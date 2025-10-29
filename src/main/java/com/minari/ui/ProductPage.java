@@ -1,4 +1,4 @@
-package com.minari.controller;
+package com.minari.ui;
 
 public class ProductPage {
     
