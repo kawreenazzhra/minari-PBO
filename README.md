@@ -25,7 +25,7 @@ git clone https://github.com/kawreenazzhra/minari-PBO.git
 
 # Masuk ke direktori project
 cd minari
-
+'''
 ## 📚 Konsep OOP yang Diimplementasi
 - ✅ Abstract Class (User)
 - ✅ Inheritance (Customer extends User)  
@@ -41,29 +41,6 @@ mvnw.cmd spring-boot:run
 ./mvnw spring-boot:run
 
 http://localhost:8080
-
-## 📁 Struktur Project
-minari/
-├── src/main/java/com/minari/
-│   ├── controller/     # Spring MVC Controllers
-│   │   └── HomeController.java
-│   ├── model/          # OOP Classes 
-│   │   ├── User.java (Abstract)
-│   │   ├── Customer.java (Inheritance)
-│   │   └── Product.java (Encapsulation)
-│   ├── service/        # Business Logic
-│   │   └── ProductService.java
-│   └── MinariApplication.java
-├── src/main/resources/
-│   ├── templates/      # HTML Files 
-│   │   ├── index.html
-│   │   ├── test-oop.html
-│   │   └── products.html
-│   ├── static/         # CSS/JS
-│   │   └── css/style.css
-│   └── application.properties
-├── pom.xml
-└── README.md
 
 👥 Tim Pengembang
 Aliyah Rahma - 103032300126
