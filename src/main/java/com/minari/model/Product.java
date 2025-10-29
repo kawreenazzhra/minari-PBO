@@ -1,5 +1,6 @@
 package com.minari.model;
 
+import java.util.ArrayList;
 import java.util.Locale.Category;
 
 public class Product {
@@ -13,6 +14,8 @@ public class Product {
     private String imageUrl;
     private Boolean active = true;
     private Category category;
+    this.reviews = new ArrayList<>();
+    this.active = true;
     
     // Constructors
     public Product() {}
@@ -43,6 +46,25 @@ public class Product {
     
     public Boolean isInStock() {
         return this.stock > 0 && this.active;
+    }
+
+        public double calculateDiscount(double discountPercentage) {
+        if (discountPercentage < 0 || discountPercentage > 100) {
+            return price;
+        }
+        return price * (1 - discountPercentage / 100);
+    }
+
+    public double getAverageRating() {
+        if (reviews == null || reviews.isEmpty()) {
+            return 0.0;
+        }
+        
+        double totalRating = 0.0;
+        for (Review review : reviews) {
+            totalRating += review.getRating();
+        }
+        return totalRating / reviews.size();
     }
     
     // Getters & Setters
