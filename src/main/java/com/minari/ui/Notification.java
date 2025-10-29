@@ -1,4 +1,4 @@
-package com.minari.service;
+package com.minari.ui;
 
 public class Notification {
     
