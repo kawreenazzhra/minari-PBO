@@ -27,7 +27,7 @@ Website e-commerce pakaian casual wanita yang mengimplementasikan konsep OOP Jav
 Aliyah Rahma - 103032300126
 Anneiza Wirda Nursifana - 103032300038
 Karina Azzahra - 103032300040
-Elsa Risnauli Sianturi - 103032
+Elsa Risnauli Sianturi - 103032300010
 Chantika Syafana Zultantia - 103032300058
 
 
