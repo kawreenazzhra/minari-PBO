@@ -4,8 +4,8 @@ import java.util.ArrayList;
 import java.util.List;
 
 public class Category {
-private String categoryId;
-private Long id;
+    private String categoryId;
+    private String id;
     private String name;
     private String description;
     private List<Product> products = new ArrayList<>();
@@ -13,7 +13,7 @@ private Long id;
     // Constructors
     public Category() {}
     
-    public Category(Long id, String name, String description) {
+    public Category(String id, String name, String description) {
         this.id = id;
         this.name = name;
         this.description = description;
@@ -23,7 +23,6 @@ private Long id;
     public void addProduct(Product product) {
         if (!products.contains(product)) {
             products.add(product);
-            product.setCategory(this);
         }
     }
     
@@ -33,8 +32,8 @@ private Long id;
     }
     
     // Getters & Setters
-    public Long getId() { return id; }
-    public void setId(Long id) { this.id = id; }
+    public String getId() { return id; }
+    public void setId(String id) { this.id = id; }
     
     public String getName() { return name; }
     public void setName(String name) { this.name = name; }
