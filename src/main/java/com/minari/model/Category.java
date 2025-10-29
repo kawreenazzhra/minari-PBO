@@ -4,7 +4,7 @@ import java.util.ArrayList;
 import java.util.List;
 
 public class Category {
-     private Long id;
+     private String id;
     private String name;
     private String description;
     private Double price;
@@ -15,7 +15,7 @@ public class Category {
     // Constructors
     public void Product() {}
     
-    public void Product(Long id, String name, String description, Double price, Integer stock, Category category) {
+    public void Product(String id, String name, String description, Double price, Integer stock, Category category) {
         this.id = id;
         this.name = name;
         this.description = description;
@@ -25,8 +25,8 @@ public class Category {
     }
     
     // Getters and Setters
-    public Long getId() { return id; }
-    public void setId(Long id) { this.id = id; }
+    public String getId() { return id; }
+    public void setId(String id) { this.id = id; }
     
     public String getName() { return name; }
     public void setName(String name) { this.name = name; }
