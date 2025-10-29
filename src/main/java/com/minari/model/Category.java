@@ -4,7 +4,8 @@ import java.util.ArrayList;
 import java.util.List;
 
 public class Category {
-   private String id;
+private String categoryId;
+private Long id;
     private String name;
     private String description;
     private List<Product> products = new ArrayList<>();
@@ -12,15 +13,28 @@ public class Category {
     // Constructors
     public Category() {}
     
-    public Category(String id, String name, String description) {
+    public Category(Long id, String name, String description) {
         this.id = id;
         this.name = name;
         this.description = description;
     }
     
-    // Getters and Setters
-    public String getId() { return id; }
-    public void setId(String id) { this.id = id; }
+    // Business Methods
+    public void addProduct(Product product) {
+        if (!products.contains(product)) {
+            products.add(product);
+            product.setCategory(this);
+        }
+    }
+    
+    public void removeProduct(Product product) {
+        products.remove(product);
+        product.setCategory(null);
+    }
+    
+    // Getters & Setters
+    public Long getId() { return id; }
+    public void setId(Long id) { this.id = id; }
     
     public String getName() { return name; }
     public void setName(String name) { this.name = name; }
@@ -28,14 +42,6 @@ public class Category {
     public String getDescription() { return description; }
     public void setDescription(String description) { this.description = description; }
     
-    public List<Product> getProducts() { return products; }
+    public List<Product> getProducts() { return new ArrayList<>(products); }
     public void setProducts(List<Product> products) { this.products = products; }
-    
-    public void addProduct(Product product) {
-        this.products.add(product);
-    }
-    
-    public void removeProduct(Product product) {
-        this.products.remove(product);
-    }
 }
