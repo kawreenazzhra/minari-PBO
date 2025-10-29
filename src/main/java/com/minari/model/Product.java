@@ -1,6 +1,7 @@
 package com.minari.model;
 
 import java.util.ArrayList;
+import java.util.List;
 import java.util.Locale.Category;
 
 public class Product {
@@ -14,9 +15,8 @@ public class Product {
     private String imageUrl;
     private Boolean active = true;
     private Category category;
-    this.reviews = new ArrayList<>();
-    this.active = true;
-    
+    private List<Review> reviews;  
+  
     // Constructors
     public Product() {}
     
