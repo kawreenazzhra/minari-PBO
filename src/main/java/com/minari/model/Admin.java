@@ -8,11 +8,10 @@ public class Admin extends User implements Notification {
     private ProductManager productManager;
     private List<Order> orderList;
 
-    // 🔹 Constructor
     public Admin(int userId, String username, String email, String password, String adminLevel) {
         super(userId, username, email, password);
         this.adminLevel = adminLevel;
-        this.productManager = new ProductManager(); // supaya admin bisa langsung pakai ProductManager
+        this.productManager = new ProductManager();
     }
 
     @Override
@@ -64,8 +63,6 @@ public class Admin extends User implements Notification {
         order.setStatus(newStatus);
         sendNotification("Order #" + order.getOrderId() + " updated to: " + newStatus);
     }
-
-    // Membuat laporan sederhana dari semua order
     public void generateSalesReport() {
         System.out.println("📊 Sales Report Summary:");
         double total = 0;
