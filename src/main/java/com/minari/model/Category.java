@@ -4,24 +4,18 @@ import java.util.ArrayList;
 import java.util.List;
 
 public class Category {
-     private String id;
+   private String id;
     private String name;
     private String description;
-    private Double price;
-    private Integer stock;
-    private String imageUrl;
-    private Category category;
+    private List<Product> products = new ArrayList<>();
     
     // Constructors
-    public void Product() {}
+    public Category() {}
     
-    public void Product(String id, String name, String description, Double price, Integer stock, Category category) {
+    public Category(String id, String name, String description) {
         this.id = id;
         this.name = name;
         this.description = description;
-        this.price = price;
-        this.stock = stock;
-        this.category = category;
     }
     
     // Getters and Setters
@@ -34,15 +28,14 @@ public class Category {
     public String getDescription() { return description; }
     public void setDescription(String description) { this.description = description; }
     
-    public Double getPrice() { return price; }
-    public void setPrice(Double price) { this.price = price; }
+    public List<Product> getProducts() { return products; }
+    public void setProducts(List<Product> products) { this.products = products; }
     
-    public Integer getStock() { return stock; }
-    public void setStock(Integer stock) { this.stock = stock; }
+    public void addProduct(Product product) {
+        this.products.add(product);
+    }
     
-    public String getImageUrl() { return imageUrl; }
-    public void setImageUrl(String imageUrl) { this.imageUrl = imageUrl; }
-    
-    public Category getCategory() { return category; }
-    public void setCategory(Category category) { this.category = category; }
+    public void removeProduct(Product product) {
+        this.products.remove(product);
+    }
 }
