@@ -1,0 +1,607 @@
+<!DOCTYPE html>
+<html xmlns:th="http://www.thymeleaf.org"
+      xmlns:layout="http://www.thymeleaf.org"
+      layout:decorate="~{admin/layout}">
+<head>
+    <title>Reports & Analytics - MINARI Admin</title>
+    <!-- Chart.js -->
+    <script src="https://cdn.jsdelivr.net/npm/chart.js"></script>
+</head>
+<body>
+    <div layout:fragment="content">
+        <!-- Page Header -->
+        <div class="d-flex justify-content-between align-items-center mb-4">
+            <div>
+                <h1 class="h3 mb-0">Reports & Analytics</h1>
+                <nav aria-label="breadcrumb">
+                    <ol class="breadcrumb">
+                        <li class="breadcrumb-item"><a href="/admin/dashboard">Dashboard</a></li>
+                        <li class="breadcrumb-item active">Reports</li>
+                    </ol>
+                </nav>
+            </div>
+            <div class="d-flex gap-2">
+                <button class="btn btn-outline-primary" onclick="exportReport()">
+                    <i class="fas fa-download me-2"></i>Export Report
+                </button>
+                <div class="dropdown">
+                    <button class="btn btn-outline-secondary dropdown-toggle" type="button" data-bs-toggle="dropdown">
+                        <i class="fas fa-calendar me-2"></i>Last 30 Days
+                    </button>
+                    <ul class="dropdown-menu">
+                        <li><a class="dropdown-item" href="#" onclick="changePeriod('7')">Last 7 Days</a></li>
+                        <li><a class="dropdown-item active" href="#" onclick="changePeriod('30')">Last 30 Days</a></li>
+                        <li><a class="dropdown-item" href="#" onclick="changePeriod('90')">Last 90 Days</a></li>
+                        <li><a class="dropdown-item" href="#" onclick="changePeriod('365')">Last Year</a></li>
+                        <li><a class="dropdown-item" href="#" onclick="changePeriod('custom')">Custom Range</a></li>
+                    </ul>
+                </div>
+            </div>
+        </div>
+
+        <!-- Date Range Picker (Hidden by default, shown for custom range) -->
+        <div class="card mb-4" id="dateRangeCard" style="display: none;">
+            <div class="card-body">
+                <div class="row g-3">
+                    <div class="col-md-4">
+                        <label for="startDate" class="form-label">Start Date</label>
+                        <input type="date" class="form-control" id="startDate">
+                    </div>
+                    <div class="col-md-4">
+                        <label for="endDate" class="form-label">End Date</label>
+                        <input type="date" class="form-control" id="endDate">
+                    </div>
+                    <div class="col-md-4 d-flex align-items-end">
+                        <button class="btn btn-primary me-2" onclick="applyCustomRange()">Apply</button>
+                        <button class="btn btn-outline-secondary" onclick="cancelCustomRange()">Cancel</button>
+                    </div>
+                </div>
+            </div>
+        </div>
+
+        <!-- Summary Cards -->
+        <div class="row mb-4">
+            <div class="col-xl-3 col-md-6 mb-4">
+                <div class="card border-left-primary shadow h-100 py-2">
+                    <div class="card-body">
+                        <div class="row no-gutters align-items-center">
+                            <div class="col mr-2">
+                                <div class="text-xs font-weight-bold text-primary text-uppercase mb-1">
+                                    Total Sales</div>
+                                <div class="h5 mb-0 font-weight-bold text-gray-800" th:text="'Rp ' + ${totalSales}">Rp 0</div>
+                            </div>
+                            <div class="col-auto">
+                                <i class="fas fa-dollar-sign fa-2x text-gray-300"></i>
+                            </div>
+                        </div>
+                    </div>
+                </div>
+            </div>
+
+            <div class="col-xl-3 col-md-6 mb-4">
+                <div class="card border-left-success shadow h-100 py-2">
+                    <div class="card-body">
+                        <div class="row no-gutters align-items-center">
+                            <div class="col mr-2">
+                                <div class="text-xs font-weight-bold text-success text-uppercase mb-1">
+                                    Total Orders</div>
+                                <div class="h5 mb-0 font-weight-bold text-gray-800" th:text="${totalOrders}">0</div>
+                            </div>
+                            <div class="col-auto">
+                                <i class="fas fa-shopping-cart fa-2x text-gray-300"></i>
+                            </div>
+                        </div>
+                    </div>
+                </div>
+            </div>
+
+            <div class="col-xl-3 col-md-6 mb-4">
+                <div class="card border-left-info shadow h-100 py-2">
+                    <div class="card-body">
+                        <div class="row no-gutters align-items-center">
+                            <div class="col mr-2">
+                                <div class="text-xs font-weight-bold text-info text-uppercase mb-1">
+                                    Avg. Order Value</div>
+                                <div class="h5 mb-0 font-weight-bold text-gray-800" th:text="'Rp ' + ${avgOrderValue}">Rp 0</div>
+                            </div>
+                            <div class="col-auto">
+                                <i class="fas fa-calculator fa-2x text-gray-300"></i>
+                            </div>
+                        </div>
+                    </div>
+                </div>
+            </div>
+
+            <div class="col-xl-3 col-md-6 mb-4">
+                <div class="card border-left-warning shadow h-100 py-2">
+                    <div class="card-body">
+                        <div class="row no-gutters align-items-center">
+                            <div class="col mr-2">
+                                <div class="text-xs font-weight-bold text-warning text-uppercase mb-1">
+                                    Conversion Rate</div>
+                                <div class="h5 mb-0 font-weight-bold text-gray-800" th:text="${#numbers.formatDecimal(conversionRate, 1, 1, 'ID')} + '%'">0%</div>
+                            </div>
+                            <div class="col-auto">
+                                <i class="fas fa-chart-line fa-2x text-gray-300"></i>
+                            </div>
+                        </div>
+                    </div>
+                </div>
+            </div>
+        </div>
+
+        <!-- Charts Section -->
+        <div class="row mb-4">
+            <!-- Sales Trend -->
+            <div class="col-xl-8 col-lg-7 mb-4">
+                <div class="card shadow">
+                    <div class="card-header py-3 d-flex justify-content-between align-items-center">
+                        <h6 class="m-0 font-weight-bold text-primary">Sales Trend</h6>
+                        <div class="dropdown">
+                            <button class="btn btn-sm btn-outline-secondary dropdown-toggle" type="button" data-bs-toggle="dropdown">
+                                Daily
+                            </button>
+                            <ul class="dropdown-menu">
+                                <li><a class="dropdown-item active" href="#" onclick="changeChartPeriod('daily')">Daily</a></li>
+                                <li><a class="dropdown-item" href="#" onclick="changeChartPeriod('weekly')">Weekly</a></li>
+                                <li><a class="dropdown-item" href="#" onclick="changeChartPeriod('monthly')">Monthly</a></li>
+                            </ul>
+                        </div>
+                    </div>
+                    <div class="card-body">
+                        <canvas id="salesTrendChart" width="100%" height="300"></canvas>
+                    </div>
+                </div>
+            </div>
+
+            <!-- Top Categories -->
+            <div class="col-xl-4 col-lg-5 mb-4">
+                <div class="card shadow">
+                    <div class="card-header py-3">
+                        <h6 class="m-0 font-weight-bold text-primary">Top Categories</h6>
+                    </div>
+                    <div class="card-body">
+                        <canvas id="categoriesChart" width="100%" height="300"></canvas>
+                    </div>
+                </div>
+            </div>
+        </div>
+
+        <!-- Detailed Reports -->
+        <div class="row mb-4">
+            <!-- Product Performance -->
+            <div class="col-xl-6 mb-4">
+                <div class="card shadow">
+                    <div class="card-header py-3 d-flex justify-content-between align-items-center">
+                        <h6 class="m-0 font-weight-bold text-primary">Product Performance</h6>
+                        <a href="#" class="btn btn-sm btn-outline-primary" onclick="exportProductReport()">Export</a>
+                    </div>
+                    <div class="card-body">
+                        <div class="table-responsive">
+                            <table class="table table-hover">
+                                <thead>
+                                    <tr>
+                                        <th>Product</th>
+                                        <th>Sold</th>
+                                        <th>Revenue</th>
+                                        <th>Profit</th>
+                                    </tr>
+                                </thead>
+                                <tbody>
+                                    <tr th:each="product : ${topProducts}">
+                                        <td>
+                                            <div class="d-flex align-items-center">
+                                                <img th:src="${product.imageUrl ?: '/images/placeholder.png'}" alt="Product"
+                                                     class="rounded me-2" style="width: 30px; height: 30px; object-fit: cover;">
+                                                <span th:text="${product.name}">Product Name</span>
+                                            </div>
+                                        </td>
+                                        <td th:text="${product.soldQuantity}">0</td>
+                                        <td th:text="'Rp ' + ${product.revenue}">Rp 0</td>
+                                        <td th:text="'Rp ' + ${product.profit}">Rp 0</td>
+                                    </tr>
+                                </tbody>
+                            </table>
+                        </div>
+                    </div>
+                </div>
+            </div>
+
+            <!-- Customer Insights -->
+            <div class="col-xl-6 mb-4">
+                <div class="card shadow">
+                    <div class="card-header py-3 d-flex justify-content-between align-items-center">
+                        <h6 class="m-0 font-weight-bold text-primary">Customer Insights</h6>
+                        <a href="#" class="btn btn-sm btn-outline-primary" onclick="exportCustomerReport()">Export</a>
+                    </div>
+                    <div class="card-body">
+                        <div class="row">
+                            <div class="col-md-6">
+                                <div class="text-center mb-3">
+                                    <h4 class="text-primary" th:text="${newCustomers}">0</h4>
+                                    <small class="text-muted">New Customers</small>
+                                </div>
+                            </div>
+                            <div class="col-md-6">
+                                <div class="text-center mb-3">
+                                    <h4 class="text-success" th:text="${returningCustomers}">0</h4>
+                                    <small class="text-muted">Returning Customers</small>
+                                </div>
+                            </div>
+                        </div>
+                        <hr>
+                        <div class="row">
+                            <div class="col-md-6">
+                                <div class="text-center mb-3">
+                                    <h4 class="text-info" th:text="${#numbers.formatDecimal(avgCustomerLifetimeValue, 0, 0, 'ID')}">0</h4>
+                                    <small class="text-muted">Avg. Lifetime Value</small>
+                                </div>
+                            </div>
+                            <div class="col-md-6">
+                                <div class="text-center mb-3">
+                                    <h4 class="text-warning" th:text="${#numbers.formatDecimal(customerRetentionRate, 1, 1, 'ID')} + '%'">0%</h4>
+                                    <small class="text-muted">Retention Rate</small>
+                                </div>
+                            </div>
+                        </div>
+                    </div>
+                </div>
+            </div>
+        </div>
+
+        <!-- Advanced Analytics -->
+        <div class="row">
+            <!-- Geographic Sales -->
+            <div class="col-xl-6 mb-4">
+                <div class="card shadow">
+                    <div class="card-header py-3">
+                        <h6 class="m-0 font-weight-bold text-primary">Sales by Region</h6>
+                    </div>
+                    <div class="card-body">
+                        <canvas id="geographicChart" width="100%" height="250"></canvas>
+                    </div>
+                </div>
+            </div>
+
+            <!-- Payment Methods -->
+            <div class="col-xl-6 mb-4">
+                <div class="card shadow">
+                    <div class="card-header py-3">
+                        <h6 class="m-0 font-weight-bold text-primary">Payment Methods</h6>
+                    </div>
+                    <div class="card-body">
+                        <canvas id="paymentMethodsChart" width="100%" height="250"></canvas>
+                        <div class="mt-3">
+                            <div th:each="method : ${paymentMethods}" class="d-flex justify-content-between align-items-center mb-2">
+                                <span class="text-muted" th:text="${method.name}">Method</span>
+                                <div>
+                                    <span class="fw-bold me-2" th:text="${method.count}">0</span>
+                                    <small class="text-muted" th:text="'(' + ${#numbers.formatDecimal(method.percentage, 1, 1, 'ID')} + '%)'">(0%)</small>
+                                </div>
+                            </div>
+                        </div>
+                    </div>
+                </div>
+            </div>
+        </div>
+
+        <!-- Report Actions -->
+        <div class="row">
+            <div class="col-12">
+                <div class="card shadow">
+                    <div class="card-header py-3">
+                        <h6 class="m-0 font-weight-bold text-primary">Generate Custom Reports</h6>
+                    </div>
+                    <div class="card-body">
+                        <div class="row g-3">
+                            <div class="col-md-3">
+                                <label class="form-label">Report Type</label>
+                                <select class="form-select" id="reportType">
+                                    <option value="sales">Sales Report</option>
+                                    <option value="products">Product Report</option>
+                                    <option value="customers">Customer Report</option>
+                                    <option value="inventory">Inventory Report</option>
+                                    <option value="financial">Financial Report</option>
+                                </select>
+                            </div>
+                            <div class="col-md-2">
+                                <label class="form-label">Format</label>
+                                <select class="form-select" id="reportFormat">
+                                    <option value="pdf">PDF</option>
+                                    <option value="excel">Excel</option>
+                                    <option value="csv">CSV</option>
+                                </select>
+                            </div>
+                            <div class="col-md-2">
+                                <label class="form-label">From Date</label>
+                                <input type="date" class="form-control" id="reportStartDate">
+                            </div>
+                            <div class="col-md-2">
+                                <label class="form-label">To Date</label>
+                                <input type="date" class="form-control" id="reportEndDate">
+                            </div>
+                            <div class="col-md-3 d-flex align-items-end">
+                                <button class="btn btn-primary me-2" onclick="generateReport()">
+                                    <i class="fas fa-cog me-2"></i>Generate Report
+                                </button>
+                                <div class="dropdown">
+                                    <button class="btn btn-outline-secondary dropdown-toggle" type="button" data-bs-toggle="dropdown">
+                                        Scheduled Reports
+                                    </button>
+                                    <ul class="dropdown-menu">
+                                        <li><a class="dropdown-item" href="#" onclick="scheduleReport('daily')">Daily</a></li>
+                                        <li><a class="dropdown-item" href="#" onclick="scheduleReport('weekly')">Weekly</a></li>
+                                        <li><a class="dropdown-item" href="#" onclick="scheduleReport('monthly')">Monthly</a></li>
+                                    </ul>
+                                </div>
+                            </div>
+                        </div>
+                    </div>
+                </div>
+            </div>
+        </div>
+    </div>
+
+    <div layout:fragment="scripts">
+        <script>
+            // Sales Trend Chart
+            const salesTrendCtx = document.getElementById('salesTrendChart').getContext('2d');
+            const salesTrendChart = new Chart(salesTrendCtx, {
+                type: 'line',
+                data: {
+                    labels: /*[[${salesTrendLabels}]]*/ [],
+                    datasets: [{
+                        label: 'Sales (Rp)',
+                        data: /*[[${salesTrendData}]]*/ [],
+                        borderColor: 'rgb(78, 115, 223)',
+                        backgroundColor: 'rgba(78, 115, 223, 0.1)',
+                        tension: 0.4,
+                        fill: true
+                    }]
+                },
+                options: {
+                    responsive: true,
+                    maintainAspectRatio: false,
+                    scales: {
+                        y: {
+                            beginAtZero: true,
+                            ticks: {
+                                callback: function(value) {
+                                    return 'Rp ' + value.toLocaleString('id-ID');
+                                }
+                            }
+                        }
+                    },
+                    plugins: {
+                        tooltip: {
+                            callbacks: {
+                                label: function(context) {
+                                    return 'Sales: Rp ' + context.parsed.y.toLocaleString('id-ID');
+                                }
+                            }
+                        }
+                    }
+                }
+            });
+
+            // Categories Chart
+            const categoriesCtx = document.getElementById('categoriesChart').getContext('2d');
+            const categoriesChart = new Chart(categoriesCtx, {
+                type: 'pie',
+                data: {
+                    labels: /*[[${categoryLabels}]]*/ [],
+                    datasets: [{
+                        data: /*[[${categoryData}]]*/ [],
+                        backgroundColor: [
+                            '#4e73df', '#1cc88a', '#36b9cc', '#f6c23e', '#e74a3b',
+                            '#6f42c1', '#fd7e14', '#20c997', '#dc3545', '#ffc107'
+                        ],
+                        borderWidth: 0
+                    }]
+                },
+                options: {
+                    responsive: true,
+                    maintainAspectRatio: false,
+                    plugins: {
+                        legend: {
+                            position: 'bottom'
+                        }
+                    }
+                }
+            });
+
+            // Geographic Chart
+            const geographicCtx = document.getElementById('geographicChart').getContext('2d');
+            const geographicChart = new Chart(geographicCtx, {
+                type: 'bar',
+                data: {
+                    labels: /*[[${regionLabels}]]*/ [],
+                    datasets: [{
+                        label: 'Sales by Region',
+                        data: /*[[${regionData}]]*/ [],
+                        backgroundColor: 'rgba(28, 200, 138, 0.8)',
+                        borderColor: 'rgb(28, 200, 138)',
+                        borderWidth: 1
+                    }]
+                },
+                options: {
+                    responsive: true,
+                    maintainAspectRatio: false,
+                    scales: {
+                        y: {
+                            beginAtZero: true,
+                            ticks: {
+                                callback: function(value) {
+                                    return 'Rp ' + value.toLocaleString('id-ID');
+                                }
+                            }
+                        }
+                    },
+                    plugins: {
+                        legend: {
+                            display: false
+                        }
+                    }
+                }
+            });
+
+            // Payment Methods Chart
+            const paymentMethodsCtx = document.getElementById('paymentMethodsChart').getContext('2d');
+            const paymentMethodsChart = new Chart(paymentMethodsCtx, {
+                type: 'doughnut',
+                data: {
+                    labels: /*[[${paymentMethodLabels}]]*/ [],
+                    datasets: [{
+                        data: /*[[${paymentMethodData}]]*/ [],
+                        backgroundColor: [
+                            '#4e73df', '#1cc88a', '#36b9cc', '#f6c23e', '#e74a3b'
+                        ],
+                        borderWidth: 0
+                    }]
+                },
+                options: {
+                    responsive: true,
+                    maintainAspectRatio: false,
+                    plugins: {
+                        legend: {
+                            position: 'bottom'
+                        }
+                    }
+                }
+            });
+
+            // Change period
+            function changePeriod(days) {
+                if (days === 'custom') {
+                    document.getElementById('dateRangeCard').style.display = 'block';
+                    return;
+                }
+
+                document.getElementById('dateRangeCard').style.display = 'none';
+                const url = new URL(window.location);
+                url.searchParams.set('period', days);
+                window.location.href = url.toString();
+            }
+
+            // Apply custom date range
+            function applyCustomRange() {
+                const startDate = document.getElementById('startDate').value;
+                const endDate = document.getElementById('endDate').value;
+
+                if (!startDate || !endDate) {
+                    alert('Please select both start and end dates');
+                    return;
+                }
+
+                const url = new URL(window.location);
+                url.searchParams.set('startDate', startDate);
+                url.searchParams.set('endDate', endDate);
+                url.searchParams.set('period', 'custom');
+                window.location.href = url.toString();
+            }
+
+            // Cancel custom range
+            function cancelCustomRange() {
+                document.getElementById('dateRangeCard').style.display = 'none';
+            }
+
+            // Change chart period
+            function changeChartPeriod(period) {
+                // This would typically make an AJAX call to get new data
+                console.log('Changing chart period to:', period);
+                // For now, just update the button text
+                event.target.closest('.dropdown').querySelector('.dropdown-toggle').textContent =
+                    period.charAt(0).toUpperCase() + period.slice(1);
+            }
+
+            // Export functions
+            function exportReport() {
+                window.location.href = '/admin/reports/export?format=pdf';
+            }
+
+            function exportProductReport() {
+                window.location.href = '/admin/reports/export?type=products&format=excel';
+            }
+
+            function exportCustomerReport() {
+                window.location.href = '/admin/reports/export?type=customers&format=excel';
+            }
+
+            // Generate custom report
+            function generateReport() {
+                const type = document.getElementById('reportType').value;
+                const format = document.getElementById('reportFormat').value;
+                const startDate = document.getElementById('reportStartDate').value;
+                const endDate = document.getElementById('reportEndDate').value;
+
+                let url = `/admin/reports/generate?type=${type}&format=${format}`;
+                if (startDate) url += `&startDate=${startDate}`;
+                if (endDate) url += `&endDate=${endDate}`;
+
+                window.open(url, '_blank');
+            }
+
+            // Schedule report
+            function scheduleReport(frequency) {
+                const type = document.getElementById('reportType').value;
+                const format = document.getElementById('reportFormat').value;
+
+                fetch('/admin/reports/schedule', {
+                    method: 'POST',
+                    headers: {
+                        'Content-Type': 'application/json',
+                    },
+                    body: JSON.stringify({
+                        type: type,
+                        format: format,
+                        frequency: frequency
+                    })
+                })
+                .then(response => response.json())
+                .then(data => {
+                    if (data.success) {
+                        showAlert(`Report scheduled ${frequency}`, 'success');
+                    } else {
+                        showAlert('Failed to schedule report', 'danger');
+                    }
+                })
+                .catch(error => {
+                    console.error('Error:', error);
+                    showAlert('An error occurred', 'danger');
+                });
+            }
+
+            // Alert function
+            function showAlert(message, type) {
+                const alertHtml = `
+                    <div class="alert alert-${type} alert-dismissible fade show position-fixed" role="alert"
+                         style="top: 20px; right: 20px; z-index: 9999; min-width: 300px;">
+                        <i class="fas fa-${type === 'success' ? 'check-circle' : 'exclamation-triangle'} me-2"></i>
+                        ${message}
+                        <button type="button" class="btn-close" data-bs-dismiss="alert"></button>
+                    </div>
+                `;
+                document.body.insertAdjacentHTML('beforeend', alertHtml);
+
+                setTimeout(() => {
+                    const alert = document.querySelector('.alert');
+                    if (alert) {
+                        alert.remove();
+                    }
+                }, 3000);
+            }
+
+            // Initialize date inputs with current month
+            document.addEventListener('DOMContentLoaded', function() {
+                const now = new Date();
+                const firstDay = new Date(now.getFullYear(), now.getMonth(), 1);
+                const lastDay = new Date(now.getFullYear(), now.getMonth() + 1, 0);
+
+                document.getElementById('reportStartDate').value = firstDay.toISOString().split('T')[0];
+                document.getElementById('reportEndDate').value = lastDay.toISOString().split('T')[0];
+            });
+        </script>
+    </div>
+</body>
+</html>
+

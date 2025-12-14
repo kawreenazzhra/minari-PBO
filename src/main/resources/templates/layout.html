@@ -1,0 +1,400 @@
+<!DOCTYPE html>
+<html xmlns:th="http://www.thymeleaf.org"
+      xmlns:sec="http://www.thymeleaf.org/extras/spring-security"
+      xmlns:layout="http://www.ultraq.net.nz/thymeleaf/layout">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title th:text="${pageTitle != null ? pageTitle : 'Minari E-Commerce'}">Minari E-Commerce</title>
+
+    <!-- Tailwind CSS -->
+    <script src="https://cdn.tailwindcss.com"></script>
+    <!-- Inter Font -->
+    <link href="https://rsms.me/inter/inter.css" rel="stylesheet">
+    <!-- Feather Icons -->
+    <script src="https://cdn.jsdelivr.net/npm/feather-icons/dist/feather.min.js"></script>
+
+    <style>
+        * {
+            font-family: 'Inter', sans-serif;
+        }
+
+        :root {
+            --color-primary: #1f2937;
+            --color-secondary: #6b7280;
+            --color-accent: #d97706;
+            --color-accent-light: #fef3c7;
+            --color-border: #e5e7eb;
+            --color-success: #10b981;
+            --color-danger: #ef4444;
+        }
+
+        body {
+            background-color: #f9fafb;
+            color: var(--color-primary);
+        }
+
+        .navbar {
+            background-color: #ffffff;
+            border-bottom: 1px solid var(--color-border);
+        }
+
+        .nav-link {
+            color: var(--color-secondary);
+            font-weight: 500;
+            font-size: 0.95rem;
+            transition: color 0.2s;
+        }
+
+        .nav-link:hover {
+            color: var(--color-accent);
+        }
+
+        .cart-badge {
+            position: absolute;
+            top: -6px;
+            right: -8px;
+            background: var(--color-accent);
+            color: white;
+            border-radius: 50%;
+            width: 20px;
+            height: 20px;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            font-size: 0.7rem;
+            font-weight: 600;
+        }
+
+        .product-card {
+            transition: all 0.3s ease;
+            border: 1px solid var(--color-border);
+            border-radius: 0.5rem;
+            background: white;
+        }
+
+        .product-card:hover {
+            box-shadow: 0 10px 25px rgba(0, 0, 0, 0.08);
+            transform: translateY(-4px);
+            border-color: var(--color-accent-light);
+        }
+
+        .product-image {
+            width: 100%;
+            height: 280px;
+            object-fit: cover;
+            border-radius: 0.5rem 0.5rem 0 0;
+        }
+
+        .price {
+            color: var(--color-accent);
+            font-weight: 600;
+            font-size: 1.1rem;
+        }
+
+        .original-price {
+            text-decoration: line-through;
+            color: var(--color-secondary);
+            font-size: 0.9rem;
+        }
+
+        .btn-primary {
+            background-color: var(--color-accent);
+            color: white;
+            border: none;
+            padding: 0.625rem 1.5rem;
+            border-radius: 0.375rem;
+            font-weight: 500;
+            transition: background-color 0.2s;
+            cursor: pointer;
+        }
+
+        .btn-primary:hover {
+            background-color: #b45309;
+        }
+
+        .btn-outline {
+            border: 1px solid var(--color-border);
+            background: white;
+            color: var(--color-primary);
+            padding: 0.625rem 1.5rem;
+            border-radius: 0.375rem;
+            font-weight: 500;
+            transition: all 0.2s;
+            cursor: pointer;
+        }
+
+        .btn-outline:hover {
+            border-color: var(--color-accent);
+            color: var(--color-accent);
+        }
+
+        .section-title {
+            font-size: 2rem;
+            font-weight: 700;
+            color: var(--color-primary);
+            margin-bottom: 2rem;
+        }
+    </style>
+</head>
+<body class="bg-gray-50">
+    <!-- Navigation -->
+    <header class="navbar">
+    <nav class="bg-white border-b border-gray-200 sticky top-0 z-50">
+        <div class="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8">
+            <div class="flex justify-between items-center h-16">
+                <!-- Logo -->
+                <a href="/" class="flex items-center space-x-2">
+                    <span class="text-2xl font-bold text-gray-900">MINARI</span>
+                    <span class="text-xs uppercase tracking-wide text-gray-400">Fashion</span>
+                </a>
+
+                <!-- Center Navigation -->
+                <div class="hidden md:flex items-center space-x-8">
+                    <a href="/" class="nav-link text-gray-600 hover:text-amber-600">Home</a>
+                    <a href="/products" class="nav-link text-gray-600 hover:text-amber-600">Products</a>
+                    <a href="/about" class="nav-link text-gray-600 hover:text-amber-600">About</a>
+                </div>
+
+                <!-- Right Actions -->
+                <div class="flex items-center space-x-2 sm:space-x-4">
+                    <!-- Search -->
+                    <form action="/products" method="get" class="hidden sm:flex items-center">
+                        <input type="text" name="search" placeholder="Search..." class="px-3 py-2 text-sm border border-gray-200 rounded bg-gray-50 focus:outline-none focus:ring-2 focus:ring-amber-500 focus:border-transparent" />
+                    </form>
+
+                    <!-- Wishlist - CUSTOMER ONLY -->
+                    <div sec:authorize="hasRole('CUSTOMER')">
+                        <a href="/wishlist" class="text-gray-600 hover:text-amber-600 transition" title="Wishlist">
+                            <svg width="20" height="20" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2">
+                                <path d="M20.84 4.61a5.5 5.5 0 0 0-7.78 0L12 5.67l-1.06-1.06a5.5 5.5 0 0 0-7.78 7.78l1.06 1.06L12 21.23l7.78-7.78 1.06-1.06a5.5 5.5 0 0 0 0-7.78z"></path>
+                            </svg>
+                        </a>
+                    </div>
+
+                    <!-- Wishlist - GUEST SHOWS LOGIN PROMPT -->
+                    <div sec:authorize="!isAuthenticated()">
+                        <button onclick="showLoginPrompt()" class="text-gray-600 hover:text-amber-600 transition" title="Wishlist">
+                            <svg width="20" height="20" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2">
+                                <path d="M20.84 4.61a5.5 5.5 0 0 0-7.78 0L12 5.67l-1.06-1.06a5.5 5.5 0 0 0-7.78 7.78l1.06 1.06L12 21.23l7.78-7.78 1.06-1.06a5.5 5.5 0 0 0 0-7.78z"></path>
+                            </svg>
+                        </button>
+                    </div>
+
+                    <!-- Cart -->
+                    <div class="relative" sec:authorize="hasRole('CUSTOMER')">
+                        <a href="/cart" class="relative text-gray-600 hover:text-amber-600 transition" title="Cart">
+                            <svg width="20" height="20" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2">
+                                <circle cx="9" cy="21" r="1"></circle>
+                                <circle cx="20" cy="21" r="1"></circle>
+                                <path d="M1 1h4l2.68 13.39a2 2 0 0 0 2 1.61h9.72a2 2 0 0 0 2-1.61L23 6H6"></path>
+                            </svg>
+                            <span class="cart-badge" th:text="${cartItemCount != null ? cartItemCount : 0}">0</span>
+                        </a>
+                    </div>
+
+                    <!-- Profile Menu - AUTHENTICATED -->
+                    <div sec:authorize="isAuthenticated()" class="relative group">
+                        <button class="text-gray-600 hover:text-amber-600 transition flex items-center" title="Profile">
+                            <svg width="24" height="24" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2">
+                                <path d="M20 21v-2a4 4 0 0 0-4-4H8a4 4 0 0 0-4 4v2"></path>
+                                <circle cx="12" cy="7" r="4"></circle>
+                            </svg>
+                        </button>
+                        <!-- Dropdown Menu -->
+                        <div class="hidden group-hover:flex group-hover:flex-col absolute right-0 mt-2 w-56 bg-white border border-gray-200 rounded-lg shadow-lg z-50">
+                            <div class="px-4 py-3 border-b border-gray-100">
+                                <p class="text-sm text-gray-600">Signed in as</p>
+                                <p class="text-sm font-medium text-gray-900" sec:authentication="name"></p>
+                            </div>
+                            <a href="/profile" class="block px-4 py-2 text-sm text-gray-700 hover:bg-amber-50">My Profile</a>
+                            <a href="/orders" class="block px-4 py-2 text-sm text-gray-700 hover:bg-amber-50">My Orders</a>
+                            <a href="/wishlist" class="block px-4 py-2 text-sm text-gray-700 hover:bg-amber-50">My Wishlist</a>
+                            <a href="/settings" class="block px-4 py-2 text-sm text-gray-700 hover:bg-amber-50">Settings</a>
+                            <div sec:authorize="hasRole('ADMIN')" class="border-t border-gray-100">
+                                <a href="/admin/dashboard" class="block px-4 py-2 text-sm text-amber-600 font-medium hover:bg-amber-50">🔐 Admin Dashboard</a>
+                            </div>
+                            <div class="border-t border-gray-100">
+                                <a href="/logout" class="block px-4 py-2 text-sm text-red-600 hover:bg-red-50">Logout</a>
+                            </div>
+                        </div>
+                    </div>
+
+                    <!-- Profile Menu - GUEST -->
+                    <div sec:authorize="!isAuthenticated()" class="relative group">
+                        <button class="text-gray-600 hover:text-amber-600 transition flex items-center" title="Guest Profile">
+                            <svg width="24" height="24" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2">
+                                <path d="M20 21v-2a4 4 0 0 0-4-4H8a4 4 0 0 0-4 4v2"></path>
+                                <circle cx="12" cy="7" r="4"></circle>
+                            </svg>
+                        </button>
+                        <!-- Guest Dropdown Menu -->
+                        <div class="hidden group-hover:flex group-hover:flex-col absolute right-0 mt-2 w-56 bg-white border border-gray-200 rounded-lg shadow-lg z-50">
+                            <div class="px-4 py-4 text-center border-b border-gray-100">
+                                <svg class="w-12 h-12 mx-auto text-gray-400 mb-2" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2">
+                                    <path d="M20 21v-2a4 4 0 0 0-4-4H8a4 4 0 0 0-4 4v2"></path>
+                                    <circle cx="12" cy="7" r="4"></circle>
+                                </svg>
+                                <p class="text-lg font-semibold text-gray-900">Guest</p>
+                                <p class="text-xs text-gray-500 mt-1">You are browsing as a guest</p>
+                            </div>
+                            <a href="/login" class="block px-4 py-3 text-center text-sm font-medium text-gray-900 border-gray-200 border rounded-md m-3 hover:bg-gray-50">Log in</a>
+                            <a href="/register" class="block px-4 py-3 text-center text-sm font-medium text-white bg-amber-600 hover:bg-amber-700 rounded-md m-3">Sign up</a>
+                        </div>
+                    </div>
+                </div>
+            </div>
+        </div>
+    </nav>
+    </header>
+
+    <!-- Main Content -->
+    <main>
+        <!-- Messages -->
+        <div th:if="${success}" class="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8 mt-4">
+            <div class="bg-green-50 border border-green-200 text-green-700 px-4 py-3 rounded relative flex items-center justify-between">
+                <div class="flex items-center">
+                    <svg class="w-5 h-5 mr-2" fill="currentColor" viewBox="0 0 20 20">
+                        <path fill-rule="evenodd" d="M10 18a8 8 0 100-16 8 8 0 000 16zm3.707-9.293a1 1 0 00-1.414-1.414L9 10.586 7.707 9.293a1 1 0 00-1.414 1.414l2 2a1 1 0 001.414 0l4-4z" clip-rule="evenodd"></path>
+                    </svg>
+                    <span th:text="${success}"></span>
+                </div>
+                <button type="button" onclick="this.parentElement.style.display='none'" class="text-green-700 font-bold">×</button>
+            </div>
+        </div>
+
+        <div th:if="${error}" class="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8 mt-4">
+            <div class="bg-red-50 border border-red-200 text-red-700 px-4 py-3 rounded relative flex items-center justify-between">
+                <div class="flex items-center">
+                    <svg class="w-5 h-5 mr-2" fill="currentColor" viewBox="0 0 20 20">
+                        <path fill-rule="evenodd" d="M10 18a8 8 0 100-16 8 8 0 000 16zM8.707 7.293a1 1 0 00-1.414 1.414L8.586 10l-1.293 1.293a1 1 0 101.414 1.414L10 11.414l1.293 1.293a1 1 0 001.414-1.414L11.414 10l1.293-1.293a1 1 0 00-1.414-1.414L10 8.586 8.707 7.293z" clip-rule="evenodd"></path>
+                    </svg>
+                    <span th:text="${error}"></span>
+                </div>
+                <button type="button" onclick="this.parentElement.style.display='none'" class="text-red-700 font-bold">×</button>
+            </div>
+        </div>
+
+        <!-- Page Content -->
+        <div layout:fragment="content"></div>
+    </main>
+
+    <!-- Footer -->
+    <footer class="bg-gray-900 text-gray-300 mt-16">
+        <div class="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8 py-12">
+            <div class="grid grid-cols-1 md:grid-cols-4 gap-8">
+                <div>
+                    <h3 class="text-white font-bold text-lg mb-4">MINARI</h3>
+                    <p class="text-sm leading-relaxed">Your trusted online fashion store for the latest trends and quality products.</p>
+                    <div class="flex space-x-4 mt-4">
+                        <a href="#" class="text-gray-400 hover:text-amber-600">Facebook</a>
+                        <a href="#" class="text-gray-400 hover:text-amber-600">Instagram</a>
+                        <a href="#" class="text-gray-400 hover:text-amber-600">Twitter</a>
+                    </div>
+                </div>
+                <div>
+                    <h4 class="text-white font-semibold mb-4">Quick Links</h4>
+                    <ul class="space-y-2 text-sm">
+                        <li><a href="/" class="text-gray-400 hover:text-amber-600">Home</a></li>
+                        <li><a href="/products" class="text-gray-400 hover:text-amber-600">Products</a></li>
+                        <li><a href="/about" class="text-gray-400 hover:text-amber-600">About Us</a></li>
+                        <li><a href="/contact" class="text-gray-400 hover:text-amber-600">Contact</a></li>
+                    </ul>
+                </div>
+                <div>
+                    <h4 class="text-white font-semibold mb-4">Customer Service</h4>
+                    <ul class="space-y-2 text-sm">
+                        <li><a href="/shipping" class="text-gray-400 hover:text-amber-600">Shipping Info</a></li>
+                        <li><a href="/returns" class="text-gray-400 hover:text-amber-600">Returns</a></li>
+                        <li><a href="/faq" class="text-gray-400 hover:text-amber-600">FAQ</a></li>
+                        <li><a href="/support" class="text-gray-400 hover:text-amber-600">Support</a></li>
+                    </ul>
+                </div>
+                <div>
+                    <h4 class="text-white font-semibold mb-4">Contact Info</h4>
+                    <ul class="space-y-2 text-sm">
+                        <li class="text-gray-400">📍 Jakarta, Indonesia</li>
+                        <li class="text-gray-400">📞 +62 812-3456-7890</li>
+                        <li class="text-gray-400">✉️ info@minari.com</li>
+                    </ul>
+                </div>
+            </div>
+            <hr class="border-gray-700 my-8" />
+            <div class="text-center text-sm text-gray-400">
+                <p>&copy; 2024 MINARI E-Commerce. All rights reserved.</p>
+            </div>
+        </div>
+    </footer>
+
+    <!-- Page-specific scripts -->
+    <layout:fragment name="scripts"></layout:fragment>
+
+    <script>
+        feather.replace();
+
+        // Show login prompt modal for guests trying to access customer-only features
+        function showLoginPrompt() {
+            const modal = document.createElement('div');
+            modal.className = 'fixed inset-0 bg-black bg-opacity-50 flex items-center justify-center z-50';
+            modal.innerHTML = `
+                <div class="bg-white rounded-lg shadow-xl p-8 max-w-md w-full mx-4">
+                    <div class="flex justify-between items-center mb-4">
+                        <h2 class="text-2xl font-bold text-gray-900">Sign In Required</h2>
+                        <button onclick="this.closest('.fixed').remove()" class="text-gray-400 hover:text-gray-600">
+                            <svg class="w-6 h-6" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+                                <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M6 18L18 6M6 6l12 12"></path>
+                            </svg>
+                        </button>
+                    </div>
+                    <p class="text-gray-600 mb-6">You need to log in to access this feature. Create a new account or sign in to your existing account.</p>
+                    <div class="flex flex-col gap-3">
+                        <a href="/login" class="w-full bg-amber-600 text-white font-semibold py-3 rounded-lg hover:bg-amber-700 transition text-center">
+                            Sign In
+                        </a>
+                        <a href="/register" class="w-full border-2 border-amber-600 text-amber-600 font-semibold py-3 rounded-lg hover:bg-amber-50 transition text-center">
+                            Create Account
+                        </a>
+                    </div>
+                </div>
+            `;
+            document.body.appendChild(modal);
+            modal.addEventListener('click', (e) => {
+                if (e.target === modal) modal.remove();
+            });
+        }
+
+        // Show checkout login prompt
+        function showCheckoutLoginPrompt() {
+            const modal = document.createElement('div');
+            modal.className = 'fixed inset-0 bg-black bg-opacity-50 flex items-center justify-center z-50';
+            modal.innerHTML = `
+                <div class="bg-white rounded-lg shadow-xl p-8 max-w-md w-full mx-4">
+                    <div class="flex justify-between items-center mb-4">
+                        <h2 class="text-2xl font-bold text-gray-900">Checkout</h2>
+                        <button onclick="this.closest('.fixed').remove()" class="text-gray-400 hover:text-gray-600">
+                            <svg class="w-6 h-6" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+                                <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M6 18L18 6M6 6l12 12"></path>
+                            </svg>
+                        </button>
+                    </div>
+                    <p class="text-gray-600 mb-6">Please sign in to continue with your purchase.</p>
+                    <div class="flex flex-col gap-3">
+                        <a href="/login" class="w-full bg-amber-600 text-white font-semibold py-3 rounded-lg hover:bg-amber-700 transition text-center">
+                            Sign In
+                        </a>
+                        <a href="/register" class="w-full border-2 border-amber-600 text-amber-600 font-semibold py-3 rounded-lg hover:bg-amber-50 transition text-center">
+                            Create Account
+                        </a>
+                    </div>
+                    <p class="text-sm text-gray-500 text-center mt-4">Or <button onclick="this.closest('.fixed').remove()" class="text-amber-600 hover:underline">continue shopping</button></p>
+                </div>
+            `;
+            document.body.appendChild(modal);
+            modal.addEventListener('click', (e) => {
+                if (e.target === modal) modal.remove();
+            });
+        }
+    </script>
+</body>
+</html>
+

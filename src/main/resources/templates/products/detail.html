@@ -1,0 +1,233 @@
+<!DOCTYPE html>
+<html xmlns:th="http://www.thymeleaf.org"
+      xmlns:sec="http://www.thymeleaf.org/extras/spring-security"
+      xmlns:layout="http://www.ultraq.net.nz/thymeleaf/layout"
+      layout:decorate="~{layout}">
+<head>
+    <title th:text="${product.name} + ' - MINARI'">Product Detail - MINARI</title>
+</head>
+<body>
+    <div layout:fragment="content">
+        <div class="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8 py-8">
+            <!-- Breadcrumb -->
+            <nav class="flex items-center space-x-2 mb-6 text-sm">
+                <a href="/" class="text-gray-600 hover:text-amber-600">Home</a>
+                <span class="text-gray-400">/</span>
+                <a href="/products" class="text-gray-600 hover:text-amber-600">Products</a>
+                <span class="text-gray-400">/</span>
+                <span class="text-gray-900" th:text="${product.name}">Product Name</span>
+            </nav>
+
+        <div class="grid grid-cols-1 lg:grid-cols-2 gap-8 lg:gap-12">
+            <div class="grid grid-cols-1 lg:grid-cols-2 gap-8 lg:gap-12">
+                <!-- Product Images -->
+                <div class="flex flex-col gap-4">
+                    <div class="bg-gray-100 rounded-lg overflow-hidden h-96 lg:h-[500px] flex items-center justify-center">
+                        <img th:if="${product.imageUrl}" 
+                             th:src="${product.imageUrl}" 
+                             th:alt="${product.name}"
+                             class="w-full h-full object-cover"
+                             alt="Product image">
+                        <div th:unless="${product.imageUrl}" class="text-gray-400 text-center">
+                            <svg class="w-16 h-16 mx-auto mb-4" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+                                <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M4 16l4.586-4.586a2 2 0 012.828 0L16 16m-2-2l1.586-1.586a2 2 0 012.828 0L20 14m-6-6h.01M6 20h12a2 2 0 002-2V6a2 2 0 00-2-2H6a2 2 0 00-2 2v12a2 2 0 002 2z"></path>
+                            </svg>
+                            No image available
+                        </div>
+                    </div>
+                </div>
+
+                <!-- Product Info -->
+                <div class="flex flex-col gap-6">
+                    <!-- Product Name & Price -->
+                    <div>
+                        <h1 class="text-3xl lg:text-4xl font-bold text-gray-900 mb-2" th:text="${product.name}">Product Name</h1>
+                        
+                        <!-- Rating -->
+                        <div class="flex items-center gap-2 mb-4">
+                            <div class="flex gap-1">
+                                <span th:each="i : ${#numbers.sequence(1, 5)}" class="text-amber-400">
+                                    <svg th:if="${i <= product.averageRating}" class="w-4 h-4" fill="currentColor" viewBox="0 0 20 20">
+                                        <path d="M9.049 2.927c.3-.921 1.603-.921 1.902 0l1.07 3.292a1 1 0 00.95.69h3.462c.969 0 1.371 1.24.588 1.81l-2.8 2.034a1 1 0 00-.364 1.118l1.07 3.292c.3.921-.755 1.688-1.54 1.118l-2.8-2.034a1 1 0 00-1.175 0l-2.8 2.034c-.784.57-1.838-.197-1.539-1.118l1.07-3.292a1 1 0 00-.364-1.118L2.98 8.72c-.783-.57-.38-1.81.588-1.81h3.461a1 1 0 00.951-.69l1.07-3.292z"></path>
+                                    </svg>
+                                    <svg th:unless="${i <= product.averageRating}" class="w-4 h-4" fill="none" stroke="currentColor" viewBox="0 0 20 20">
+                                        <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M9.049 2.927c.3-.921 1.603-.921 1.902 0l1.07 3.292a1 1 0 00.95.69h3.462c.969 0 1.371 1.24.588 1.81l-2.8 2.034a1 1 0 00-.364 1.118l1.07 3.292c.3.921-.755 1.688-1.54 1.118l-2.8-2.034a1 1 0 00-1.175 0l-2.8 2.034c-.784.57-1.838-.197-1.539-1.118l1.07-3.292a1 1 0 00-.364-1.118L2.98 8.72c-.783-.57-.38-1.81.588-1.81h3.461a1 1 0 00.951-.69l1.07-3.292z"></path>
+                                    </svg>
+                                </span>
+                            </div>
+                            <span class="text-sm text-gray-600" th:text="${product.averageRating} + '/5 (' + ${product.reviewCount} + ' reviews)'">
+                                4.8/5 (128 reviews)
+                            </span>
+                        </div>
+
+                        <!-- Price -->
+                        <div class="flex items-baseline gap-3 mb-4">
+                            <span class="text-3xl font-bold text-gray-900" th:text="'Rp ' + ${#numbers.formatInteger(product.price, 0)}">
+                                Rp 299.000
+                            </span>
+                            <span th:if="${product.compareAtPrice}" class="text-lg text-gray-500 line-through" 
+                                  th:text="'Rp ' + ${#numbers.formatInteger(product.compareAtPrice, 0)}">
+                                Rp 399.000
+                            </span>
+                            <span th:if="${product.compareAtPrice}" class="text-sm font-semibold text-amber-600 bg-amber-50 px-2 py-1 rounded">
+                                <span th:text="${#numbers.formatInteger((1 - product.price / product.compareAtPrice) * 100, 0)} + '% OFF'">25% OFF</span>
+                            </span>
+                        </div>
+
+                        <!-- Stock Status -->
+                        <div class="mb-4">
+                            <span th:if="${product.stockQuantity > 0}" class="text-sm font-medium text-green-600">
+                                ✓ In Stock (<span th:text="${product.stockQuantity}">10</span> available)
+                            </span>
+                            <span th:unless="${product.stockQuantity > 0}" class="text-sm font-medium text-red-600">
+                                Out of Stock
+                            </span>
+                        </div>
+                    </div>
+
+                    <!-- Brand & SKU -->
+                    <div class="border-t border-gray-200 pt-4" th:if="${product.brand}">
+                        <div class="grid grid-cols-2 gap-4 text-sm">
+                            <div>
+                                <p class="text-gray-600 font-medium">Brand</p>
+                                <p class="text-gray-900" th:text="${product.brand}">Brand Name</p>
+                            </div>
+                            <div>
+                                <p class="text-gray-600 font-medium">SKU</p>
+                                <p class="text-gray-900 font-mono" th:text="${product.sku}">SKU-12345</p>
+                            </div>
+                        </div>
+                    </div>
+
+                    <!-- Add to Cart Form -->
+                    <form th:action="@{/cart/add}" method="POST" class="border-t border-gray-200 pt-6">
+                        <input type="hidden" name="productId" th:value="${product.id}">
+                        
+                        <!-- Quantity -->
+                        <div class="mb-6">
+                            <label class="block text-sm font-medium text-gray-700 mb-2">Quantity</label>
+                            <div class="flex items-center gap-3 w-24">
+                                <button type="button" onclick="decreaseQty()" class="w-10 h-10 flex items-center justify-center border border-gray-300 rounded hover:bg-gray-100">
+                                    −
+                                </button>
+                                <input type="number" id="quantity" name="quantity" value="1" min="1" 
+                                       th:max="${product.stockQuantity}"
+                                       class="flex-1 text-center border border-gray-300 rounded py-2">
+                                <button type="button" onclick="increaseQty()" class="w-10 h-10 flex items-center justify-center border border-gray-300 rounded hover:bg-gray-100">
+                                    +
+                                </button>
+                            </div>
+                        </div>
+
+                        <!-- Buttons -->
+                        <div class="flex gap-3 mb-6">
+                            <button type="submit" 
+                                    th:disabled="${product.stockQuantity <= 0}"
+                                    class="flex-1 bg-amber-600 text-white py-3 rounded-lg font-semibold hover:bg-amber-700 transition disabled:bg-gray-300 disabled:cursor-not-allowed flex items-center justify-center gap-2">
+                                <svg class="w-5 h-5" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+                                    <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M3 3h2l.4 2M7 13h10l4-8H5.4M7 13L5.4 5M7 13l-2.293 2.293c-.63.63-.184 1.707.707 1.707H17m0 0a2 2 0 100 4 2 2 0 000-4zm-8 2a2 2 0 11-4 0 2 2 0 014 0z"></path>
+                                </svg>
+                                Add to Cart
+                            </button>
+                            
+                            <button type="button" onclick="toggleWishlist()" 
+                                    class="w-12 h-12 flex items-center justify-center border-2 border-gray-300 rounded-lg hover:border-amber-600 hover:bg-amber-50 transition">
+                                <svg id="wishlistIcon" class="w-6 h-6" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+                                    <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M4.318 6.318a4.5 4.5 0 000 6.364L12 20.364l7.682-7.682a4.5 4.5 0 00-6.364-6.364L12 7.636l-1.318-1.318a4.5 4.5 0 00-6.364 0z"></path>
+                                </svg>
+                            </button>
+                        </div>
+
+                        <!-- Features -->
+                        <div class="bg-gray-50 rounded-lg p-4 space-y-3">
+                            <div class="flex gap-3">
+                                <svg class="w-5 h-5 text-amber-600 flex-shrink-0" fill="currentColor" viewBox="0 0 20 20">
+                                    <path fill-rule="evenodd" d="M10 18a8 8 0 100-16 8 8 0 000 16zm3.707-9.293a1 1 0 00-1.414-1.414L9 10.586 7.707 9.293a1 1 0 00-1.414 1.414l2 2a1 1 0 001.414 0l4-4z" clip-rule="evenodd"></path>
+                                </svg>
+                                <div>
+                                    <p class="font-medium text-gray-900">Free Returns</p>
+                                    <p class="text-sm text-gray-600">30 days money-back guarantee</p>
+                                </div>
+                            </div>
+                            <div class="flex gap-3">
+                                <svg class="w-5 h-5 text-amber-600 flex-shrink-0" fill="currentColor" viewBox="0 0 20 20">
+                                    <path fill-rule="evenodd" d="M10 18a8 8 0 100-16 8 8 0 000 16zm3.707-9.293a1 1 0 00-1.414-1.414L9 10.586 7.707 9.293a1 1 0 00-1.414 1.414l2 2a1 1 0 001.414 0l4-4z" clip-rule="evenodd"></path>
+                                </svg>
+                                <div>
+                                    <p class="font-medium text-gray-900">Fast Shipping</p>
+                                    <p class="text-sm text-gray-600">Get it in 2-3 business days</p>
+                                </div>
+                            </div>
+                            <div class="flex gap-3">
+                                <svg class="w-5 h-5 text-amber-600 flex-shrink-0" fill="currentColor" viewBox="0 0 20 20">
+                                    <path fill-rule="evenodd" d="M10 18a8 8 0 100-16 8 8 0 000 16zm3.707-9.293a1 1 0 00-1.414-1.414L9 10.586 7.707 9.293a1 1 0 00-1.414 1.414l2 2a1 1 0 001.414 0l4-4z" clip-rule="evenodd"></path>
+                                </svg>
+                                <div>
+                                    <p class="font-medium text-gray-900">Secure Payment</p>
+                                    <p class="text-sm text-gray-600">SSL encrypted checkout</p>
+                                </div>
+                            </div>
+                        </div>
+                    </form>
+                </div>
+            </div>
+
+            <!-- Description Section -->
+            <div class="mt-16 border-t border-gray-200 pt-8">
+                <h2 class="text-2xl font-bold text-gray-900 mb-4">Product Description</h2>
+                <div class="prose prose-sm max-w-none text-gray-600" th:utext="${product.description}">
+                    <p>Product description goes here...</p>
+                </div>
+            </div>
+        </div>
+    </div>
+
+    <!-- Success Toast Notification -->
+    <div id="successToast" class="fixed bottom-4 right-4 bg-green-500 text-white px-6 py-3 rounded-lg shadow-lg hidden">
+        ✓ Added to cart! 
+        <a href="/cart" class="underline font-semibold">View cart</a>
+    </div>
+
+    <style>
+        .prose {
+            color: #6b7280;
+        }
+        .prose p {
+            margin-bottom: 1rem;
+        }
+        .prose ul, .prose ol {
+            margin: 1rem 0 1rem 2rem;
+        }
+        .prose li {
+            margin-bottom: 0.5rem;
+        }
+    </style>
+
+    <script>
+        function decreaseQty() {
+            const qty = document.getElementById('quantity');
+            if (qty.value > 1) qty.value = parseInt(qty.value) - 1;
+        }
+
+        function increaseQty() {
+            const qty = document.getElementById('quantity');
+            const max = parseInt(qty.getAttribute('max'));
+            if (qty.value < max) qty.value = parseInt(qty.value) + 1;
+        }
+
+        function toggleWishlist() {
+            const icon = document.getElementById('wishlistIcon');
+            icon.classList.toggle('fill-amber-600');
+            icon.classList.toggle('stroke-amber-600');
+        }
+
+        // Show success toast if redirected with success param
+        const params = new URLSearchParams(window.location.search);
+        if (params.has('success')) {
+            const toast = document.getElementById('successToast');
+            toast.classList.remove('hidden');
+            setTimeout(() => toast.classList.add('hidden'), 4000);
+        }
+    </script>
+</body>
+</html>

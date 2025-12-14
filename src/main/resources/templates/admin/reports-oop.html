@@ -1,0 +1,396 @@
+<!DOCTYPE html>
+<html lang="en" xmlns:th="http://www.thymeleaf.org">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <meta http-equiv="X-UA-Compatible" content="ie=edge">
+    <meta name="description" content="MINARI Admin - View business reports and analytics">
+    <title>Reports - MINARI Admin</title>
+    <link href="https://cdn.jsdelivr.net/npm/bootstrap@5.3.0/dist/css/bootstrap.min.css" rel="stylesheet">
+    <link href="https://fonts.googleapis.com/css2?family=Playfair+Display:wght@700&family=Poppins:wght@400;500;600&display=swap" rel="stylesheet">
+    <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.4.0/css/all.min.css">
+    <link rel="stylesheet" href="/css/admin-styles.css">
+    <script src="https://cdn.jsdelivr.net/npm/chart.js"></script>
+</head>
+<body>
+    <!-- Navigation Bar -->
+    <nav class="navbar-custom fixed-top">
+        <div class="container-fluid">
+            <div class="d-flex justify-content-between align-items-center w-100 px-5">
+                <div class="logo">
+                    <svg width="150" height="40" viewBox="0 0 150 40" fill="none" xmlns="http://www.w3.org/2000/svg">
+                        <text x="0" y="30" font-family="Playfair Display, serif" font-size="32" font-weight="700" fill="#8B6F47">MINARI</text>
+                    </svg>
+                </div>
+                <div class="navbar-icons">
+                    <i class="fas fa-search" title="Search" aria-hidden="true"></i>
+                    <i class="fas fa-envelope" title="Messages" aria-hidden="true"></i>
+                </div>
+            </div>
+        </div>
+    </nav>
+
+    <!-- Sidebar Navigation -->
+    <div class="sidebar">
+        <a href="/admin" class="sidebar-item" title="Dashboard">
+            <i class="fas fa-table-columns" aria-hidden="true"></i>
+            <span>Dashboard</span>
+        </a>
+        <a href="/admin/products" class="sidebar-item" title="Products">
+            <i class="fas fa-box" aria-hidden="true"></i>
+            <span>Product</span>
+        </a>
+        <a href="/admin/categories" class="sidebar-item" title="Categories">
+            <i class="fas fa-layer-group" aria-hidden="true"></i>
+            <span>Categories</span>
+        </a>
+        <a href="/admin/orders" class="sidebar-item" title="Orders">
+            <i class="fas fa-file-invoice" aria-hidden="true"></i>
+            <span>Orders</span>
+        </a>
+        <a href="/admin/customers" class="sidebar-item" title="Customers">
+            <i class="fas fa-users" aria-hidden="true"></i>
+            <span>Customers</span>
+        </a>
+        <a href="/admin/reports" class="sidebar-item active" title="Reports">
+            <i class="fas fa-chart-bar" aria-hidden="true"></i>
+            <span>Reports</span>
+        </a>
+        <a href="/admin/promotions" class="sidebar-item" title="Promotions">
+            <i class="fas fa-ad" aria-hidden="true"></i>
+            <span>Promotions</span>
+        </a>
+    </div>
+
+    <!-- Main Content Area -->
+    <div class="main-content">
+        <div class="page-header d-flex justify-content-between align-items-center mb-5">
+            <div>
+                <h2 class="page-title">Reports</h2>
+                <p class="text-muted">View detailed business analytics and reports</p>
+            </div>
+            <div class="d-flex gap-2">
+                <input type="date" class="form-control" style="width: auto;" id="dateStart" aria-label="Start date" title="Select start date">
+                <input type="date" class="form-control" style="width: auto;" id="dateEnd" aria-label="End date" title="Select end date">
+                <button class="btn btn-outline-primary" onclick="generateReport()" title="Generate report">
+                    <i class="fas fa-download me-2" aria-hidden="true"></i>Export
+                </button>
+            </div>
+        </div>
+
+        <!-- Key Metrics -->
+        <div class="row mb-5">
+            <div class="col-md-6 col-lg-3 mb-4">
+                <div class="stat-card">
+                    <div class="stat-icon revenue">
+                        <i class="fas fa-dollar-sign" aria-hidden="true"></i>
+                    </div>
+                    <div class="stat-content">
+                        <p class="stat-label">Total Revenue</p>
+                        <p class="stat-value" id="totalRevenue">Rp 0</p>
+                        <p class="stat-change positive">
+                            <i class="fas fa-arrow-up" aria-hidden="true"></i>
+                            <span id="revenueChange">0% vs last period</span>
+                        </p>
+                    </div>
+                </div>
+            </div>
+
+            <div class="col-md-6 col-lg-3 mb-4">
+                <div class="stat-card">
+                    <div class="stat-icon orders">
+                        <i class="fas fa-shopping-cart" aria-hidden="true"></i>
+                    </div>
+                    <div class="stat-content">
+                        <p class="stat-label">Total Orders</p>
+                        <p class="stat-value" id="totalOrders">0</p>
+                        <p class="stat-change positive">
+                            <i class="fas fa-arrow-up" aria-hidden="true"></i>
+                            <span id="ordersChange">0% vs last period</span>
+                        </p>
+                    </div>
+                </div>
+            </div>
+
+            <div class="col-md-6 col-lg-3 mb-4">
+                <div class="stat-card">
+                    <div class="stat-icon customers">
+                        <i class="fas fa-users" aria-hidden="true"></i>
+                    </div>
+                    <div class="stat-content">
+                        <p class="stat-label">New Customers</p>
+                        <p class="stat-value" id="newCustomers">0</p>
+                        <p class="stat-change positive">
+                            <i class="fas fa-arrow-up" aria-hidden="true"></i>
+                            <span id="customerChange">0% vs last period</span>
+                        </p>
+                    </div>
+                </div>
+            </div>
+
+            <div class="col-md-6 col-lg-3 mb-4">
+                <div class="stat-card">
+                    <div class="stat-icon products">
+                        <i class="fas fa-percent" aria-hidden="true"></i>
+                    </div>
+                    <div class="stat-content">
+                        <p class="stat-label">Conversion Rate</p>
+                        <p class="stat-value" id="conversionRate">0%</p>
+                        <p class="stat-change positive">
+                            <i class="fas fa-arrow-up" aria-hidden="true"></i>
+                            <span id="conversionChange">0% vs last period</span>
+                        </p>
+                    </div>
+                </div>
+            </div>
+        </div>
+
+        <!-- Charts Section -->
+        <div class="row mb-5">
+            <!-- Revenue Trend Chart -->
+            <div class="col-lg-8 mb-4">
+                <div class="chart-card">
+                    <h5 class="chart-title">Revenue Trend</h5>
+                    <canvas id="revenueChart" height="80"></canvas>
+                </div>
+            </div>
+
+            <!-- Top Categories -->
+            <div class="col-lg-4 mb-4">
+                <div class="chart-card">
+                    <h5 class="chart-title">Top Categories</h5>
+                    <canvas id="categoriesChart" height="80"></canvas>
+                </div>
+            </div>
+        </div>
+
+        <!-- Additional Analytics -->
+        <div class="row mb-5">
+            <!-- Order Status Distribution -->
+            <div class="col-lg-6 mb-4">
+                <div class="chart-card">
+                    <h5 class="chart-title">Order Status Distribution</h5>
+                    <canvas id="statusChart" height="80"></canvas>
+                </div>
+            </div>
+
+            <!-- Customer Acquisition -->
+            <div class="col-lg-6 mb-4">
+                <div class="chart-card">
+                    <h5 class="chart-title">Customer Acquisition</h5>
+                    <canvas id="acquisitionChart" height="80"></canvas>
+                </div>
+            </div>
+        </div>
+
+        <!-- Top Products Table -->
+        <div class="row">
+            <div class="col-12 mb-4">
+                <div class="table-card">
+                    <div class="table-header d-flex justify-content-between align-items-center mb-4">
+                        <h5 class="mb-0">Top 10 Best Selling Products</h5>
+                        <a href="#" class="btn-link" title="View all products">View All</a>
+                    </div>
+                    <div class="table-responsive">
+                        <table class="table-custom">
+                            <thead>
+                                <tr>
+                                    <th>Product Name</th>
+                                    <th>Category</th>
+                                    <th>Units Sold</th>
+                                    <th>Revenue</th>
+                                    <th>Profit</th>
+                                    <th>Growth</th>
+                                </tr>
+                            </thead>
+                            <tbody id="topProductsTable">
+                                <tr>
+                                    <td colspan="6" class="text-center text-muted py-5">
+                                        <i class="fas fa-spinner fa-spin me-2" aria-hidden="true"></i>Loading...
+                                    </td>
+                                </tr>
+                            </tbody>
+                        </table>
+                    </div>
+                </div>
+            </div>
+        </div>
+    </div>
+
+    <!-- Footer -->
+    <footer>
+        <div class="container">
+            <div class="row align-items-center">
+                <div class="col-md-6">
+                    <div class="logo">
+                        <svg width="150" height="40" viewBox="0 0 150 40" fill="none" xmlns="http://www.w3.org/2000/svg">
+                            <text x="0" y="30" font-family="Playfair Display, serif" font-size="32" font-weight="700" fill="#8B6F47">MINARI</text>
+                        </svg>
+                    </div>
+                    <p>Your everyday fashion boutique</p>
+                </div>
+                <div class="col-md-6 text-end">
+                    <p>Give us suggestions for future progress</p>
+                    <div class="footer-form">
+                        <input type="text" placeholder="your message . . ." aria-label="Feedback message">
+                        <button title="Send feedback">Send</button>
+                    </div>
+                </div>
+            </div>
+            <div class="footer-divider"></div>
+            <div class="copyright">
+                © 2025 MINARI. All Rights Reserved.
+            </div>
+        </div>
+    </footer>
+
+    <!-- Scripts -->
+    <script src="https://cdn.jsdelivr.net/npm/bootstrap@5.3.0/dist/js/bootstrap.bundle.min.js"></script>
+    <script>
+        function initCharts() {
+            // Revenue Trend Chart
+            const revenueCtx = document.getElementById('revenueChart');
+            if (revenueCtx) {
+                new Chart(revenueCtx, {
+                    type: 'line',
+                    data: {
+                        labels: ['Week 1', 'Week 2', 'Week 3', 'Week 4', 'Week 5', 'Week 6', 'Week 7'],
+                        datasets: [{
+                            label: 'Revenue',
+                            data: [50000, 60000, 55000, 70000, 75000, 80000, 85000],
+                            borderColor: '#8B6F47',
+                            backgroundColor: 'rgba(139, 111, 71, 0.1)',
+                            tension: 0.4,
+                            fill: true
+                        }]
+                    },
+                    options: {
+                        responsive: true,
+                        maintainAspectRatio: false,
+                        plugins: { legend: { position: 'bottom' } },
+                        scales: {
+                            y: {
+                                beginAtZero: true,
+                                ticks: {
+                                    callback: function(value) {
+                                        return 'Rp ' + value.toLocaleString();
+                                    }
+                                }
+                            }
+                        }
+                    }
+                });
+            }
+
+            // Categories Chart
+            const categoriesCtx = document.getElementById('categoriesChart');
+            if (categoriesCtx) {
+                new Chart(categoriesCtx, {
+                    type: 'doughnut',
+                    data: {
+                        labels: ['Clothing', 'Accessories', 'Shoes'],
+                        datasets: [{
+                            data: [45, 30, 25],
+                            backgroundColor: ['#8B6F47', '#D4AF37', '#10B981']
+                        }]
+                    },
+                    options: {
+                        responsive: true,
+                        maintainAspectRatio: false,
+                        plugins: { legend: { position: 'bottom' } }
+                    }
+                });
+            }
+
+            // Status Distribution Chart
+            const statusCtx = document.getElementById('statusChart');
+            if (statusCtx) {
+                new Chart(statusCtx, {
+                    type: 'bar',
+                    data: {
+                        labels: ['Pending', 'Processing', 'Shipped', 'Delivered', 'Cancelled'],
+                        datasets: [{
+                            label: 'Orders',
+                            data: [20, 35, 45, 120, 8],
+                            backgroundColor: ['#F59E0B', '#3B82F6', '#8B5CF6', '#10B981', '#EF4444']
+                        }]
+                    },
+                    options: {
+                        responsive: true,
+                        maintainAspectRatio: false,
+                        plugins: { legend: { position: 'bottom' } }
+                    }
+                });
+            }
+
+            // Customer Acquisition Chart
+            const acquisitionCtx = document.getElementById('acquisitionChart');
+            if (acquisitionCtx) {
+                new Chart(acquisitionCtx, {
+                    type: 'line',
+                    data: {
+                        labels: ['Jan', 'Feb', 'Mar', 'Apr', 'May', 'Jun'],
+                        datasets: [{
+                            label: 'New Customers',
+                            data: [12, 19, 15, 25, 22, 30],
+                            borderColor: '#D4AF37',
+                            backgroundColor: 'rgba(212, 175, 55, 0.1)',
+                            tension: 0.4,
+                            fill: true
+                        }]
+                    },
+                    options: {
+                        responsive: true,
+                        maintainAspectRatio: false,
+                        plugins: { legend: { position: 'bottom' } }
+                    }
+                });
+            }
+        }
+
+        function loadTopProducts() {
+            fetch('/api/reports/top-products')
+                .then(response => response.json())
+                .then(data => {
+                    const tbody = document.getElementById('topProductsTable');
+                    tbody.innerHTML = data.map(product => `
+                        <tr>
+                            <td class="fw-bold">${product.name}</td>
+                            <td>${product.category}</td>
+                            <td>${product.unitsSold}</td>
+                            <td>Rp ${product.revenue.toLocaleString()}</td>
+                            <td>Rp ${product.profit.toLocaleString()}</td>
+                            <td>
+                                <span class="text-success">
+                                    <i class="fas fa-arrow-up me-1" aria-hidden="true"></i>${product.growth}%
+                                </span>
+                            </td>
+                        </tr>
+                    `).join('');
+                })
+                .catch(error => {
+                    console.error('Error:', error);
+                    document.getElementById('topProductsTable').innerHTML = 
+                        '<tr><td colspan="6" class="text-center text-danger py-5">Failed to load products</td></tr>';
+                });
+        }
+
+        function generateReport() {
+            const startDate = document.getElementById('dateStart').value;
+            const endDate = document.getElementById('dateEnd').value;
+            
+            if (!startDate || !endDate) {
+                alert('Please select both start and end dates');
+                return;
+            }
+
+            window.location.href = `/api/reports/export?startDate=${startDate}&endDate=${endDate}`;
+        }
+
+        document.addEventListener('DOMContentLoaded', () => {
+            initCharts();
+            loadTopProducts();
+        });
+    </script>
+</body>
+</html>

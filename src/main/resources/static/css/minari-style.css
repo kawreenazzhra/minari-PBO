@@ -1,0 +1,597 @@
+/* ====================================
+   MINARI E-COMMERCE CUSTOM STYLES
+   ==================================== */
+
+:root {
+    --soft-pink: #D4A5A5;
+    --soft-choco: #8B6F47;
+    --cream: #F5F0E8;
+    --light-cream: #FAFAF8;
+    --dark-gray: #3A3A3A;
+    --medium-gray: #6B6B6B;
+    --light-gray: #E8E8E8;
+    --white: #FFFFFF;
+}
+
+* {
+    margin: 0;
+    padding: 0;
+    box-sizing: border-box;
+}
+
+html, body {
+    font-family: 'Poppins', -apple-system, BlinkMacSystemFont, 'Segoe UI', sans-serif;
+    color: var(--dark-gray);
+    background-color: var(--white);
+}
+
+/* ====================================
+   HEADER & NAVIGATION
+   ==================================== */
+
+header {
+    background-color: var(--white);
+    border-bottom: 1px solid var(--light-gray);
+    padding: 1rem 0;
+    position: sticky;
+    top: 0;
+    z-index: 1000;
+}
+
+.navbar-brand {
+    font-size: 1.5rem;
+    font-weight: 700;
+    color: var(--soft-choco);
+    letter-spacing: 2px;
+}
+
+.navbar-brand:hover {
+    color: var(--soft-pink);
+}
+
+.navbar {
+    padding: 0;
+}
+
+.nav-link {
+    color: var(--dark-gray) !important;
+    font-weight: 500;
+    font-size: 0.95rem;
+    margin: 0 1rem;
+    transition: color 0.3s ease;
+}
+
+.nav-link:hover {
+    color: var(--soft-pink) !important;
+}
+
+.navbar-icons {
+    display: flex;
+    gap: 1.5rem;
+    align-items: center;
+}
+
+.navbar-icons a {
+    color: var(--dark-gray);
+    font-size: 1.2rem;
+    transition: color 0.3s ease;
+    text-decoration: none;
+}
+
+.navbar-icons a:hover {
+    color: var(--soft-pink);
+}
+
+.search-form {
+    flex: 1;
+    max-width: 400px;
+    margin: 0 2rem;
+}
+
+.search-form input {
+    background-color: var(--light-cream);
+    border: none;
+    padding: 0.7rem 1rem;
+    border-radius: 25px;
+    color: var(--dark-gray);
+    font-size: 0.9rem;
+}
+
+.search-form input::placeholder {
+    color: var(--medium-gray);
+}
+
+.search-form input:focus {
+    outline: none;
+    background-color: var(--cream);
+    box-shadow: 0 0 0 2px var(--soft-pink);
+}
+
+/* ====================================
+   HERO SECTION
+   ==================================== */
+
+.hero-section {
+    background: linear-gradient(135deg, var(--soft-pink) 0%, #E8C4C4 100%);
+    padding: 80px 0;
+    position: relative;
+    overflow: hidden;
+}
+
+.hero-content {
+    display: flex;
+    align-items: center;
+    justify-content: space-between;
+    gap: 4rem;
+}
+
+.hero-text h1 {
+    font-size: 3.5rem;
+    font-weight: 600;
+    color: var(--dark-gray);
+    margin-bottom: 1.5rem;
+    line-height: 1.2;
+    letter-spacing: -1px;
+}
+
+.hero-text p {
+    font-size: 1.1rem;
+    color: var(--medium-gray);
+    margin-bottom: 2rem;
+    line-height: 1.6;
+}
+
+.hero-text .cta-btn {
+    display: inline-block;
+    background-color: var(--soft-choco);
+    color: var(--white);
+    padding: 1rem 2.5rem;
+    border-radius: 50px;
+    text-decoration: none;
+    font-weight: 500;
+    transition: all 0.3s ease;
+    border: 2px solid var(--soft-choco);
+}
+
+.hero-text .cta-btn:hover {
+    background-color: transparent;
+    color: var(--soft-choco);
+}
+
+.hero-image {
+    flex: 1;
+    text-align: center;
+    min-height: 300px;
+    display: flex;
+    align-items: center;
+    justify-content: center;
+}
+
+.hero-image img {
+    max-width: 100%;
+    height: auto;
+    filter: drop-shadow(0 10px 30px rgba(0, 0, 0, 0.1));
+}
+
+@media (max-width: 768px) {
+    .hero-content {
+        flex-direction: column;
+        gap: 2rem;
+    }
+
+    .hero-text h1 {
+        font-size: 2.2rem;
+    }
+
+    .hero-section {
+        padding: 50px 0;
+    }
+}
+
+/* ====================================
+   SECTION TITLE
+   ==================================== */
+
+.section-title {
+    font-size: 2.2rem;
+    font-weight: 600;
+    color: var(--dark-gray);
+    text-align: center;
+    margin-bottom: 3rem;
+    letter-spacing: -0.5px;
+}
+
+.section-title-divider {
+    width: 60px;
+    height: 3px;
+    background-color: var(--soft-pink);
+    margin: 0.5rem auto 2rem;
+}
+
+/* ====================================
+   MINARI'S STYLE (PRODUCT SHOWCASE)
+   ==================================== */
+
+.minari-style-section {
+    padding: 80px 0;
+    background-color: var(--white);
+}
+
+.product-grid {
+    display: grid;
+    grid-template-columns: repeat(auto-fit, minmax(220px, 1fr));
+    gap: 2rem;
+    position: relative;
+}
+
+.product-card {
+    text-align: center;
+    transition: transform 0.3s ease;
+    cursor: pointer;
+}
+
+.product-card:hover {
+    transform: translateY(-8px);
+}
+
+.product-image {
+    background-color: var(--cream);
+    border-radius: 8px;
+    overflow: hidden;
+    margin-bottom: 1rem;
+    aspect-ratio: 3/4;
+    display: flex;
+    align-items: center;
+    justify-content: center;
+}
+
+.product-image img {
+    width: 100%;
+    height: 100%;
+    object-fit: cover;
+    transition: transform 0.3s ease;
+}
+
+.product-card:hover .product-image img {
+    transform: scale(1.05);
+}
+
+.product-name {
+    font-size: 1rem;
+    font-weight: 500;
+    color: var(--dark-gray);
+    margin-bottom: 0.5rem;
+}
+
+.product-price {
+    font-size: 1.1rem;
+    color: var(--soft-choco);
+    font-weight: 600;
+}
+
+/* ====================================
+   PRODUCT CATEGORY SECTION
+   ==================================== */
+
+.category-section {
+    padding: 80px 0;
+    background-color: var(--light-cream);
+}
+
+.category-grid {
+    display: grid;
+    grid-template-columns: repeat(auto-fit, minmax(250px, 1fr));
+    gap: 2rem;
+}
+
+.category-card {
+    background-color: var(--white);
+    border-radius: 8px;
+    overflow: hidden;
+    transition: all 0.3s ease;
+    cursor: pointer;
+}
+
+.category-card:hover {
+    transform: translateY(-5px);
+    box-shadow: 0 10px 30px rgba(0, 0, 0, 0.1);
+}
+
+.category-image {
+    background-color: var(--cream);
+    aspect-ratio: 4/3;
+    overflow: hidden;
+    display: flex;
+    align-items: center;
+    justify-content: center;
+}
+
+.category-image img {
+    width: 100%;
+    height: 100%;
+    object-fit: cover;
+    transition: transform 0.3s ease;
+}
+
+.category-card:hover .category-image img {
+    transform: scale(1.1);
+}
+
+.category-info {
+    padding: 1.5rem;
+    text-align: center;
+}
+
+.category-name {
+    font-size: 1.2rem;
+    font-weight: 600;
+    color: var(--dark-gray);
+}
+
+/* ====================================
+   CAMPAIGN BANNER
+   ==================================== */
+
+.campaign-banner {
+    background: linear-gradient(rgba(0, 0, 0, 0.4), rgba(0, 0, 0, 0.4)), 
+                url('data:image/svg+xml,<svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 1200 400"><rect fill="%23f0e8d8" width="1200" height="400"/></svg>');
+    background-size: cover;
+    background-position: center;
+    padding: 100px 0;
+    text-align: center;
+    color: var(--white);
+    position: relative;
+    overflow: hidden;
+    margin: 80px 0;
+}
+
+.campaign-content h2 {
+    font-size: 3rem;
+    font-weight: 600;
+    margin-bottom: 1rem;
+    text-shadow: 0 2px 8px rgba(0, 0, 0, 0.2);
+}
+
+.campaign-content p {
+    font-size: 1.2rem;
+    margin-bottom: 2rem;
+    text-shadow: 0 1px 4px rgba(0, 0, 0, 0.2);
+}
+
+.campaign-btn {
+    display: inline-block;
+    background-color: var(--soft-choco);
+    color: var(--white);
+    padding: 0.8rem 2rem;
+    border-radius: 50px;
+    text-decoration: none;
+    font-weight: 500;
+    transition: all 0.3s ease;
+    border: 2px solid var(--soft-choco);
+}
+
+.campaign-btn:hover {
+    background-color: transparent;
+    color: var(--soft-choco);
+}
+
+/* ====================================
+   TESTIMONIALS SECTION
+   ==================================== */
+
+.testimonials-section {
+    padding: 80px 0;
+    background-color: var(--white);
+}
+
+.testimonials-grid {
+    display: grid;
+    grid-template-columns: repeat(auto-fit, minmax(280px, 1fr));
+    gap: 2rem;
+}
+
+.testimonial-card {
+    background-color: var(--cream);
+    padding: 2rem;
+    border-radius: 8px;
+    text-align: center;
+    transition: all 0.3s ease;
+}
+
+.testimonial-card:hover {
+    background-color: var(--soft-pink);
+    color: var(--white);
+    transform: translateY(-5px);
+}
+
+.testimonial-stars {
+    color: #FFD700;
+    font-size: 1.2rem;
+    margin-bottom: 1rem;
+}
+
+.testimonial-text {
+    font-size: 0.95rem;
+    line-height: 1.6;
+    margin-bottom: 1.5rem;
+    font-style: italic;
+}
+
+.testimonial-author {
+    font-weight: 600;
+    color: var(--soft-choco);
+}
+
+.testimonial-card:hover .testimonial-author {
+    color: var(--white);
+}
+
+/* ====================================
+   FOOTER
+   ==================================== */
+
+footer {
+    background-color: var(--soft-pink);
+    color: var(--white);
+    padding: 60px 0 20px;
+}
+
+.footer-content {
+    display: grid;
+    grid-template-columns: repeat(auto-fit, minmax(200px, 1fr));
+    gap: 3rem;
+    margin-bottom: 3rem;
+}
+
+.footer-section h4 {
+    font-size: 1.1rem;
+    font-weight: 600;
+    margin-bottom: 1.5rem;
+}
+
+.footer-section ul {
+    list-style: none;
+}
+
+.footer-section ul li {
+    margin-bottom: 0.8rem;
+}
+
+.footer-section ul li a {
+    color: rgba(255, 255, 255, 0.8);
+    text-decoration: none;
+    transition: color 0.3s ease;
+}
+
+.footer-section ul li a:hover {
+    color: var(--white);
+}
+
+.footer-social {
+    display: flex;
+    gap: 1.5rem;
+    margin-top: 1.5rem;
+}
+
+.footer-social a {
+    color: var(--white);
+    font-size: 1.3rem;
+    text-decoration: none;
+    transition: transform 0.3s ease;
+}
+
+.footer-social a:hover {
+    transform: scale(1.2);
+}
+
+.footer-bottom {
+    border-top: 1px solid rgba(255, 255, 255, 0.2);
+    padding-top: 2rem;
+    text-align: center;
+    color: rgba(255, 255, 255, 0.8);
+    font-size: 0.9rem;
+}
+
+/* ====================================
+   UTILITIES
+   ==================================== */
+
+.container {
+    max-width: 1200px;
+    margin: 0 auto;
+    padding: 0 20px;
+}
+
+.no-decoration {
+    text-decoration: none;
+    color: inherit;
+}
+
+.no-decoration:hover {
+    color: var(--soft-pink);
+}
+
+/* ====================================
+   RESPONSIVE
+   ==================================== */
+
+@media (max-width: 1024px) {
+    .product-grid {
+        grid-template-columns: repeat(3, 1fr);
+    }
+}
+
+@media (max-width: 768px) {
+    .section-title {
+        font-size: 1.8rem;
+    }
+
+    .product-grid {
+        grid-template-columns: repeat(2, 1fr);
+        gap: 1.5rem;
+    }
+
+    .category-grid {
+        grid-template-columns: repeat(2, 1fr);
+    }
+
+    .campaign-banner {
+        padding: 60px 0;
+    }
+
+    .campaign-content h2 {
+        font-size: 2rem;
+    }
+
+    .footer-content {
+        gap: 2rem;
+    }
+}
+
+@media (max-width: 480px) {
+    .product-grid {
+        grid-template-columns: 1fr;
+    }
+
+    .category-grid {
+        grid-template-columns: 1fr;
+    }
+
+    .hero-text h1 {
+        font-size: 1.8rem;
+    }
+
+    .navbar-icons {
+        gap: 1rem;
+    }
+
+    .search-form {
+        max-width: 100%;
+        margin: 1rem 0;
+    }
+}
+
+/* ====================================
+   ANIMATIONS
+   ==================================== */
+
+@keyframes fadeInUp {
+    from {
+        opacity: 0;
+        transform: translateY(30px);
+    }
+    to {
+        opacity: 1;
+        transform: translateY(0);
+    }
+}
+
+.section-title {
+    animation: fadeInUp 0.6s ease-out;
+}
+
+.product-card,
+.category-card,
+.testimonial-card {
+    animation: fadeInUp 0.6s ease-out;
+}

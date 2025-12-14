@@ -1,0 +1,267 @@
+<!DOCTYPE html>
+<html xmlns:th="http://www.thymeleaf.org"
+      xmlns:layout="http://www.ultraq.net.nz/thymeleaf/layout"
+      layout:decorate="~{layout}">
+<head>
+    <title>Shopping Cart - Minari E-Commerce</title>
+</head>
+<body>
+    <div layout:fragment="content">
+        <div class="container py-4">
+            <!-- Page Header -->
+            <div class="row mb-4">
+                <div class="col-12">
+                    <h1 class="h2 mb-2">Shopping Cart</h1>
+                    <nav aria-label="breadcrumb">
+                        <ol class="breadcrumb">
+                            <li class="breadcrumb-item"><a href="/">Home</a></li>
+                            <li class="breadcrumb-item active">Shopping Cart</li>
+                        </ol>
+                    </nav>
+                </div>
+            </div>
+
+            <div th:if="${cart == null or cart.items == null or cart.items.empty}" class="text-center py-5">
+                <i class="fas fa-shopping-cart fa-4x text-muted mb-3"></i>
+                <h3 class="text-muted mb-3">Your cart is empty</h3>
+                <p class="text-muted mb-4">Add some products to your cart and they will appear here.</p>
+                <a href="/products" class="btn btn-primary btn-lg">
+                    <i class="fas fa-shopping-bag me-2"></i>Continue Shopping
+                </a>
+            </div>
+
+            <div th:if="${cart != null and cart.items != null and !cart.items.empty}" class="row">
+                <!-- Cart Items -->
+                <div class="col-lg-8 mb-4">
+                    <div class="card border-0 shadow-sm">
+                        <div class="card-header bg-white">
+                            <h5 class="mb-0">Cart Items (<span th:text="${cart.items.size()}">0</span>)</h5>
+                        </div>
+                        <div class="card-body p-0">
+                            <div th:each="item : ${cart.items}" class="cart-item border-bottom">
+                                <div class="row g-0 p-3">
+                                    <div class="col-md-2">
+                                        <img th:src="${item.product.imageUrl != null ? item.product.imageUrl : 'https://via.placeholder.com/80x80?text=No+Image'}"
+                                             th:alt="${item.product.name}" class="img-fluid rounded">
+                                    </div>
+                                    <div class="col-md-4">
+                                        <h6 class="mb-1">
+                                            <a th:href="@{/products/{id}(id=${item.product.id})}" class="text-decoration-none text-dark"
+                                               th:text="${item.product.name}">Product Name</a>
+                                        </h6>
+                                        <small class="text-muted" th:if="${item.product.category != null}" th:text="${item.product.category.name}">Category</small>
+                                    </div>
+                                    <div class="col-md-2">
+                                        <div class="price text-success fw-bold" th:text="'Rp ' + ${item.product.price}">Rp 0</div>
+                                    </div>
+                                    <div class="col-md-2">
+                                        <div class="quantity-controls d-flex align-items-center justify-content-center">
+                                            <button class="btn btn-sm btn-outline-secondary" th:onclick="'updateQuantity(' + ${item.product.id} + ', ' + (${item.quantity} - 1) + ')'">
+                                                <i class="fas fa-minus"></i>
+                                            </button>
+                                            <input type="number" class="form-control form-control-sm text-center mx-2"
+                                                   th:value="${item.quantity}" min="1" th:max="${item.product.stockQuantity}"
+                                                   th:onchange="'updateQuantity(' + ${item.product.id} + ', parseInt(this.value))'"
+                                                   style="width: 60px;">
+                                            <button class="btn btn-sm btn-outline-secondary" th:onclick="'updateQuantity(' + ${item.product.id} + ', ' + (${item.quantity} + 1) + ')'">
+                                                <i class="fas fa-plus"></i>
+                                            </button>
+                                        </div>
+                                    </div>
+                                    <div class="col-md-2 text-end">
+                                        <div class="fw-bold text-success mb-2" th:text="'Rp ' + ${item.subtotal}">Rp 0</div>
+                                        <button class="btn btn-sm btn-outline-danger" th:onclick="'removeItem(' + ${item.product.id} + ')'">
+                                            <i class="fas fa-trash"></i> Remove
+                                        </button>
+                                    </div>
+                                </div>
+                            </div>
+                        </div>
+                    </div>
+
+                    <!-- Continue Shopping -->
+                    <div class="mt-3">
+                        <a href="/products" class="btn btn-outline-primary">
+                            <i class="fas fa-arrow-left me-2"></i>Continue Shopping
+                        </a>
+                    </div>
+                </div>
+
+                <!-- Order Summary -->
+                <div class="col-lg-4">
+                    <div class="card border-0 shadow-sm checkout-summary sticky-top">
+                        <div class="card-header bg-white">
+                            <h5 class="mb-0">Order Summary</h5>
+                        </div>
+                        <div class="card-body">
+                            <div class="d-flex justify-content-between mb-2">
+                                <span>Subtotal (<span th:text="${cart.items.size()}">0</span> items)</span>
+                                <span th:text="'Rp ' + ${cart.subtotal}">Rp 0</span>
+                            </div>
+
+                            <div th:if="${cart.discount > 0}" class="d-flex justify-content-between mb-2 text-success">
+                                <span>Discount</span>
+                                <span th:text="'-Rp ' + ${cart.discount}">-Rp 0</span>
+                            </div>
+
+                            <div class="d-flex justify-content-between mb-2">
+                                <span>Shipping</span>
+                                <span th:if="${cart.shippingCost == 0}" class="text-success">Free</span>
+                                <span th:if="${cart.shippingCost > 0}" th:text="'Rp ' + ${cart.shippingCost}">Rp 0</span>
+                            </div>
+
+                            <div th:if="${cart.tax > 0}" class="d-flex justify-content-between mb-3">
+                                <span>Tax</span>
+                                <span th:text="'Rp ' + ${cart.tax}">Rp 0</span>
+                            </div>
+
+                            <hr>
+
+                            <div class="d-flex justify-content-between mb-4">
+                                <strong class="total">Total</strong>
+                                <strong class="total text-success" th:text="'Rp ' + ${cart.total}">Rp 0</strong>
+                            </div>
+
+                            <!-- Promo Code -->
+                            <div class="mb-3">
+                                <label for="promoCode" class="form-label small">Promo Code</label>
+                                <div class="input-group">
+                                    <input type="text" class="form-control form-control-sm" id="promoCode" placeholder="Enter code">
+                                    <button class="btn btn-outline-primary btn-sm" onclick="applyPromoCode()">Apply</button>
+                                </div>
+                            </div>
+
+                            <!-- Checkout Button -->
+                            <a href="/checkout" class="btn btn-primary w-100 mb-2">
+                                <i class="fas fa-credit-card me-2"></i>Proceed to Checkout
+                            </a>
+
+                            <!-- Payment Methods -->
+                            <div class="text-center">
+                                <small class="text-muted">We accept:</small>
+                                <div class="mt-2">
+                                    <i class="fab fa-cc-visa fa-lg me-2 text-primary"></i>
+                                    <i class="fab fa-cc-mastercard fa-lg me-2 text-warning"></i>
+                                    <i class="fab fa-cc-paypal fa-lg text-info"></i>
+                                </div>
+                            </div>
+                        </div>
+                    </div>
+
+                    <!-- Security Notice -->
+                    <div class="alert alert-info mt-3 py-2">
+                        <i class="fas fa-shield-alt me-2"></i>
+                        <small>Secure checkout with SSL encryption</small>
+                    </div>
+                </div>
+            </div>
+        </div>
+    </div>
+
+    <div layout:fragment="scripts">
+        <script>
+            // Update quantity
+            function updateQuantity(productId, newQuantity) {
+                if (newQuantity < 1) return;
+
+                fetch('/cart/update/' + productId, {
+                    method: 'POST',
+                    headers: {
+                        'Content-Type': 'application/json',
+                    },
+                    body: JSON.stringify({ quantity: parseInt(newQuantity) })
+                })
+                .then(response => response.json())
+                .then(data => {
+                    if (data.success) {
+                        location.reload();
+                    } else {
+                        showAlert('Failed to update quantity', 'danger');
+                    }
+                })
+                .catch(error => {
+                    console.error('Error:', error);
+                    showAlert('An error occurred', 'danger');
+                });
+            }
+
+            // Remove item
+            function removeItem(productId) {
+                if (!confirm('Are you sure you want to remove this item from your cart?')) {
+                    return;
+                }
+
+                fetch('/cart/remove/' + productId, {
+                    method: 'POST',
+                    headers: {
+                        'Content-Type': 'application/json',
+                    }
+                })
+                .then(response => response.json())
+                .then(data => {
+                    if (data.success) {
+                        location.reload();
+                    } else {
+                        showAlert('Failed to remove item', 'danger');
+                    }
+                })
+                .catch(error => {
+                    console.error('Error:', error);
+                    showAlert('An error occurred', 'danger');
+                });
+            }
+
+            // Apply promo code
+            function applyPromoCode() {
+                const promoCode = document.getElementById('promoCode').value.trim();
+                if (!promoCode) {
+                    showAlert('Please enter a promo code', 'warning');
+                    return;
+                }
+
+                fetch('/cart/promo', {
+                    method: 'POST',
+                    headers: {
+                        'Content-Type': 'application/json',
+                    },
+                    body: JSON.stringify({ code: promoCode })
+                })
+                .then(response => response.json())
+                .then(data => {
+                    if (data.success) {
+                        showAlert('Promo code applied successfully!', 'success');
+                        setTimeout(() => location.reload(), 1000);
+                    } else {
+                        showAlert(data.message || 'Invalid promo code', 'danger');
+                    }
+                })
+                .catch(error => {
+                    console.error('Error:', error);
+                    showAlert('An error occurred', 'danger');
+                });
+            }
+
+            // Show alert function
+            function showAlert(message, type) {
+                const alertHtml = `
+                    <div class="alert alert-${type} alert-dismissible fade show" role="alert">
+                        <i class="fas fa-${type === 'success' ? 'check-circle' : 'exclamation-triangle'} me-2"></i>
+                        ${message}
+                        <button type="button" class="btn-close" data-bs-dismiss="alert"></button>
+                    </div>
+                `;
+                document.querySelector('main').insertAdjacentHTML('afterbegin', alertHtml);
+
+                // Auto dismiss after 3 seconds
+                setTimeout(() => {
+                    const alert = document.querySelector('.alert');
+                    if (alert) {
+                        alert.remove();
+                    }
+                }, 3000);
+            }
+        </script>
+    </div>
+</body>
+</html>
+

@@ -1,0 +1,613 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Add Promotion - MINARI E-Commerce</title>
+    <link href="https://cdnjs.cloudflare.com/ajax/libs/bootstrap/5.3.0/css/bootstrap.min.css" rel="stylesheet">
+    <style>
+        body {
+            background-color: #f8f9fa;
+            font-family: 'Segoe UI', Tahoma, Geneva, Verdana, sans-serif;
+        }
+
+        .sidebar {
+            background-color: #2c3e50;
+            min-height: 100vh;
+            padding: 20px 0;
+        }
+
+        .sidebar .nav-link {
+            color: #ecf0f1;
+            padding: 12px 20px;
+            margin: 5px 0;
+            border-left: 3px solid transparent;
+            transition: all 0.3s ease;
+        }
+
+        .sidebar .nav-link:hover {
+            color: #fff;
+            background-color: #34495e;
+            border-left-color: #3498db;
+        }
+
+        .sidebar .nav-link.active {
+            color: #fff;
+            background-color: #3498db;
+            border-left-color: #2980b9;
+        }
+
+        .navbar {
+            background-color: #fff;
+            box-shadow: 0 2px 4px rgba(0,0,0,0.1);
+            padding: 15px 0;
+        }
+
+        .main-content {
+            padding: 30px 20px;
+        }
+
+        .breadcrumb {
+            background-color: transparent;
+            margin-bottom: 30px;
+            padding-bottom: 15px;
+            border-bottom: 1px solid #e0e0e0;
+        }
+
+        .form-section {
+            background-color: #fff;
+            border-radius: 8px;
+            padding: 25px;
+            margin-bottom: 25px;
+            box-shadow: 0 2px 8px rgba(0,0,0,0.1);
+        }
+
+        .form-section h5 {
+            color: #2c3e50;
+            font-weight: 600;
+            margin-bottom: 20px;
+            padding-bottom: 10px;
+            border-bottom: 2px solid #3498db;
+        }
+
+        .form-group {
+            margin-bottom: 20px;
+        }
+
+        .form-label {
+            font-weight: 500;
+            color: #2c3e50;
+            margin-bottom: 8px;
+        }
+
+        .form-control,
+        .form-select {
+            border: 1px solid #ddd;
+            border-radius: 6px;
+            padding: 10px 12px;
+            font-size: 14px;
+            transition: all 0.3s ease;
+        }
+
+        .form-control:focus,
+        .form-select:focus {
+            border-color: #3498db;
+            box-shadow: 0 0 0 0.2rem rgba(52, 152, 219, 0.25);
+        }
+
+        .form-control.is-invalid,
+        .form-select.is-invalid {
+            border-color: #dc3545;
+        }
+
+        .invalid-feedback {
+            display: none;
+            color: #dc3545;
+            font-size: 13px;
+            margin-top: 5px;
+        }
+
+        .invalid-feedback.show {
+            display: block;
+        }
+
+        .form-text {
+            font-size: 13px;
+            color: #6c757d;
+            margin-top: 5px;
+        }
+
+        .char-count {
+            font-size: 12px;
+            color: #6c757d;
+            text-align: right;
+            margin-top: 5px;
+        }
+
+        .applicability-group {
+            background-color: #f8f9fa;
+            padding: 15px;
+            border-radius: 6px;
+            margin-bottom: 20px;
+        }
+
+        .form-check {
+            padding-left: 0;
+            margin-bottom: 12px;
+        }
+
+        .form-check-input {
+            width: 20px;
+            height: 20px;
+            margin-right: 10px;
+            cursor: pointer;
+            border: 1px solid #ddd;
+        }
+
+        .form-check-input:checked {
+            background-color: #3498db;
+            border-color: #3498db;
+        }
+
+        .form-check-label {
+            cursor: pointer;
+            user-select: none;
+            margin-bottom: 0;
+        }
+
+        .category-select-container,
+        .product-select-container {
+            display: none;
+            margin-top: 15px;
+            padding: 15px;
+            background-color: #e8f4f8;
+            border-radius: 6px;
+            border-left: 4px solid #3498db;
+        }
+
+        .category-select-container label,
+        .product-select-container label {
+            display: block;
+            margin-bottom: 8px;
+            font-weight: 500;
+        }
+
+        .btn-group-custom {
+            display: flex;
+            gap: 10px;
+            margin-top: 30px;
+        }
+
+        .btn {
+            padding: 10px 25px;
+            font-weight: 500;
+            border-radius: 6px;
+            transition: all 0.3s ease;
+        }
+
+        .btn-primary {
+            background-color: #3498db;
+            border-color: #3498db;
+        }
+
+        .btn-primary:hover {
+            background-color: #2980b9;
+            border-color: #2980b9;
+        }
+
+        .btn-secondary {
+            background-color: #95a5a6;
+            border-color: #95a5a6;
+            color: #fff;
+        }
+
+        .btn-secondary:hover {
+            background-color: #7f8c8d;
+            border-color: #7f8c8d;
+        }
+
+        .btn-reset {
+            background-color: #ecf0f1;
+            color: #2c3e50;
+            border: 1px solid #bdc3c7;
+        }
+
+        .btn-reset:hover {
+            background-color: #bdc3c7;
+        }
+
+        .alert {
+            border-radius: 6px;
+            border: none;
+            margin-bottom: 20px;
+            display: none;
+        }
+
+        .alert-success {
+            background-color: #d4edda;
+            color: #155724;
+        }
+
+        .alert-danger {
+            background-color: #f8d7da;
+            color: #721c24;
+        }
+
+        .alert-info {
+            background-color: #d1ecf1;
+            color: #0c5460;
+        }
+
+        .discount-label {
+            font-weight: 600;
+            color: #3498db;
+        }
+
+        .discount-help {
+            font-size: 12px;
+            color: #7f8c8d;
+            margin-top: 5px;
+        }
+
+        h1 {
+            color: #2c3e50;
+            font-weight: 700;
+            margin-bottom: 10px;
+        }
+
+        .page-title {
+            display: flex;
+            justify-content: space-between;
+            align-items: center;
+            margin-bottom: 20px;
+        }
+
+        .user-info {
+            display: flex;
+            align-items: center;
+            gap: 10px;
+        }
+
+        .user-avatar {
+            width: 40px;
+            height: 40px;
+            border-radius: 50%;
+            background-color: #3498db;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            color: #fff;
+            font-weight: bold;
+        }
+
+        @media (max-width: 768px) {
+            .sidebar {
+                position: absolute;
+                width: 100%;
+                margin-top: 60px;
+            }
+
+            .main-content {
+                margin-left: 0;
+                padding: 15px;
+            }
+
+            .form-section {
+                padding: 15px;
+            }
+
+            .btn-group-custom {
+                flex-direction: column;
+            }
+
+            .btn {
+                width: 100%;
+            }
+        }
+    </style>
+</head>
+<body>
+    <div class="container-fluid">
+        <div class="row" style="min-height: 100vh;">
+            <!-- Sidebar -->
+            <div class="col-md-3 sidebar">
+                <div class="navbar-brand text-white mb-4 ps-3">
+                    <strong>MINARI</strong>
+                </div>
+                <nav class="nav flex-column">
+                    <a class="nav-link" href="/admin/dashboard">📊 Dashboard</a>
+                    <a class="nav-link" href="/admin/products">📦 Products</a>
+                    <a class="nav-link" href="/admin/products/add">➕ Add Product</a>
+                    <a class="nav-link active" href="/admin/promotions/add">🎉 Add Promotion</a>
+                    <a class="nav-link" href="/admin/categories">🏷️ Categories</a>
+                    <a class="nav-link" href="/admin/orders">📋 Orders</a>
+                    <a class="nav-link" href="/admin/customers">👥 Customers</a>
+                    <a class="nav-link" href="/admin/reports">📈 Reports</a>
+                </nav>
+            </div>
+
+            <!-- Main Content -->
+            <div class="col-md-9 main-content">
+                <!-- Top Navbar -->
+                <nav class="navbar">
+                    <div class="container-fluid">
+                        <div class="page-title w-100">
+                            <div>
+                                <h1>Add Promotion</h1>
+                                <p class="text-muted mb-0">Create a new promotion or discount campaign</p>
+                            </div>
+                            <div class="user-info">
+                                <div class="user-avatar">A</div>
+                                <div>
+                                    <small>Admin</small><br>
+                                    <small class="text-muted">john@minari.com</small>
+                                </div>
+                            </div>
+                        </div>
+                    </div>
+                </nav>
+
+                <!-- Breadcrumb -->
+                <nav aria-label="breadcrumb" class="breadcrumb">
+                    <ol class="breadcrumb mb-0">
+                        <li class="breadcrumb-item"><a href="/admin/dashboard">Dashboard</a></li>
+                        <li class="breadcrumb-item active" aria-current="page">Add Promotion</li>
+                    </ol>
+                </nav>
+
+                <!-- Status Message -->
+                <div id="statusMessage" class="alert" role="alert"></div>
+
+                <!-- Promotion Form -->
+                <form id="promotionForm" novalidate>
+                    <!-- Basic Information Section -->
+                    <div class="form-section">
+                        <h5>📝 Basic Information</h5>
+                        
+                        <div class="row">
+                            <div class="col-md-6">
+                                <div class="form-group">
+                                    <label for="promotionName" class="form-label">Promotion Name <span style="color: #dc3545;">*</span></label>
+                                    <input 
+                                        type="text" 
+                                        class="form-control" 
+                                        id="promotionName" 
+                                        placeholder="e.g., Summer Sale 2024"
+                                        required>
+                                    <small class="form-text">3-100 characters</small>
+                                    <div class="invalid-feedback" data-error-for="promotionName"></div>
+                                </div>
+                            </div>
+
+                            <div class="col-md-6">
+                                <div class="form-group">
+                                    <label for="promotionCode" class="form-label">Promo Code <span style="color: #dc3545;">*</span></label>
+                                    <input 
+                                        type="text" 
+                                        class="form-control" 
+                                        id="promotionCode" 
+                                        placeholder="e.g., SUMMER2024"
+                                        style="text-transform: uppercase;">
+                                    <small class="form-text">3-20 characters, uppercase alphanumeric only</small>
+                                    <div class="invalid-feedback" data-error-for="promotionCode"></div>
+                                </div>
+                            </div>
+                        </div>
+
+                        <div class="row">
+                            <div class="col-md-6">
+                                <div class="form-group">
+                                    <label for="promotionType" class="form-label">Promotion Type <span style="color: #dc3545;">*</span></label>
+                                    <select class="form-select" id="promotionType" required>
+                                        <option value="">-- Select Type --</option>
+                                        <option value="percentage">Percentage Discount</option>
+                                        <option value="fixed-amount">Fixed Amount</option>
+                                        <option value="buy-one-get-one">Buy One Get One</option>
+                                        <option value="free-shipping">Free Shipping</option>
+                                    </select>
+                                    <div class="invalid-feedback" data-error-for="promotionType"></div>
+                                </div>
+                            </div>
+
+                            <div class="col-md-6">
+                                <div class="form-group">
+                                    <label class="form-label">
+                                        <span id="discountLabel" class="discount-label">Discount Value</span>
+                                        <span style="color: #dc3545;">*</span>
+                                    </label>
+                                    <input 
+                                        type="number" 
+                                        class="form-control" 
+                                        id="discountValue" 
+                                        step="0.01"
+                                        placeholder="Enter discount value"
+                                        required>
+                                    <div class="discount-help" style="display: none;">
+                                        Type-specific help text will appear here
+                                    </div>
+                                    <div class="invalid-feedback" data-error-for="discountValue"></div>
+                                </div>
+                            </div>
+                        </div>
+
+                        <div class="form-group">
+                            <label for="description" class="form-label">Description (Optional)</label>
+                            <textarea 
+                                class="form-control" 
+                                id="description" 
+                                rows="3" 
+                                placeholder="Describe the promotion details, terms, and conditions..."
+                                maxlength="500"></textarea>
+                            <div class="char-count">
+                                <span id="descriptionCount">0</span>/500
+                            </div>
+                            <div class="invalid-feedback" data-error-for="description"></div>
+                        </div>
+                    </div>
+
+                    <!-- Date & Constraints Section -->
+                    <div class="form-section">
+                        <h5>📅 Date & Constraints</h5>
+
+                        <div class="row">
+                            <div class="col-md-6">
+                                <div class="form-group">
+                                    <label for="startDate" class="form-label">Start Date <span style="color: #dc3545;">*</span></label>
+                                    <input 
+                                        type="date" 
+                                        class="form-control" 
+                                        id="startDate"
+                                        required>
+                                    <small class="form-text">Cannot be in the past</small>
+                                    <div class="invalid-feedback" data-error-for="startDate"></div>
+                                </div>
+                            </div>
+
+                            <div class="col-md-6">
+                                <div class="form-group">
+                                    <label for="endDate" class="form-label">End Date <span style="color: #dc3545;">*</span></label>
+                                    <input 
+                                        type="date" 
+                                        class="form-control" 
+                                        id="endDate"
+                                        required>
+                                    <small class="form-text">Must be after start date</small>
+                                    <div class="invalid-feedback" data-error-for="endDate"></div>
+                                </div>
+                            </div>
+                        </div>
+
+                        <div class="row">
+                            <div class="col-md-6">
+                                <div class="form-group">
+                                    <label for="minPurchase" class="form-label">Minimum Purchase (Optional)</label>
+                                    <input 
+                                        type="number" 
+                                        class="form-control" 
+                                        id="minPurchase" 
+                                        placeholder="e.g., 100000"
+                                        step="0.01">
+                                    <small class="form-text">Minimum purchase amount required to use promotion</small>
+                                    <div class="invalid-feedback" data-error-for="minPurchase"></div>
+                                </div>
+                            </div>
+
+                            <div class="col-md-6">
+                                <div class="form-group">
+                                    <label for="maxUsage" class="form-label">Max Usage (Optional)</label>
+                                    <input 
+                                        type="number" 
+                                        class="form-control" 
+                                        id="maxUsage" 
+                                        placeholder="e.g., 100"
+                                        min="1">
+                                    <small class="form-text">Maximum number of times the promotion can be used</small>
+                                    <div class="invalid-feedback" data-error-for="maxUsage"></div>
+                                </div>
+                            </div>
+                        </div>
+                    </div>
+
+                    <!-- Applicability Section -->
+                    <div class="form-section">
+                        <h5>🎯 Applicability</h5>
+
+                        <div class="applicability-group">
+                            <p style="margin-bottom: 15px; font-weight: 500;">Which products does this promotion apply to?</p>
+
+                            <div class="form-check">
+                                <input 
+                                    class="form-check-input" 
+                                    type="radio" 
+                                    name="applicability" 
+                                    id="applyAll" 
+                                    value="all-products" 
+                                    checked>
+                                <label class="form-check-label" for="applyAll">
+                                    ✓ All Products
+                                </label>
+                            </div>
+
+                            <div class="form-check">
+                                <input 
+                                    class="form-check-input" 
+                                    type="radio" 
+                                    name="applicability" 
+                                    id="applyCategories" 
+                                    value="categories">
+                                <label class="form-check-label" for="applyCategories">
+                                    ✓ Specific Categories
+                                </label>
+                            </div>
+
+                            <div class="form-check">
+                                <input 
+                                    class="form-check-input" 
+                                    type="radio" 
+                                    name="applicability" 
+                                    id="applyProducts" 
+                                    value="products">
+                                <label class="form-check-label" for="applyProducts">
+                                    ✓ Specific Products
+                                </label>
+                            </div>
+                        </div>
+
+                        <div class="category-select-container">
+                            <label for="promotionCategories">Select Categories</label>
+                            <select 
+                                class="form-select" 
+                                id="promotionCategories" 
+                                multiple
+                                style="height: 150px;">
+                                <option value="shirtblouse">Shirt & Blouse</option>
+                                <option value="dresses">Dresses</option>
+                                <option value="accessories">Accessories</option>
+                                <option value="outerwear">Outerwear</option>
+                                <option value="shoes">Shoes</option>
+                                <option value="activewear">Activewear</option>
+                            </select>
+                            <small class="form-text">Hold Ctrl/Cmd to select multiple categories</small>
+                        </div>
+
+                        <div class="product-select-container">
+                            <label for="promotionProducts">Select Products</label>
+                            <select 
+                                class="form-select" 
+                                id="promotionProducts" 
+                                multiple
+                                style="height: 150px;">
+                                <option value="PROD-001">Blue Casual T-Shirt</option>
+                                <option value="PROD-002">Black Formal Dress</option>
+                                <option value="PROD-003">Leather Handbag</option>
+                                <option value="PROD-004">Running Shoes</option>
+                                <option value="PROD-005">Winter Jacket</option>
+                                <option value="PROD-006">Yoga Pants</option>
+                            </select>
+                            <small class="form-text">Hold Ctrl/Cmd to select multiple products</small>
+                        </div>
+                    </div>
+
+                    <!-- Form Actions -->
+                    <div class="btn-group-custom">
+                        <button type="submit" class="btn btn-primary">
+                            🚀 Create Promotion
+                        </button>
+                        <button type="reset" class="btn btn-reset">
+                            🔄 Reset
+                        </button>
+                        <a href="/admin/dashboard" class="btn btn-secondary">
+                            ← Back
+                        </a>
+                    </div>
+                </form>
+            </div>
+        </div>
+    </div>
+
+    <!-- Scripts -->
+    <script src="https://cdnjs.cloudflare.com/ajax/libs/bootstrap/5.3.0/js/bootstrap.bundle.min.js"></script>
+    <script src="/js/classes/PromotionValidator.js"></script>
+    <script src="/js/PromotionManager.js"></script>
+</body>
+</html>

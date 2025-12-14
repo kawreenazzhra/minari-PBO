@@ -1,0 +1,373 @@
+<!DOCTYPE html>
+<html lang="en" xmlns:th="http://www.thymeleaf.org">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <meta http-equiv="X-UA-Compatible" content="ie=edge">
+    <meta name="description" content="MINARI Admin Dashboard - View business statistics and performance metrics">
+    <title>Dashboard - MINARI Admin</title>
+    <link href="https://cdn.jsdelivr.net/npm/bootstrap@5.3.0/dist/css/bootstrap.min.css" rel="stylesheet">
+    <link href="https://fonts.googleapis.com/css2?family=Playfair+Display:wght@700&family=Poppins:wght@400;500;600&display=swap" rel="stylesheet">
+    <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.4.0/css/all.min.css">
+    <link rel="stylesheet" href="/css/admin-styles.css">
+    <script src="https://cdn.jsdelivr.net/npm/chart.js"></script>
+</head>
+<body>
+    <!-- Navigation Bar -->
+    <nav class="navbar-custom fixed-top">
+        <div class="container-fluid">
+            <div class="d-flex justify-content-between align-items-center w-100 px-5">
+                <div class="logo">
+                    <svg width="150" height="40" viewBox="0 0 150 40" fill="none" xmlns="http://www.w3.org/2000/svg">
+                        <text x="0" y="30" font-family="Playfair Display, serif" font-size="32" font-weight="700" fill="#8B6F47">MINARI</text>
+                    </svg>
+                </div>
+                <div class="navbar-icons">
+                    <i class="fas fa-search" title="Search" aria-hidden="true"></i>
+                    <i class="fas fa-envelope" title="Messages" aria-hidden="true"></i>
+                </div>
+            </div>
+        </div>
+    </nav>
+
+    <!-- Sidebar Navigation -->
+    <div class="sidebar">
+        <a href="/admin" class="sidebar-item active" title="Dashboard">
+            <i class="fas fa-table-columns" aria-hidden="true"></i>
+            <span>Dashboard</span>
+        </a>
+        <a href="/admin/products" class="sidebar-item" title="Products">
+            <i class="fas fa-box" aria-hidden="true"></i>
+            <span>Product</span>
+        </a>
+        <a href="/admin/categories" class="sidebar-item" title="Categories">
+            <i class="fas fa-layer-group" aria-hidden="true"></i>
+            <span>Categories</span>
+        </a>
+        <a href="/admin/orders" class="sidebar-item" title="Orders">
+            <i class="fas fa-file-invoice" aria-hidden="true"></i>
+            <span>Orders</span>
+        </a>
+        <a href="/admin/customers" class="sidebar-item" title="Customers">
+            <i class="fas fa-users" aria-hidden="true"></i>
+            <span>Customers</span>
+        </a>
+        <a href="/admin/reports" class="sidebar-item" title="Reports">
+            <i class="fas fa-chart-bar" aria-hidden="true"></i>
+            <span>Reports</span>
+        </a>
+        <a href="/admin/promotions" class="sidebar-item" title="Promotions">
+            <i class="fas fa-ad" aria-hidden="true"></i>
+            <span>Promotions</span>
+        </a>
+    </div>
+
+    <!-- Main Content Area -->
+    <div class="main-content">
+        <div class="page-header d-flex justify-content-between align-items-center mb-5">
+            <div>
+                <h2 class="page-title">Dashboard</h2>
+                <p class="text-muted">Welcome back, <span th:text="${currentUser?.firstName ?: 'Admin'}">Admin</span>! Here's your store overview.</p>
+            </div>
+            <div class="d-flex gap-2">
+                <button class="btn btn-outline-primary" onclick="refreshDashboard()" title="Refresh dashboard">
+                    <i class="fas fa-sync-alt me-2" aria-hidden="true"></i>Refresh
+                </button>
+                <select class="form-select" style="width: auto;" onchange="changePeriod(this.value)" title="Select time period">
+                    <option value="7">Last 7 Days</option>
+                    <option value="30" selected>Last 30 Days</option>
+                    <option value="90">Last 90 Days</option>
+                    <option value="365">Last Year</option>
+                </select>
+            </div>
+        </div>
+
+        <!-- Statistics Cards Row 1 -->
+        <div class="row mb-5">
+            <!-- Total Revenue -->
+            <div class="col-md-6 col-lg-3 mb-4">
+                <div class="stat-card">
+                    <div class="stat-icon revenue">
+                        <i class="fas fa-dollar-sign" aria-hidden="true"></i>
+                    </div>
+                    <div class="stat-content">
+                        <p class="stat-label">Total Revenue</p>
+                        <p class="stat-value" th:text="'Rp ' + (${totalRevenue ?: 0})">Rp 0</p>
+                        <p class="stat-change" th:classappend="${(revenueChange ?: 0) >= 0 ? 'positive' : 'negative'}">
+                            <i class="fas" th:classappend="${(revenueChange ?: 0) >= 0 ? 'fa-arrow-up' : 'fa-arrow-down'}" aria-hidden="true"></i>
+                            <span th:text="(${revenueChange ?: 0}) + '% from last period'">0% from last period</span>
+                        </p>
+                    </div>
+                </div>
+            </div>
+
+            <!-- Total Orders -->
+            <div class="col-md-6 col-lg-3 mb-4">
+                <div class="stat-card">
+                    <div class="stat-icon orders">
+                        <i class="fas fa-shopping-cart" aria-hidden="true"></i>
+                    </div>
+                    <div class="stat-content">
+                        <p class="stat-label">Total Orders</p>
+                        <p class="stat-value" th:text="${totalOrders ?: 0}">0</p>
+                        <p class="stat-change" th:classappend="${(ordersChange ?: 0) >= 0 ? 'positive' : 'negative'}">
+                            <i class="fas" th:classappend="${(ordersChange ?: 0) >= 0 ? 'fa-arrow-up' : 'fa-arrow-down'}" aria-hidden="true"></i>
+                            <span th:text="(${ordersChange ?: 0}) + '% from last period'">0% from last period</span>
+                        </p>
+                    </div>
+                </div>
+            </div>
+
+            <!-- Total Customers -->
+            <div class="col-md-6 col-lg-3 mb-4">
+                <div class="stat-card">
+                    <div class="stat-icon customers">
+                        <i class="fas fa-users" aria-hidden="true"></i>
+                    </div>
+                    <div class="stat-content">
+                        <p class="stat-label">Total Customers</p>
+                        <p class="stat-value" th:text="${totalCustomers ?: 0}">0</p>
+                        <p class="stat-change positive">
+                            <i class="fas fa-arrow-up" aria-hidden="true"></i>
+                            <span th:text="(${newCustomersToday ?: 0}) + ' new today'">0 new today</span>
+                        </p>
+                    </div>
+                </div>
+            </div>
+
+            <!-- Active Products -->
+            <div class="col-md-6 col-lg-3 mb-4">
+                <div class="stat-card">
+                    <div class="stat-icon products">
+                        <i class="fas fa-box" aria-hidden="true"></i>
+                    </div>
+                    <div class="stat-content">
+                        <p class="stat-label">Active Products</p>
+                        <p class="stat-value" th:text="${activeProducts ?: 0}">0</p>
+                        <p class="stat-change positive">
+                            <i class="fas fa-check-circle" aria-hidden="true"></i>
+                            <span th:text="(${outOfStockProducts ?: 0}) + ' out of stock'">0 out of stock</span>
+                        </p>
+                    </div>
+                </div>
+            </div>
+        </div>
+
+        <!-- Charts Row -->
+        <div class="row mb-5">
+            <!-- Sales Chart -->
+            <div class="col-lg-8 mb-4">
+                <div class="chart-card">
+                    <h5 class="chart-title">Sales Overview</h5>
+                    <canvas id="salesChart" height="80"></canvas>
+                </div>
+            </div>
+
+            <!-- Category Distribution -->
+            <div class="col-lg-4 mb-4">
+                <div class="chart-card">
+                    <h5 class="chart-title">Sales by Category</h5>
+                    <canvas id="categoryChart" height="80"></canvas>
+                </div>
+            </div>
+        </div>
+
+        <!-- Recent Orders Table -->
+        <div class="row">
+            <div class="col-12 mb-4">
+                <div class="table-card">
+                    <div class="table-header d-flex justify-content-between align-items-center mb-4">
+                        <h5 class="mb-0">Recent Orders</h5>
+                        <a href="/admin/orders" class="btn-link">View All</a>
+                    </div>
+                    <div class="table-responsive">
+                        <table class="table-custom">
+                            <thead>
+                                <tr>
+                                    <th>Order ID</th>
+                                    <th>Customer</th>
+                                    <th>Date</th>
+                                    <th>Total</th>
+                                    <th>Status</th>
+                                    <th>Action</th>
+                                </tr>
+                            </thead>
+                            <tbody id="recentOrdersTable">
+                                <tr>
+                                    <td colspan="6" class="text-center text-muted py-5">
+                                        <i class="fas fa-spinner fa-spin me-2" aria-hidden="true"></i>Loading orders...
+                                    </td>
+                                </tr>
+                            </tbody>
+                        </table>
+                    </div>
+                </div>
+            </div>
+        </div>
+    </div>
+
+    <!-- Footer -->
+    <footer>
+        <div class="container">
+            <div class="row align-items-center">
+                <div class="col-md-6">
+                    <div class="logo">
+                        <svg width="150" height="40" viewBox="0 0 150 40" fill="none" xmlns="http://www.w3.org/2000/svg">
+                            <text x="0" y="30" font-family="Playfair Display, serif" font-size="32" font-weight="700" fill="#8B6F47">MINARI</text>
+                        </svg>
+                    </div>
+                    <p>Your everyday fashion boutique</p>
+                </div>
+                <div class="col-md-6 text-end">
+                    <p>Give us suggestions for future progress</p>
+                    <div class="footer-form">
+                        <input type="text" placeholder="your message . . ." aria-label="Feedback message">
+                        <button title="Send feedback">Send</button>
+                    </div>
+                </div>
+            </div>
+            <div class="footer-divider"></div>
+            <div class="copyright">
+                © 2025 MINARI. All Rights Reserved.
+            </div>
+        </div>
+    </footer>
+
+    <!-- Scripts -->
+    <script src="https://cdn.jsdelivr.net/npm/bootstrap@5.3.0/dist/js/bootstrap.bundle.min.js"></script>
+    <script>
+        // Sample data for charts - replace with actual API calls
+        function initCharts() {
+            // Sales Chart
+            const salesCtx = document.getElementById('salesChart');
+            if (salesCtx) {
+                new Chart(salesCtx, {
+                    type: 'line',
+                    data: {
+                        labels: ['Mon', 'Tue', 'Wed', 'Thu', 'Fri', 'Sat', 'Sun'],
+                        datasets: [{
+                            label: 'Sales',
+                            data: [12000, 19000, 3000, 5000, 2000, 3000, 8000],
+                            borderColor: '#8B6F47',
+                            backgroundColor: 'rgba(139, 111, 71, 0.1)',
+                            tension: 0.4,
+                            fill: true
+                        }]
+                    },
+                    options: {
+                        responsive: true,
+                        maintainAspectRatio: false,
+                        plugins: {
+                            legend: {
+                                display: true,
+                                position: 'bottom'
+                            }
+                        },
+                        scales: {
+                            y: {
+                                beginAtZero: true,
+                                ticks: {
+                                    callback: function(value) {
+                                        return 'Rp ' + value.toLocaleString();
+                                    }
+                                }
+                            }
+                        }
+                    }
+                });
+            }
+
+            // Category Chart
+            const categoryCtx = document.getElementById('categoryChart');
+            if (categoryCtx) {
+                new Chart(categoryCtx, {
+                    type: 'doughnut',
+                    data: {
+                        labels: ['Clothing', 'Accessories', 'Shoes', 'Other'],
+                        datasets: [{
+                            data: [30, 25, 20, 25],
+                            backgroundColor: ['#8B6F47', '#D4AF37', '#10B981', '#F59E0B']
+                        }]
+                    },
+                    options: {
+                        responsive: true,
+                        maintainAspectRatio: false,
+                        plugins: {
+                            legend: {
+                                position: 'bottom'
+                            }
+                        }
+                    }
+                });
+            }
+        }
+
+        // Load recent orders
+        function loadRecentOrders() {
+            fetch('/api/orders?limit=5&sort=recent')
+                .then(response => response.json())
+                .then(data => {
+                    const tbody = document.getElementById('recentOrdersTable');
+                    if (data.length === 0) {
+                        tbody.innerHTML = '<tr><td colspan="6" class="text-center text-muted py-5">No orders found</td></tr>';
+                        return;
+                    }
+                    tbody.innerHTML = data.map(order => `
+                        <tr>
+                            <td class="fw-bold">#${order.id}</td>
+                            <td>${order.customerName}</td>
+                            <td>${new Date(order.date).toLocaleDateString('id-ID')}</td>
+                            <td>Rp ${order.total.toLocaleString()}</td>
+                            <td>
+                                <span class="badge" style="background-color: ${getStatusColor(order.status)}">
+                                    ${capitalizeStatus(order.status)}
+                                </span>
+                            </td>
+                            <td>
+                                <a href="/admin/orders/${order.id}" class="btn-link" title="View order details">
+                                    <i class="fas fa-eye" aria-hidden="true"></i>
+                                </a>
+                            </td>
+                        </tr>
+                    `).join('');
+                })
+                .catch(error => {
+                    console.error('Error loading orders:', error);
+                    document.getElementById('recentOrdersTable').innerHTML = 
+                        '<tr><td colspan="6" class="text-center text-danger py-5">Failed to load orders</td></tr>';
+                });
+        }
+
+        function getStatusColor(status) {
+            const colors = {
+                'PENDING': '#F59E0B',
+                'PROCESSING': '#3B82F6',
+                'SHIPPED': '#8B5CF6',
+                'DELIVERED': '#10B981',
+                'CANCELLED': '#EF4444'
+            };
+            return colors[status] || '#6B7280';
+        }
+
+        function capitalizeStatus(status) {
+            return status.charAt(0) + status.slice(1).toLowerCase();
+        }
+
+        function refreshDashboard() {
+            location.reload();
+        }
+
+        function changePeriod(days) {
+            // Implement period change functionality
+            console.log('Changing period to:', days, 'days');
+            location.reload();
+        }
+
+        // Initialize on page load
+        document.addEventListener('DOMContentLoaded', () => {
+            initCharts();
+            loadRecentOrders();
+        });
+    </script>
+</body>
+</html>

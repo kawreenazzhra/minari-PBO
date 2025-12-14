@@ -1,0 +1,308 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Add Product - MINARI Admin</title>
+    
+    <!-- Bootstrap CSS -->
+    <link href="https://cdn.jsdelivr.net/npm/bootstrap@5.3.0/dist/css/bootstrap.min.css" rel="stylesheet">
+    
+    <!-- Font Awesome -->
+    <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.4.0/css/all.min.css">
+    
+    <!-- Custom Styles -->
+    <link rel="stylesheet" href="/css/admin-styles.css">
+</head>
+<body>
+    <!-- Admin Container -->
+    <div class="admin-container">
+        <!-- Sidebar Navigation -->
+        <aside class="admin-sidebar">
+            <div class="sidebar-header">
+                <svg class="minari-logo" viewBox="0 0 100 100">
+                    <text x="50" y="60" text-anchor="middle" font-size="40" font-weight="bold" fill="#8B4513">
+                        M
+                    </text>
+                </svg>
+                <h3>MINARI Admin</h3>
+            </div>
+
+            <nav class="sidebar-menu">
+                <a href="/admin/dashboard" class="menu-item">
+                    <i class="fas fa-chart-line"></i>
+                    <span>Dashboard</span>
+                </a>
+                <a href="/admin/products" class="menu-item">
+                    <i class="fas fa-box"></i>
+                    <span>Products</span>
+                </a>
+                <a href="/admin/products/add" class="menu-item active">
+                    <i class="fas fa-plus-circle"></i>
+                    <span>Add Product</span>
+                </a>
+                <a href="/admin/categories" class="menu-item">
+                    <i class="fas fa-tags"></i>
+                    <span>Categories</span>
+                </a>
+                <a href="/admin/promotions" class="menu-item">
+                    <i class="fas fa-percent"></i>
+                    <span>Promotions</span>
+                </a>
+                <a href="/admin/orders" class="menu-item">
+                    <i class="fas fa-shopping-bag"></i>
+                    <span>Orders</span>
+                </a>
+                <a href="/admin/customers" class="menu-item">
+                    <i class="fas fa-users"></i>
+                    <span>Customers</span>
+                </a>
+            </nav>
+
+            <div class="sidebar-footer">
+                <a href="#" class="logout-btn">
+                    <i class="fas fa-sign-out-alt"></i>
+                    Logout
+                </a>
+            </div>
+        </aside>
+
+        <!-- Main Content -->
+        <main class="admin-content">
+            <!-- Top Navigation -->
+            <nav class="top-navbar">
+                <div class="navbar-left">
+                    <button class="sidebar-toggle">
+                        <i class="fas fa-bars"></i>
+                    </button>
+                    <h1>Add New Product</h1>
+                </div>
+                <div class="navbar-right">
+                    <div class="user-info">
+                        <img src="/static/images/avatar.jpg" alt="Admin" class="avatar">
+                        <span>Admin User</span>
+                    </div>
+                </div>
+            </nav>
+
+            <!-- Content Area -->
+            <div class="content-wrapper">
+                <!-- Breadcrumb -->
+                <nav aria-label="breadcrumb" class="breadcrumb-container">
+                    <ol class="breadcrumb">
+                        <li class="breadcrumb-item"><a href="/admin/dashboard">Dashboard</a></li>
+                        <li class="breadcrumb-item"><a href="/admin/products">Products</a></li>
+                        <li class="breadcrumb-item active" aria-current="page">Add Product</li>
+                    </ol>
+                </nav>
+
+                <!-- Status Message -->
+                <div class="form-status-message"></div>
+
+                <!-- Add Product Form -->
+                <div class="form-container">
+                    <form id="addProductForm" class="product-form">
+                        <!-- Basic Information Section -->
+                        <section class="form-section">
+                            <div class="section-header">
+                                <i class="fas fa-info-circle"></i>
+                                <h2>Basic Information</h2>
+                            </div>
+
+                            <!-- Product Name -->
+                            <div class="form-group">
+                                <label for="productName" class="form-label">
+                                    Product Name <span class="required">*</span>
+                                </label>
+                                <input 
+                                    type="text" 
+                                    id="productName" 
+                                    class="form-control" 
+                                    placeholder="Enter product name (3-100 characters)"
+                                    required>
+                                <div class="form-error" data-error-for="productName"></div>
+                                <small class="form-text">3 to 100 characters</small>
+                            </div>
+
+                            <!-- SKU -->
+                            <div class="form-group">
+                                <label for="sku" class="form-label">
+                                    SKU <span class="required">*</span>
+                                </label>
+                                <input 
+                                    type="text" 
+                                    id="sku" 
+                                    class="form-control" 
+                                    placeholder="e.g., PROD-001"
+                                    required>
+                                <div class="form-error" data-error-for="sku"></div>
+                                <small class="form-text">Unique product code (alphanumeric, dash, underscore)</small>
+                            </div>
+
+                            <!-- Category -->
+                            <div class="form-group">
+                                <label for="category" class="form-label">
+                                    Category <span class="required">*</span>
+                                </label>
+                                <select id="category" class="form-control" required>
+                                    <option value="">-- Select Category --</option>
+                                    <option value="shirtblouse">Shirt & Blouse</option>
+                                    <option value="dress">Dress</option>
+                                    <option value="pants">Pants & Shorts</option>
+                                    <option value="skirt">Skirt</option>
+                                    <option value="outerwear">Outerwear</option>
+                                    <option value="accessories">Accessories</option>
+                                </select>
+                                <div class="form-error" data-error-for="category"></div>
+                            </div>
+                        </section>
+
+                        <!-- Pricing & Inventory Section -->
+                        <section class="form-section">
+                            <div class="section-header">
+                                <i class="fas fa-tag"></i>
+                                <h2>Pricing & Inventory</h2>
+                            </div>
+
+                            <div class="form-row">
+                                <!-- Price -->
+                                <div class="form-group form-col-6">
+                                    <label for="price" class="form-label">
+                                        Price (IDR) <span class="required">*</span>
+                                    </label>
+                                    <input 
+                                        type="number" 
+                                        id="price" 
+                                        class="form-control" 
+                                        placeholder="0"
+                                        step="0.01"
+                                        min="0"
+                                        required>
+                                    <div class="form-error" data-error-for="price"></div>
+                                </div>
+
+                                <!-- Stock -->
+                                <div class="form-group form-col-6">
+                                    <label for="stock" class="form-label">
+                                        Stock <span class="required">*</span>
+                                    </label>
+                                    <input 
+                                        type="number" 
+                                        id="stock" 
+                                        class="form-control" 
+                                        placeholder="0"
+                                        min="0"
+                                        required>
+                                    <div class="form-error" data-error-for="stock"></div>
+                                </div>
+                            </div>
+
+                            <div class="form-row">
+                                <!-- Weight (Optional) -->
+                                <div class="form-group form-col-6">
+                                    <label for="weight" class="form-label">Weight (kg)</label>
+                                    <input 
+                                        type="number" 
+                                        id="weight" 
+                                        class="form-control" 
+                                        placeholder="0"
+                                        step="0.01"
+                                        min="0">
+                                    <div class="form-error" data-error-for="weight"></div>
+                                    <small class="form-text">Optional - for shipping calculations</small>
+                                </div>
+
+                                <!-- Discount (Optional) -->
+                                <div class="form-group form-col-6">
+                                    <label for="discount" class="form-label">Discount (%)</label>
+                                    <input 
+                                        type="number" 
+                                        id="discount" 
+                                        class="form-control" 
+                                        placeholder="0"
+                                        min="0"
+                                        max="99">
+                                    <div class="form-error" data-error-for="discount"></div>
+                                    <small class="form-text">0 to 99 percent</small>
+                                </div>
+                            </div>
+                        </section>
+
+                        <!-- Description Section -->
+                        <section class="form-section">
+                            <div class="section-header">
+                                <i class="fas fa-file-alt"></i>
+                                <h2>Description</h2>
+                            </div>
+
+                            <div class="form-group">
+                                <label for="description" class="form-label">
+                                    Product Description <span class="required">*</span>
+                                </label>
+                                <textarea 
+                                    id="description" 
+                                    class="form-control form-textarea" 
+                                    placeholder="Describe your product (10-1000 characters)"
+                                    rows="6"
+                                    required></textarea>
+                                <div class="form-error" data-error-for="description"></div>
+                                <small class="form-text">10 to 1000 characters</small>
+                            </div>
+                        </section>
+
+                        <!-- Image Upload Section -->
+                        <section class="form-section">
+                            <div class="section-header">
+                                <i class="fas fa-image"></i>
+                                <h2>Product Images</h2>
+                                <span class="image-count">0/5</span>
+                            </div>
+
+                            <div id="imageUploadContainer">
+                                <!-- Upload Area -->
+                                <div class="upload-area">
+                                    <div class="upload-icon">
+                                        <i class="fas fa-cloud-upload-alt"></i>
+                                    </div>
+                                    <h3>Click to select images or drag and drop</h3>
+                                    <p>Supported formats: JPG, PNG, GIF (Max 5MB per file, Max 5 images)</p>
+                                    <input type="file" class="file-input" accept="image/*" multiple>
+                                </div>
+
+                                <!-- Image Preview Container -->
+                                <div class="image-preview-container"></div>
+                            </div>
+
+                            <div class="form-error" data-error-for="images"></div>
+                            <small class="form-text">First image will be set as primary product image</small>
+                        </section>
+
+                        <!-- Form Actions -->
+                        <section class="form-actions">
+                            <button type="reset" class="btn btn-secondary">
+                                <i class="fas fa-redo"></i> Clear Form
+                            </button>
+                            <button type="submit" class="btn btn-primary btn-submit">
+                                <i class="fas fa-plus"></i> Add Product
+                            </button>
+                        </section>
+                    </form>
+                </div>
+            </div>
+        </main>
+    </div>
+
+    <!-- Scripts -->
+    <!-- Load validator classes first -->
+    <script src="/js/classes/ProductValidator.js"></script>
+    
+    <!-- Load image upload manager -->
+    <script src="/js/classes/ProductImageUploadManager.js"></script>
+    
+    <!-- Load product manager orchestrator -->
+    <script src="/js/ProductManager.js"></script>
+
+    <!-- Bootstrap JS -->
+    <script src="https://cdn.jsdelivr.net/npm/bootstrap@5.3.0/dist/js/bootstrap.bundle.min.js"></script>
+</body>
+</html>
