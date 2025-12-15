@@ -124,6 +124,45 @@ public class CartController {
         return "redirect:/cart";
     }
 
+    @PostMapping("/update")
+    @ResponseBody
+    public org.springframework.http.ResponseEntity<java.util.Map<String, Object>> updateCartItem(
+            @RequestParam Long productId,
+            @RequestParam int quantity,
+            Principal principal,
+            HttpSession session) {
+
+        java.util.Map<String, Object> response = new java.util.HashMap<>();
+
+        try {
+            if (principal != null) {
+                // Authenticated user
+                cartService.updateCartItemQuantity(principal.getName(), productId, quantity);
+            } else {
+                // Guest user
+                List<CartSessionItem> guestCart = (List<CartSessionItem>) session.getAttribute(GUEST_CART_SESSION_KEY);
+                if (guestCart != null) {
+                    if (quantity <= 0) {
+                        guestCart.removeIf(item -> item.getProductId().equals(productId));
+                    } else {
+                        guestCart.stream()
+                                .filter(item -> item.getProductId().equals(productId))
+                                .findFirst()
+                                .ifPresent(item -> item.setQuantity(quantity));
+                    }
+                }
+            }
+
+            response.put("success", true);
+            return org.springframework.http.ResponseEntity.ok(response);
+
+        } catch (Exception e) {
+            response.put("success", false);
+            response.put("message", e.getMessage());
+            return org.springframework.http.ResponseEntity.badRequest().body(response);
+        }
+    }
+
     // Helper class to standardize cart display for both guest and user carts
     public static class CartSessionData {
         private List<CartSessionItem> items;
