@@ -12,15 +12,15 @@ import java.util.stream.Collectors;
 
 @Controller
 public class HomeController {
-    
+
     private final ProductService productService;
     private final CatalogService catalogService;
-    
+
     public HomeController(ProductService productService, CatalogService catalogService) {
         this.productService = productService;
         this.catalogService = catalogService;
     }
-    
+
     @GetMapping("/")
     public String home(Model model) {
         // Get all products and limit to 4 featured ones
@@ -28,19 +28,23 @@ public class HomeController {
         List<Product> featuredProducts = allProducts.stream()
                 .limit(4)
                 .collect(Collectors.toList());
-        
+
         // Get all active categories
         List<ProductCategory> categories = productService.getAllCategories()
                 .stream()
                 .filter(cat -> cat.getIsActive() != null && cat.getIsActive())
                 .limit(6)
                 .collect(Collectors.toList());
-        
+
         model.addAttribute("featuredProducts", featuredProducts);
         model.addAttribute("products", allProducts);
         model.addAttribute("categories", categories);
+        // Used for the navbar menu
+        model.addAttribute("navCategories", productService.getAllCategories().stream()
+                .filter(cat -> cat.getIsActive() != null && cat.getIsActive())
+                .collect(Collectors.toList()));
         model.addAttribute("pageTitle", "MINARI - Fashion E-Commerce");
-        
+
         return "home";
     }
 }

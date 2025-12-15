@@ -1,159 +1,198 @@
-.item-thumb{ width:100px; height:120px; object-fit:cover; border-radius:12px; background:white; }
-.qty-wrap{ display:flex; align-items:center; gap:6px; }
-.qty-btn{ width:32px; height:32px; border:1.5px solid #d7d7d7; border-radius:8px; 
-      display: flex;
+/* Main Container Spacing */
+.main-cart-container {
+  margin-top: 40px !important;
+  margin-bottom: 120px !important;
+  /* Space for sticky footer */
+}
+
+/* Custom Checkbox (Round) */
+.custom-check-wrapper {
+  position: relative;
+  width: 24px;
+  height: 24px;
+}
+
+.custom-check-input {
+  position: absolute;
+  opacity: 0;
+  cursor: pointer;
+  height: 0;
+  width: 0;
+}
+
+.custom-check-label {
+  position: absolute;
+  top: 0;
+  left: 0;
+  height: 24px;
+  width: 24px;
+  background-color: #fff;
+  border: 1.5px solid #d7d7d7;
+  border-radius: 50%;
+  /* Circle */
+  cursor: pointer;
+  transition: all 0.2s ease;
+}
+
+/* On Checked */
+.custom-check-input:checked~.custom-check-label {
+  background-color: #d8d8d8;
+  /* Or any brand color */
+  border-color: #999;
+}
+
+/* Checkmark */
+.custom-check-label:after {
+  content: "";
+  position: absolute;
+  display: none;
+  left: 8px;
+  top: 4px;
+  width: 6px;
+  height: 12px;
+  border: solid #333;
+  border-width: 0 2px 2px 0;
+  transform: rotate(45deg);
+}
+
+.custom-check-input:checked~.custom-check-label:after {
+  display: block;
+}
+
+/* Item Thumb */
+.item-thumb {
+  width: 90px;
+  height: 100px;
+  object-fit: contain;
+  border-radius: 8px;
+  /* background: #f9f9f9; */
+}
+
+/* Typography */
+.product-title {
+  font-size: 1.1rem;
+  font-weight: 500;
+  color: #111;
+}
+
+.product-price {
+  font-size: 1rem;
+  color: #333;
+  margin-top: 4px;
+}
+
+/* Quantity Stepper */
+.qty-wrap {
+  display: flex;
+  align-items: center;
+  border: 1px solid #ced4da;
+  border-radius: 6px;
+  height: 38px;
+  overflow: hidden;
+}
+
+.qty-btn {
+  width: 36px;
+  height: 100%;
+  background: #fff;
+  border: none;
+  display: flex;
   align-items: center;
   justify-content: center;
-  background-color: #fff;
-}
-.qty-input{ width:64px; height:36px; border:1.5px solid  #d7d7d7; border-radius:8px; text-align:center; 
-     font-size: 14px;
-  line-height: 32px; /* biar angka vertikal tengah */
-  padding: 0
-}
-.price{ font-weight:600; }
-.sticky-total{
-  position:sticky; bottom:0; z-index:1000; background:#e9b6a8;
-  border-top:1px solid #e7a99a; 
-    box-shadow: 0 -6px 18px rgba(0, 0, 0, 0.04);
-  padding: 0.75rem 1rem;
-}
-.sticky-total .btn{ border-radius:10px; }
-.cart-head{
-  position:sticky; top:0; z-index:900;
-  background:white; border-bottom:1px solid #eee;
-}
-#checkoutBtn{
-  background: #FFF6F0 !important;      /* warna yang diminta */
-  color: #1E1E1E;
-  border: 1.5px solid #ead9d2;
-  border-radius: 10px;
-    transition: all 0.3s ease;
-}
-
-#checkoutBtn:hover:not(:disabled){
-  background: #ffffff !important;       /* hover kontras ringan */
-  border-color: #f0c9b8;
-}
-
-#checkoutBtn:disabled{
-  opacity: 0.6;
-  cursor: not-allowed;
-
-}
-
-/* (opsional) rapikan info total di kanan */
-.sticky-total .price{
-  min-width: 120px;
-  text-align: right;
-}
-/* jarak antara navbar dan area cart */
-.container.mb-5 {
-  margin-top: 40px !important;   /* geser isi ke bawah */
-}
-
-.cart-card {
-  background: #ffffff !important;
-  padding-top: 20px;
-  padding-bottom: 20px;
-}
-
-.cart-item > div:nth-child(3) {
-  display: flex;
-  flex-direction: column;
-  justify-content: center;
-  margin-left: 12px; /* geser isi teks ke kanan */
-}
-
-/* Nama produk */
-.cart-item .fw-semibold {
-  font-size: 16px;
-  font-weight: 600;
-  line-height: 1.2;
-  margin: 0;
-}
-
-/* Harga */
-.cart-item .text-muted {
-  font-size: 13px;
-  color: #555;
-  line-height: 1.2;
-  margin: 0;
-}
-
-/* === Tampilan Modal Log In agar seperti contoh === */
-.modal-backdrop.show {
-  opacity: 0.2;               /* hilangkan overlay abu-abu */
-}
-
-.modal-dialog {
-  max-width: 340px;         /* kecil seperti contoh */
-}
-
-.modal-content {
-  border: 1px solid #ddd;
-  border-radius: 12px;
-  background-color: #ffffff; /* putih bersih */
-  box-shadow: 0 4px 10px rgba(0,0,0,0.08);
-}
-
-.modal-header {
-  border-bottom: none;
-  text-align: center;
-  padding-top: 20px;
-}
-
-.modal-title {
-  font-weight: 700;
-  font-size: 18px;
-  color: #1E1E1E;
-}
-
-.modal-body {
+  font-size: 1.2rem;
+  line-height: 1;
   color: #333;
+  cursor: pointer;
+}
+
+.qty-btn:hover {
+  background-color: #f8f9fa;
+}
+
+.qty-input {
+  width: 50px;
+  border: none;
   text-align: center;
-  padding-top: 5px;
-  padding-bottom: 0;
+  font-size: 1rem;
+  font-weight: 500;
+  height: 100%;
+  padding: 0;
+  -moz-appearance: textfield;
 }
 
-.modal-footer {
-  border-top: none;
-  justify-content: center;
-  padding-bottom: 20px;
+.qty-input::-webkit-outer-spin-button,
+.qty-input::-webkit-inner-spin-button {
+  -webkit-appearance: none;
+  margin: 0;
 }
 
-/* Tombol Log In warna krem (#FFF6F0) */
-.modal-footer .btn {
+/* Sticky Footer */
+.sticky-total {
+  position: fixed;
+  bottom: 0;
+  left: 0;
+  width: 100%;
+  z-index: 1000;
+  background-color: #EBB7A8;
+  /* Peach color as in image */
+  padding: 1.5rem 0;
+  box-shadow: 0 -4px 20px rgba(0, 0, 0, 0.05);
+}
+
+#checkoutBtn {
   background-color: #FFF6F0;
-  color: #1E1E1E;
-  border: 1.5px solid #ead9d2;
-  border-radius: 8px;
-  font-weight: 600;
-  padding: 6px 20px;
-  transition: all 0.3s ease;
+  color: #EBB7A8;
+  /* Text color matching background or darker? Image shows peach text on white button */
+  color: #E19E8D;
+  border: none;
+  font-weight: 700;
+  box-shadow: 0 2px 6px rgba(0, 0, 0, 0.05);
 }
 
-.modal-footer .btn:hover {
-  background-color: #ffffff;
-  border-color: #f0c9b8;
+#checkoutBtn:disabled {
+  opacity: 0.7;
+  cursor: not-allowed;
 }
 
+/* Navbar gap */
+header#navMount {
+  min-height: 80px;
+}
 
-/* responsif: hp kecil, beri ruang dan flexible */
-@media (max-width: 576px){
-  .cart-item{
-    grid-template-columns: 20px 56px 1fr auto !important;
-    gap: 6px !important;
+/* Responsive adjustments */
+@media (max-width: 576px) {
+  .item-thumb {
+    width: 70px;
+    height: 80px;
   }
-  .item-thumb{ width:56px !important; height:56px !important; }
-  .qty-btn{ width:24px; height:24px; font-size:14px; }
-  .qty-input{ width:48px; height:28px; font-size:13px; }
-  .cart-item .fw-semibold{ font-size:15px; }
-  .cart-item .text-muted{ font-size:12px; }
-    .navbar-custom {
-        padding: 0.6rem 0;
-        height: 60px;
-    }
+
+  .product-title {
+    font-size: 1rem;
+  }
+
+  .qty-wrap {
+    height: 32px;
+  }
+
+  .qty-btn {
+    width: 28px;
+  }
+
+  .qty-input {
+    width: 36px;
+    font-size: 0.9rem;
+  }
+
+  .sticky-total {
+    padding: 1rem 0;
+  }
+
+  #totalPrice {
+    font-size: 1.2rem !important;
+  }
+
+  #checkoutBtn {
+    padding-left: 1.5rem !important;
+    padding-right: 1.5rem !important;
+  }
 }
-
-

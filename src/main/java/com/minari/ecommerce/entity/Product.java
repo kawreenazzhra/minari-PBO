@@ -81,7 +81,8 @@ public class Product {
     private LocalDateTime updatedAt;
 
     // Constructors
-    public Product() {}
+    public Product() {
+    }
 
     public Product(Long id, String name, String description, Double price, Integer stockQuantity, String imageUrl,
             String sku, Double compareAtPrice, Double discountPrice, Boolean isActive, Boolean isFeatured,
@@ -113,74 +114,189 @@ public class Product {
     }
 
     // Getters and Setters
-    public Long getId() { return id; }
-    public void setId(Long id) { this.id = id; }
+    public Long getId() {
+        return id;
+    }
 
-    public String getName() { return name; }
-    public void setName(String name) { this.name = name; }
+    public void setId(Long id) {
+        this.id = id;
+    }
 
-    public String getDescription() { return description; }
-    public void setDescription(String description) { this.description = description; }
+    public String getName() {
+        return name;
+    }
 
-    public Double getPrice() { return price; }
-    public void setPrice(Double price) { this.price = price; }
+    public void setName(String name) {
+        this.name = name;
+    }
 
-    public Integer getStockQuantity() { return stockQuantity; }
-    public void setStockQuantity(Integer stockQuantity) { this.stockQuantity = stockQuantity; }
+    public String getDescription() {
+        return description;
+    }
 
-    public String getImageUrl() { return imageUrl; }
-    public void setImageUrl(String imageUrl) { this.imageUrl = imageUrl; }
+    public void setDescription(String description) {
+        this.description = description;
+    }
 
-    public String getSku() { return sku; }
-    public void setSku(String sku) { this.sku = sku; }
+    public Double getPrice() {
+        return price;
+    }
 
-    public Double getCompareAtPrice() { return compareAtPrice; }
-    public void setCompareAtPrice(Double compareAtPrice) { this.compareAtPrice = compareAtPrice; }
+    public void setPrice(Double price) {
+        this.price = price;
+    }
 
-    public Double getDiscountPrice() { return discountPrice; }
-    public void setDiscountPrice(Double discountPrice) { this.discountPrice = discountPrice; }
+    public Integer getStockQuantity() {
+        return stockQuantity;
+    }
 
-    public Boolean getIsActive() { return isActive; }
-    public void setIsActive(Boolean isActive) { this.isActive = isActive; }
+    public void setStockQuantity(Integer stockQuantity) {
+        this.stockQuantity = stockQuantity;
+    }
 
-    public Boolean getIsFeatured() { return isFeatured; }
-    public void setIsFeatured(Boolean isFeatured) { this.isFeatured = isFeatured; }
+    public String getImageUrl() {
+        return imageUrl;
+    }
 
-    public Double getWeight() { return weight; }
-    public void setWeight(Double weight) { this.weight = weight; }
+    public void setImageUrl(String imageUrl) {
+        this.imageUrl = imageUrl;
+    }
 
-    public String getTags() { return tags; }
-    public void setTags(String tags) { this.tags = tags; }
+    public String getSku() {
+        return sku;
+    }
 
-    public String getSeoTitle() { return seoTitle; }
-    public void setSeoTitle(String seoTitle) { this.seoTitle = seoTitle; }
+    public void setSku(String sku) {
+        this.sku = sku;
+    }
 
-    public String getSeoDescription() { return seoDescription; }
-    public void setSeoDescription(String seoDescription) { this.seoDescription = seoDescription; }
+    public Double getCompareAtPrice() {
+        return compareAtPrice;
+    }
 
-    public String getBrand() { return brand; }
-    public void setBrand(String brand) { this.brand = brand; }
+    public void setCompareAtPrice(Double compareAtPrice) {
+        this.compareAtPrice = compareAtPrice;
+    }
 
-    public ProductCategory getCategory() { return category; }
-    public void setCategory(ProductCategory category) { this.category = category; }
+    public Double getDiscountPrice() {
+        return discountPrice;
+    }
 
-    public List<ProductReview> getReviews() { return reviews; }
-    public void setReviews(List<ProductReview> reviews) { this.reviews = reviews; }
+    public void setDiscountPrice(Double discountPrice) {
+        this.discountPrice = discountPrice;
+    }
 
-    public List<ProductVariant> getVariants() { return variants; }
-    public void setVariants(List<ProductVariant> variants) { this.variants = variants; }
+    public Boolean getIsActive() {
+        return isActive;
+    }
 
-    public Double getAverageRating() { return averageRating; }
-    public void setAverageRating(Double averageRating) { this.averageRating = averageRating; }
+    public void setIsActive(Boolean isActive) {
+        this.isActive = isActive;
+    }
 
-    public Integer getReviewCount() { return reviewCount; }
-    public void setReviewCount(Integer reviewCount) { this.reviewCount = reviewCount; }
+    public Boolean getIsFeatured() {
+        return isFeatured;
+    }
 
-    public LocalDateTime getCreatedAt() { return createdAt; }
-    public void setCreatedAt(LocalDateTime createdAt) { this.createdAt = createdAt; }
+    public void setIsFeatured(Boolean isFeatured) {
+        this.isFeatured = isFeatured;
+    }
 
-    public LocalDateTime getUpdatedAt() { return updatedAt; }
-    public void setUpdatedAt(LocalDateTime updatedAt) { this.updatedAt = updatedAt; }
+    public Double getWeight() {
+        return weight;
+    }
+
+    public void setWeight(Double weight) {
+        this.weight = weight;
+    }
+
+    public String getTags() {
+        return tags;
+    }
+
+    public void setTags(String tags) {
+        this.tags = tags;
+    }
+
+    public String getSeoTitle() {
+        return seoTitle;
+    }
+
+    public void setSeoTitle(String seoTitle) {
+        this.seoTitle = seoTitle;
+    }
+
+    public String getSeoDescription() {
+        return seoDescription;
+    }
+
+    public void setSeoDescription(String seoDescription) {
+        this.seoDescription = seoDescription;
+    }
+
+    public String getBrand() {
+        return brand;
+    }
+
+    public void setBrand(String brand) {
+        this.brand = brand;
+    }
+
+    public ProductCategory getCategory() {
+        return category;
+    }
+
+    public void setCategory(ProductCategory category) {
+        this.category = category;
+    }
+
+    public List<ProductReview> getReviews() {
+        return reviews;
+    }
+
+    public void setReviews(List<ProductReview> reviews) {
+        this.reviews = reviews;
+    }
+
+    public List<ProductVariant> getVariants() {
+        return variants;
+    }
+
+    public void setVariants(List<ProductVariant> variants) {
+        this.variants = variants;
+    }
+
+    public Double getAverageRating() {
+        return averageRating;
+    }
+
+    public void setAverageRating(Double averageRating) {
+        this.averageRating = averageRating;
+    }
+
+    public Integer getReviewCount() {
+        return reviewCount;
+    }
+
+    public void setReviewCount(Integer reviewCount) {
+        this.reviewCount = reviewCount;
+    }
+
+    public LocalDateTime getCreatedAt() {
+        return createdAt;
+    }
+
+    public void setCreatedAt(LocalDateTime createdAt) {
+        this.createdAt = createdAt;
+    }
+
+    public LocalDateTime getUpdatedAt() {
+        return updatedAt;
+    }
+
+    public void setUpdatedAt(LocalDateTime updatedAt) {
+        this.updatedAt = updatedAt;
+    }
 
     // Business methods
     public boolean isInStock() {
@@ -218,10 +334,14 @@ public class Product {
     }
 
     public void updateProductInfo(String name, String description, Double price, Integer stockQuantity) {
-        if (name != null && !name.trim().isEmpty()) this.name = name.trim();
-        if (description != null) this.description = description;
-        if (price != null && price >= 0) this.price = price;
-        if (stockQuantity != null && stockQuantity >= 0) this.stockQuantity = stockQuantity;
+        if (name != null && !name.trim().isEmpty())
+            this.name = name.trim();
+        if (description != null)
+            this.description = description;
+        if (price != null && price >= 0)
+            this.price = price;
+        if (stockQuantity != null && stockQuantity >= 0)
+            this.stockQuantity = stockQuantity;
         this.updatedAt = LocalDateTime.now();
     }
 
@@ -234,6 +354,21 @@ public class Product {
     @PreUpdate
     protected void onUpdate() {
         updatedAt = LocalDateTime.now();
+    }
+
+    @Override
+    public boolean equals(Object o) {
+        if (this == o)
+            return true;
+        if (o == null || getClass() != o.getClass())
+            return false;
+        Product product = (Product) o;
+        return id != null && id.equals(product.id);
+    }
+
+    @Override
+    public int hashCode() {
+        return getClass().hashCode();
     }
 
     @Override

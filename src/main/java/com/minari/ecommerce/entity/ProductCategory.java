@@ -1,5 +1,9 @@
 package com.minari.ecommerce.entity;
 
+import com.fasterxml.jackson.annotation.JsonIdentityInfo;
+import com.fasterxml.jackson.annotation.JsonIgnore;
+import com.fasterxml.jackson.annotation.JsonIgnoreProperties;
+import com.fasterxml.jackson.annotation.ObjectIdGenerators;
 import jakarta.persistence.*;
 import java.time.LocalDateTime;
 import java.util.ArrayList;
@@ -7,61 +11,69 @@ import java.util.List;
 
 @Entity
 @Table(name = "product_categories")
+@JsonIdentityInfo(generator = ObjectIdGenerators.PropertyGenerator.class, property = "id")
+@JsonIgnoreProperties({ "hibernateLazyInitializer", "handler" })
 public class ProductCategory {
-    
+
     @Id
     @GeneratedValue(strategy = GenerationType.IDENTITY)
     private Long id;
-    
+
     @Column(unique = true, nullable = false)
     private String name;
-    
+
     private String description;
-    
+
     @Column(name = "slug", unique = true)
     private String slug;
-    
+
     @Column(name = "image_url")
     private String imageUrl;
-    
+
     @Column(name = "banner_url")
     private String bannerUrl;
-    
+
+    @JsonIgnore
     @ManyToOne(fetch = FetchType.LAZY)
     @JoinColumn(name = "parent_category_id")
     private ProductCategory parentCategory;
-    
+
     @OneToMany(mappedBy = "parentCategory")
     private List<ProductCategory> subCategories = new ArrayList<>();
-    
+
     @Column(name = "display_order", nullable = false, columnDefinition = "INT DEFAULT 0")
     private Integer displayOrder = 0;
-    
+
     @Column(name = "is_active", nullable = false, columnDefinition = "BOOLEAN DEFAULT TRUE")
     private Boolean isActive = true;
-    
+
     @Column(name = "meta_title")
     private String metaTitle;
-    
+
     @Column(name = "meta_description")
     private String metaDescription;
-    
+
     @Column(name = "meta_keywords")
     private String metaKeywords;
-    
+
+    @JsonIgnore
     @OneToMany(mappedBy = "category", cascade = CascadeType.ALL)
     private List<Product> products = new ArrayList<>();
-    
+
     @Column(name = "created_at")
     private LocalDateTime createdAt;
-    
+
     @Column(name = "updated_at")
     private LocalDateTime updatedAt;
 
     // Constructors
-    public ProductCategory() {}
+    public ProductCategory() {
+    }
 
-    public ProductCategory(Long id, String name, String description, String slug, String imageUrl, String bannerUrl, ProductCategory parentCategory, List<ProductCategory> subCategories, Integer displayOrder, Boolean isActive, String metaTitle, String metaDescription, String metaKeywords, List<Product> products, LocalDateTime createdAt, LocalDateTime updatedAt) {
+    public ProductCategory(Long id, String name, String description, String slug, String imageUrl, String bannerUrl,
+            ProductCategory parentCategory, List<ProductCategory> subCategories, Integer displayOrder, Boolean isActive,
+            String metaTitle, String metaDescription, String metaKeywords, List<Product> products,
+            LocalDateTime createdAt, LocalDateTime updatedAt) {
         this.id = id;
         this.name = name;
         this.description = description;
@@ -208,18 +220,18 @@ public class ProductCategory {
     public void setUpdatedAt(LocalDateTime updatedAt) {
         this.updatedAt = updatedAt;
     }
-    
+
     public String getFullPath() {
         if (parentCategory != null) {
             return parentCategory.getFullPath() + " > " + name;
         }
         return name;
     }
-    
+
     public boolean hasSubCategories() {
         return !subCategories.isEmpty();
     }
-    
+
     @PrePersist
     protected void onCreate() {
         createdAt = LocalDateTime.now();
@@ -228,7 +240,7 @@ public class ProductCategory {
             slug = name.toLowerCase().replaceAll("[^a-z0-9\\s-]", "").replaceAll("\\s+", "-");
         }
     }
-    
+
     @PreUpdate
     protected void onUpdate() {
         updatedAt = LocalDateTime.now();

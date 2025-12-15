@@ -32,13 +32,33 @@ public class ProductController {
         } else if (category != null) {
             products = productService.getProductsByCategory(category);
             productService.getCategoryById(category)
-                    .ifPresent(c -> model.addAttribute("selectedCategory", c.getName()));
+                    .ifPresent(c -> {
+                        model.addAttribute("selectedCategory", c.getName());
+                        model.addAttribute("categoryObj", c);
+                    });
         } else {
             products = productService.getAllProducts();
         }
 
         model.addAttribute("products", products);
         model.addAttribute("categories", productService.getAllCategories());
+        model.addAttribute("products", products);
+        model.addAttribute("categories", productService.getAllCategories());
+
+        // Create simplified category objects for navbar to avoid JSON
+        // recursion/overhead
+        List<java.util.Map<String, Object>> navCategories = productService.getAllCategories().stream()
+                .filter(cat -> cat.getIsActive() != null && cat.getIsActive())
+                .map(cat -> {
+                    java.util.Map<String, Object> map = new java.util.HashMap<>();
+                    map.put("id", cat.getId());
+                    map.put("name", cat.getName());
+                    map.put("imageUrl", cat.getImageUrl());
+                    return map;
+                })
+                .collect(java.util.stream.Collectors.toList());
+        model.addAttribute("navCategories", navCategories);
+
         model.addAttribute("pageTitle", "Products - Minari");
 
         return "products/list";

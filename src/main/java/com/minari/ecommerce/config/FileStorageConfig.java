@@ -13,16 +13,16 @@ import java.nio.file.Paths;
 
 @Configuration
 public class FileStorageConfig implements WebMvcConfigurer {
-    
+
     @Value("${app.upload.dir}")
     private String uploadDir;
-    
+
     @Value("${app.upload.max-file-size:10MB}")
     private String maxFileSize;
-    
+
     @Value("${app.upload.max-request-size:100MB}")
     private String maxRequestSize;
-    
+
     @PostConstruct
     public void init() {
         try {
@@ -34,7 +34,7 @@ public class FileStorageConfig implements WebMvcConfigurer {
             }
 
             // Create sub-directories
-            String[] subdirs = {"products", "categories", "users", "banners", "promotions"};
+            String[] subdirs = { "products", "categories", "users", "banners", "promotions" };
             for (String subdir : subdirs) {
                 Path subdirPath = uploadPath.resolve(subdir);
                 if (!Files.exists(subdirPath)) {
@@ -47,15 +47,15 @@ public class FileStorageConfig implements WebMvcConfigurer {
             throw new RuntimeException("Could not create upload directory: " + uploadDir, e);
         }
     }
-    
+
     @Override
     public void addResourceHandlers(@org.springframework.lang.NonNull ResourceHandlerRegistry registry) {
         // Expose upload directory as static resource
         registry.addResourceHandler("/uploads/**")
-                .addResourceLocations("file:" + uploadDir + "/")
+                .addResourceLocations(Paths.get(uploadDir).toAbsolutePath().toUri().toString())
                 .setCachePeriod(3600)
                 .resourceChain(true);
-        
+
         // Expose static resources
         registry.addResourceHandler("/static/**")
                 .addResourceLocations("classpath:/static/")

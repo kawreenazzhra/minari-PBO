@@ -21,6 +21,7 @@
         window.APP_ROLE = /*[[${#authorization.expression('isAuthenticated()') ? 'user' : 'guest'}]]*/ 'guest';
         window.APP_URL = /*[[@{/}]]*/ '/';
         window.CSRF_TOKEN = document.querySelector('meta[name="_csrf"]')?.getAttribute('content');
+        window.APP_CATEGORIES = /*[[${navCategories}]]*/[];
     </script>
 
     <!-- CSS -->
@@ -33,10 +34,21 @@
     <header id="navMount"></header>
 
     <!-- Hero - Adapted since generic product list doesn't always have category object -->
+    <!-- Hero - Adapted for Category Details -->
     <section class="hero">
-        <img id="heroImg" th:src="@{/images/default-category.jpg}" alt="Category" class="hero__img">
+        <!-- Logic for Hero Image:
+             1. Shirt and Blouse -> /images/categories/shirtandblouse.png
+             2. T-Shirt and Polo -> /images/categories/tshirtandpolo.png
+             3. Fallback -> bannerUrl or default -->
+        <img id="heroImg"
+            th:src="${(categoryObj != null and #strings.containsIgnoreCase(categoryObj.name, 'Shirt and Blouse')) ? '/images/categories/shirtandblouse.png' : 
+                      ((categoryObj != null and #strings.containsIgnoreCase(categoryObj.name, 'T-Shirt')) ? '/images/categories/tshirtandpolo.png' : 
+                      (categoryObj != null and categoryObj.bannerUrl != null ? categoryObj.bannerUrl : '/images/default-category.jpg'))}"
+            alt="Category" class="hero__img">
+
         <div id="heroTitle" class="hero__title"
-            th:text="${searchQuery != null ? 'Search: ' + searchQuery : (selectedCategory != null ? 'Category ' + selectedCategory : 'All Products')}">
+            style="font-family: 'Playfair Display', serif; font-size: 4rem; color: #FBAF99; text-shadow: 2px 2px 4px rgba(0,0,0,0.3);"
+            th:text="${selectedCategory != null ? selectedCategory : (searchQuery != null ? 'Search: ' + searchQuery : 'All Products')}">
             Products</div>
     </section>
 
@@ -89,13 +101,13 @@
                                         </small>
                                     </div>
                                     <div class="p-mini-actions">
-                                        <button class="p-wish" aria-label="Wishlist"
-                                            th:onclick="'event.preventDefault(); addToWishlist(' + ${product.id} + ', this)'">
-                                            <img th:src="@{/images/whislist.png}" alt="wishlist">
-                                        </button>
                                         <button class="p-cart" aria-label="Add to cart"
                                             th:onclick="'event.preventDefault(); window.addToCart(' + ${product.id} + ', \'' + ${#strings.escapeJavaScript(product.name)} + '\', ' + ${product.finalPrice ?: product.price} + ', \'' + ${product.imageUrl} + '\')'">
                                             <img th:src="@{/images/chart.png}" alt="cart">
+                                        </button>
+                                        <button class="p-wish" aria-label="Wishlist"
+                                            th:onclick="'event.preventDefault(); addToWishlist(' + ${product.id} + ', this)'">
+                                            <img th:src="@{/images/whislist.png}" alt="wishlist">
                                         </button>
                                     </div>
                                 </div>
@@ -116,6 +128,8 @@
 
     <script src="https://cdn.jsdelivr.net/npm/bootstrap@5.3.3/dist/js/bootstrap.bundle.min.js"></script>
     <script th:src="@{/js/navbar.js}"></script>
+    <script th:src="@{/js/cart.js}"></script>
+    <script th:src="@{/js/category.js}"></script>
 </body>
 
 </html>

@@ -6,6 +6,71 @@ const Role = {
 };
 
 // ====== Templates ======
+
+// 1. Template for the Hamburger Button (triggers full menu)
+function tplHamburgerBtn() {
+  return `
+      <button id="hamburgerBtn" class="btn p-0 border-0 bg-transparent ms-2" style="cursor: pointer;">
+          <img src="/images/menu.png" alt="Menu" width="24" height="24">
+      </button>
+  `;
+}
+
+// 2. Template for the Full Screen Overlay
+function tplFullMenuOverlay() {
+  const categories = window.APP_CATEGORIES || [];
+
+  let gridItems = '';
+  if (categories.length > 0) {
+    categories.forEach(cat => {
+      // Use default image if none provided
+      // Assuming imageUrl is stored relative to static or as an absolute path
+      // If cat.imageUrl starts with 'uploads/', prepend '/'
+      let imgPath = cat.imageUrl ? cat.imageUrl : '/images/placeholder.png';
+      if (imgPath && !imgPath.startsWith('/') && !imgPath.startsWith('http')) {
+        imgPath = '/' + imgPath;
+      }
+
+      gridItems += `
+        <a href="/products?category=${cat.id}" class="full-menu-item">
+            <div class="full-menu-img-container">
+                <img src="${imgPath}" alt="${cat.name}">
+            </div>
+            <h3>${cat.name}</h3>
+        </a>
+        `;
+    });
+  } else {
+    gridItems = '<p class="text-center w-100">No categories found.</p>';
+  }
+
+  return `
+    <div id="fullMenuOverlay" class="full-menu-overlay">
+        <!-- Header -->
+        <div class="full-menu-header">
+            <div class="logo">
+                <span style="font-family: 'Playfair Display', serif; font-size: 24px; color: #4A3B34; letter-spacing: 2px;">MINARI</span>
+            </div>
+            <button id="closeMenuBtn" class="btn-close-menu">
+                <i class="fas fa-times"></i>
+            </button>
+        </div>
+
+        <!-- Search Bar -->
+        <div class="full-menu-search">
+             <i class="fas fa-search"></i>
+             <input type="text" id="menuSearchInput" placeholder="keywords">
+        </div>
+
+        <!-- Categories Grid -->
+        <div class="full-menu-grid">
+            ${gridItems}
+        </div>
+    </div>
+  `;
+}
+
+// Template: Mobile/Guest Navbar
 function tplGuest() {
   return `
   <nav class="navbar navbar-expand-lg fixed-top py-2" id="mainNavbar" style="background-color: #FFF6F0; box-shadow: 0 4px 10px rgba(0, 0, 0, 0.15); transition: all 0.3s ease;">
@@ -21,20 +86,21 @@ function tplGuest() {
         <a href="/products"><img src="/images/whislist.png" alt="Favorite" width="24" height="24"></a>
         <a href="/products"><img src="/images/searchnav.png" alt="Search" width="24" height="24"></a>
         <a href="/cart"><img src="/images/chart.png" alt="Cart" width="24" height="24"></a>
-        <a href="/products"><img src="/images/menu.png" alt="Products" width="24" height="24"></a>
+        ${tplHamburgerBtn()}
       </div>
     </div>
   </nav>
 
-  <div id="accMini" class="accmini" style="display: none; position: fixed; z-index: 9999; background: #FFF6F0; border: 1px solid #ead9d2; border-radius: 12px; box-shadow: 0 12px 28px rgba(0, 0, 0, 0.15); padding: 14px 12px 12px; width: 220px;">
-    <div class="accmini__row" style="display: flex; align-items: center; gap: 8px; margin-bottom: 10px;">
-      <img src="/images/akun.png" width="16" height="16" class="accmini__icon" alt="">
-      <a class="accmini__name" href="/login" style="font-weight: 500; color: #1f1f1f; text-decoration: none;">Guest</a>
+  <div id="accMini" class="accmini" style="display: none;">
+    <div class="accmini__row">
+      <img src="/images/akun.png" class="accmini__icon" alt="">
+      <a class="accmini__name" href="/login">Guest</a>
     </div>
-    <a id="loginLink" class="accmini__btn" href="/login" onclick="window.location.href='/login'; return false;" style="display: inline-flex; align-items: center; justify-content: center; width: 100%; height: 36px; background-color: #ffffff; border: 1.5px solid #d9c8c1; border-radius: 10px; color: #1e1e1e; font-weight: 600; text-decoration: none; font-size: 14px; cursor: pointer !important; transition: all 0.25s ease; margin-top: 8px; position: relative; z-index: 10000; pointer-events: auto;">Log in</a>
+    <a id="loginLink" class="accmini__btn" href="/login">Log in</a>
   </div>`;
 }
 
+// Template: User (Logged In) Navbar
 function tplUser() {
   return `
   <nav class="navbar navbar-expand-lg fixed-top py-2" id="mainNavbar" style="background-color: #FFF6F0; box-shadow: 0 4px 10px rgba(0, 0, 0, 0.15); transition: all 0.3s ease;">
@@ -50,21 +116,21 @@ function tplUser() {
         <a href="/products"><img src="/images/whislist.png" alt="Favorite" width="24" height="24"></a>
         <a href="/products"><img src="/images/searchnav.png" alt="Search" width="24" height="24"></a>
         <a href="/cart"><img src="/images/chart.png" alt="Cart" width="24" height="24"></a>
-        <a href="/products"><img src="/images/menu.png" alt="Products" width="24" height="24"></a>
+        ${tplHamburgerBtn()}
       </div>
     </div>
   </nav>
 
-  <div id="accMini" class="accmini" style="display: none; position: fixed; z-index: 9999; background: #FFF6F0; border: 1px solid #ead9d2; border-radius: 12px; box-shadow: 0 12px 28px rgba(0, 0, 0, 0.15); padding: 14px 12px 12px; width: 220px;">
-    <div class="accmini__row" style="display: flex; align-items: center; gap: 8px; margin-bottom: 10px;">
-      <img src="/images/akun.png" width="16" height="16" class="accmini__icon" alt="">
-      <a class="accmini__link" href="/account" style="font-weight: 500; color: #1f1f1f; text-decoration: none;">Account</a>
+  <div id="accMini" class="accmini" style="display: none;">
+    <div class="accmini__row">
+      <img src="/images/akun.png" class="accmini__icon" alt="">
+      <a class="accmini__link" href="/account">Account</a>
     </div>
-    <div class="accmini__row" style="display: flex; align-items: center; gap: 8px; margin-bottom: 10px;">
-      <img src="/images/order history.png" width="16" height="16" class="accmini__icon" alt="">
-      <a class="accmini__link" href="/order-history" style="font-weight: 500; color: #1f1f1f; text-decoration: none;">Order history</a>
+    <div class="accmini__row">
+      <img src="/images/order history.png" class="accmini__icon" alt="">
+      <a class="accmini__link" href="/order-history">Order history</a>
     </div>
-    <button id="logoutBtn" class="accmini__btn" style="display: inline-flex; align-items: center; justify-content: center; width: 100%; height: 36px; background-color: #ffffff; border: 1.5px solid #d9c8c1; border-radius: 10px; color: #1e1e1e; font-weight: 600; text-decoration: none; font-size: 14px; cursor: pointer; transition: all 0.25s ease; margin-top: 8px;">Log out</button>
+    <button id="logoutBtn" class="accmini__btn">Log out</button>
   </div>`;
 }
 
@@ -74,17 +140,13 @@ function initializeScrollEffect() {
   if (navbar) {
     window.addEventListener('scroll', function () {
       if (window.scrollY > 50) {
-        navbar.style.backgroundColor = 'transparent';
-        navbar.style.boxShadow = 'none';
+        navbar.classList.add('scrolled');
       } else {
-        navbar.style.backgroundColor = '#FFF6F0';
-        navbar.style.boxShadow = '0 4px 10px rgba(0, 0, 0, 0.15)';
+        navbar.classList.remove('scrolled');
       }
     });
   }
 }
-
-
 
 // ====== Main Render Function ======
 function renderNavbar() {
@@ -94,18 +156,23 @@ function renderNavbar() {
     return;
   }
 
-  // Get role from global variable set by Laravel
+  // Get role global
   const role = window.APP_ROLE || Role.GUEST;
-
   console.log('Rendering navbar with role:', role);
 
-  // Clear and render template based on role
+  // Clear and render template
   mount.innerHTML = '';
+
+  // 1. Render Navbar
   if (role === Role.USER) {
     mount.innerHTML = tplUser();
   } else {
     mount.innerHTML = tplGuest();
   }
+
+  // 2. Append Full Menu Overlay to mount (or body, but mount is fine if outside container)
+  const overlayHTML = tplFullMenuOverlay();
+  mount.insertAdjacentHTML('beforeend', overlayHTML);
 
   // Initialize scroll effect
   initializeScrollEffect();
@@ -115,99 +182,84 @@ function renderNavbar() {
 }
 
 function attachEventListeners() {
-  console.log('Attaching event listeners...');
-
+  // === Account Dropdown Logic ===
   const accBtn = document.getElementById('accBtn');
   const accMini = document.getElementById('accMini');
 
-  console.log('Found elements:', { accBtn, accMini });
-
   if (accBtn && accMini) {
-    // Remove any existing event listeners
     const newAccBtn = accBtn.cloneNode(true);
     accBtn.parentNode.replaceChild(newAccBtn, accBtn);
-
-    // Get new reference
     const currentAccBtn = document.getElementById('accBtn');
-    const currentAccMini = accMini;
 
-    // Add click event to account button
     currentAccBtn.addEventListener('click', function (e) {
       e.preventDefault();
       e.stopPropagation();
-      console.log('Account button clicked!');
-
-      // Get position of button
       const rect = currentAccBtn.getBoundingClientRect();
-      console.log('Button position:', rect);
 
-      // Toggle dropdown
-      if (currentAccMini.style.display === 'block' || currentAccMini.style.display === '') {
-        currentAccMini.style.display = 'none';
-        currentAccMini.style.pointerEvents = 'none';
+      if (accMini.classList.contains('show')) {
+        accMini.classList.remove('show');
       } else {
-        // Position dropdown below button
-        currentAccMini.style.position = 'fixed';
-        currentAccMini.style.top = (rect.bottom + 10) + 'px';
-        currentAccMini.style.right = (window.innerWidth - rect.right) + 'px'; // Fix alignment
-        currentAccMini.style.display = 'block';
-        currentAccMini.style.opacity = '1';
-        currentAccMini.style.pointerEvents = 'auto'; // Enable clicks
+        accMini.style.top = (rect.bottom + 10) + 'px';
+        accMini.style.right = (window.innerWidth - rect.right) + 'px';
+        accMini.classList.add('show');
       }
     });
 
-    // Close dropdown when clicking outside
     document.addEventListener('click', function (e) {
-      if (currentAccMini &&
-        !currentAccMini.contains(e.target) &&
+      if (accMini.classList.contains('show') &&
+        !accMini.contains(e.target) &&
         !currentAccBtn.contains(e.target)) {
-        currentAccMini.style.display = 'none';
-        currentAccMini.style.pointerEvents = 'none';
+        accMini.classList.remove('show');
       }
     });
+  }
 
-    // Handle logout button
-    const logoutBtn = document.getElementById('logoutBtn');
-    if (logoutBtn) {
-      logoutBtn.addEventListener('click', function (e) {
-        e.preventDefault();
-        if (confirm('Apakah Anda yakin ingin logout?')) {
-          window.location.href = '/logout';
+  // === Full Menu Overlay Logic ===
+  const hamburgerBtn = document.getElementById('hamburgerBtn');
+  const fullMenuOverlay = document.getElementById('fullMenuOverlay');
+  const closeMenuBtn = document.getElementById('closeMenuBtn');
+  const menuSearchInput = document.getElementById('menuSearchInput');
+
+  if (hamburgerBtn && fullMenuOverlay && closeMenuBtn) {
+    hamburgerBtn.addEventListener('click', function (e) {
+      e.preventDefault();
+      fullMenuOverlay.classList.add('active');
+      document.body.style.overflow = 'hidden'; // Prevent background scrolling
+    });
+
+    closeMenuBtn.addEventListener('click', function (e) {
+      e.preventDefault();
+      fullMenuOverlay.classList.remove('active');
+      document.body.style.overflow = '';
+    });
+
+    // Handle Enter on search input
+    if (menuSearchInput) {
+      menuSearchInput.addEventListener('keypress', function (e) {
+        if (e.key === 'Enter') {
+          const query = this.value;
+          window.location.href = '/products?search=' + encodeURIComponent(query);
         }
       });
     }
+  }
 
-    // Handle login link (fix for unclickable issue)
-    const loginLink = document.getElementById('loginLink');
-    if (loginLink) {
-      loginLink.addEventListener('click', function (e) {
-        e.preventDefault();
-        e.stopPropagation(); // Stop it from closing the dropdown immediately
-        console.log('Login link clicked - Forcing navigation');
-        window.location.href = '/login';
-      });
-    }
-
-    // Handle standard navbar links to ensure navigation works
-    const navLinks = document.querySelectorAll('a[href="/menu"], a[href="/cart"], a[href="/wishlist"], a[href="/admin/dashboard"]');
-    navLinks.forEach(link => {
-      link.addEventListener('click', function (e) {
-        // e.preventDefault(); // Don't prevent default unless necessary, but...
-        // If there's some global handler blocking it, we force it.
-        // For now, let's just log and ensure propagation.
-        e.stopPropagation();
-        console.log('Nav link clicked:', this.href);
-        // Force navigation if it doesn't happen naturally
-        // window.location.href = this.href; 
-      });
-      // Safety net: if for some reason expected behavior fails, force it on click
-      link.onclick = function () {
-        window.location.href = this.href;
-        return true;
-      };
+  // === Other Buttons ===
+  const logoutBtn = document.getElementById('logoutBtn');
+  if (logoutBtn) {
+    logoutBtn.addEventListener('click', function (e) {
+      e.preventDefault();
+      if (confirm('Apakah Anda yakin ingin logout?')) {
+        window.location.href = '/logout';
+      }
     });
+  }
 
-    console.log('Event listeners attached successfully');
+  const loginLink = document.getElementById('loginLink');
+  if (loginLink) {
+    loginLink.addEventListener('click', function (e) {
+      window.location.href = '/login';
+    });
   }
 }
 
