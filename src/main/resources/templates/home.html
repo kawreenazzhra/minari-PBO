@@ -14,6 +14,7 @@
         /*<![CDATA[*/
         window.APP_ROLE = /*[[${#authorization.expression('isAuthenticated()') ? 'user' : 'guest'}]]*/ 'guest';
         window.APP_URL = /*[[@{/}]]*/ '/';
+        window.APP_CATEGORIES = /*[[${navCategories}]]*/[];
         // Simple CSRF for JS if needed
         window.CSRF_TOKEN = document.querySelector('meta[name="_csrf"]')?.getAttribute('content');
         /*]]>*/
@@ -95,46 +96,23 @@
         <div class="container-fluid">
             <h2 class="section-title">Product Category</h2>
             <div class="category-scroll px-5">
-                <a th:href="@{/products(search='shirt')}" class="category-card text-decoration-none d-block">
+                <a th:each="cat : ${categories}" th:href="@{/products(categoryId=${cat.id})}"
+                    class="category-card text-decoration-none d-block">
                     <div class="category-image">
-                        <img th:src="@{/images/shirt.png}" alt="Shirt">
+                        <!-- Smart Image Logic: DB Image -> Name Match -> Default -->
+                        <img th:with="catName=${cat.name.toLowerCase()},
+                                      imagePath=${cat.imageUrl != null and !cat.imageUrl.isEmpty() ? 
+                                          (cat.imageUrl.startsWith('http') or cat.imageUrl.startsWith('/') ? cat.imageUrl : '/images/' + cat.imageUrl) 
+                                          : (catName.contains('shirt') and !catName.contains('t-shirt') ? '/images/shirt.png' :
+                                            (catName.contains('sweater') ? '/images/sweaters.png' :
+                                            (catName.contains('t-shirt') ? '/images/tshirt.png' :
+                                            (catName.contains('pant') ? '/images/pants.png' :
+                                            (catName.contains('dress') or catName.contains('skirt') ? '/images/dress.png' :
+                                            (catName.contains('access') ? '/images/accessories.png' : '/images/default-category.png'))))))}"
+                            th:src="@{${imagePath}}" th:alt="${cat.name}"
+                            onerror="this.onerror=null; this.src='/images/default-category.png';">
                     </div>
-                    <h3>Shirt and Blouse</h3>
-                </a>
-
-                <a th:href="@{/products(search='sweater')}" class="category-card text-decoration-none d-block">
-                    <div class="category-image">
-                        <img th:src="@{/images/sweaters.png}" alt="Sweaters">
-                    </div>
-                    <h3>Sweaters, Cardigan, and Fleece</h3>
-                </a>
-
-                <a th:href="@{/products(search='t-shirt')}" class="category-card text-decoration-none d-block">
-                    <div class="category-image">
-                        <img th:src="@{/images/tshirt.png}" alt="T-Shirt">
-                    </div>
-                    <h3>T-shirt and Polo</h3>
-                </a>
-
-                <a th:href="@{/products(search='pants')}" class="category-card text-decoration-none d-block">
-                    <div class="category-image">
-                        <img th:src="@{/images/pants.png}" alt="Pants">
-                    </div>
-                    <h3>Pants</h3>
-                </a>
-
-                <a th:href="@{/products(search='dress')}" class="category-card text-decoration-none d-block">
-                    <div class="category-image">
-                        <img th:src="@{/images/dress.png}" alt="Dress">
-                    </div>
-                    <h3>Skirt and Dress</h3>
-                </a>
-
-                <a th:href="@{/products(search='accessories')}" class="category-card text-decoration-none d-block">
-                    <div class="category-image">
-                        <img th:src="@{/images/accessories.png}" alt="Accessories">
-                    </div>
-                    <h3>Accessories</h3>
+                    <h3 th:text="${cat.name}">Category Name</h3>
                 </a>
             </div>
         </div>

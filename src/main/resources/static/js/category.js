@@ -46,9 +46,9 @@ function addToWishlist(productId, buttonElement) {
     buttonElement.classList.toggle('active');
     const img = buttonElement.querySelector('img');
     if (img && buttonElement.classList.contains('active')) {
-      img.src = "{{ asset('images/whislist-active.png') }}";
+      img.src = "/images/whislist-active.png";
     } else if (img) {
-      img.src = "{{ asset('images/whislist.png') }}";
+      img.src = "/images/whislist.png";
     }
   }
 
@@ -77,7 +77,7 @@ function addToWishlist(productId, buttonElement) {
           if (buttonElement) {
             buttonElement.classList.toggle('active');
             const img = buttonElement.querySelector('img');
-            if (img) img.src = "{{ asset('images/whislist.png') }}";
+            if (img) img.src = "/images/whislist.png";
           }
         }
       }
@@ -89,7 +89,7 @@ function addToWishlist(productId, buttonElement) {
       if (buttonElement) {
         buttonElement.classList.toggle('active');
         const img = buttonElement.querySelector('img');
-        if (img) img.src = "{{ asset('images/whislist.png') }}";
+        if (img) img.src = "/images/whislist.png";
       }
     });
 }
@@ -109,7 +109,7 @@ function removeFromWishlist(productId, buttonElement, productName) {
         if (buttonElement) {
           buttonElement.classList.remove('active');
           const img = buttonElement.querySelector('img');
-          if (img) img.src = "{{ asset('images/whislist.png') }}";
+          if (img) img.src = "/images/whislist.png";
         }
       }
     })
@@ -117,31 +117,6 @@ function removeFromWishlist(productId, buttonElement, productName) {
       console.error('Error:', error);
     });
 }
-
-// ------------------------
-// Toast Function
-// ------------------------
-function showToast(message, isError = false) {
-  const toastEl = document.getElementById('miniToast');
-  const toastBody = document.getElementById('toastMessage');
-
-  if (!toastEl || !toastBody) return;
-
-  // Update message
-  toastBody.textContent = message;
-
-  // Change color for error messages
-  if (isError) {
-    toastEl.querySelector('.toast-body').style.color = 'var(--danger)';
-  } else {
-    toastEl.querySelector('.toast-body').style.color = '';
-  }
-
-  // Show toast
-  const toast = bootstrap.Toast.getOrCreateInstance(toastEl);
-  toast.show();
-}
-
 // ------------------------
 // Initialize Event Listeners
 // ------------------------
@@ -165,7 +140,7 @@ document.addEventListener('DOMContentLoaded', () => {
       if (!this.classList.contains('active')) {
         const img = this.querySelector('img');
         if (img) {
-          img.src = "{{ asset('images/whislist-hover.png') }}";
+          img.src = "/images/whislist-active.png";
         }
       }
     });
@@ -174,7 +149,7 @@ document.addEventListener('DOMContentLoaded', () => {
       if (!this.classList.contains('active')) {
         const img = this.querySelector('img');
         if (img) {
-          img.src = "{{ asset('images/whislist.png') }}";
+          img.src = "/images/whislist.png";
         }
       }
     });

@@ -5,50 +5,53 @@ import jakarta.persistence.*;
 @Entity
 @Table(name = "order_items")
 public class OrderItem {
-    
+
     @Id
     @GeneratedValue(strategy = GenerationType.IDENTITY)
     private Long id;
-    
+
     @ManyToOne(fetch = FetchType.LAZY)
     @JoinColumn(name = "order_id", nullable = false)
     private Order order;
-    
+
     @ManyToOne(fetch = FetchType.LAZY)
-    @JoinColumn(name = "product_id", nullable = false)
+    @JoinColumn(name = "product_id", nullable = true)
     private Product product;
-    
+
     @Column(name = "product_name", nullable = false)
     private String productName;
-    
+
     @Column(name = "product_sku")
     private String productSku;
-    
+
     @Column(name = "variant_info")
     private String variantInfo;
-    
+
     @Column(nullable = false)
     private Integer quantity;
-    
+
     @Column(name = "unit_price", nullable = false)
     private Double unitPrice;
-    
+
     @Column(name = "discount_price")
     private Double discountPrice;
-    
+
     @Column(name = "total_price", nullable = false)
     private Double totalPrice;
-    
+
     @Column(name = "image_url")
     private String imageUrl;
-    
+
     @Column(name = "return_status", columnDefinition = "VARCHAR(20) DEFAULT 'NONE'")
     private String returnStatus = "NONE";
 
     // Constructors
-    public OrderItem() {}
+    public OrderItem() {
+    }
 
-    public OrderItem(Long id, Order order, Product product, String productName, String productSku, String variantInfo, Integer quantity, Double unitPrice, Double discountPrice, Double totalPrice, String imageUrl, String returnStatus) {
+    public OrderItem(Long id, Order order, Product product, String productName, String productSku, String variantInfo,
+            Integer quantity, Double unitPrice, Double discountPrice, Double totalPrice, String imageUrl,
+            String returnStatus) {
         this.id = id;
         this.order = order;
         this.product = product;
@@ -171,10 +174,11 @@ public class OrderItem {
     public void setReturnStatus(String returnStatus) {
         this.returnStatus = returnStatus;
     }
-        public Double getSubtotal() {
+
+    public Double getSubtotal() {
         return unitPrice * quantity;
     }
-    
+
     public Double getDiscountedSubtotal() {
         return discountPrice != null ? discountPrice * quantity : getSubtotal();
     }

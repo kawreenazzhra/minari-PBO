@@ -196,7 +196,9 @@ document.addEventListener('DOMContentLoaded', function () {
     }
 
     function initializePrint() {
-        const printButtons = document.querySelectorAll('.btn-cancel[onclick*="print"], .btn-cancel:contains("Print")');
+        // Fix: Removed invalid :contains selector. Use data attribute or specific class if needed.
+        // Assuming .btn-cancel with 'print' in onclick is sufficient, or add a specific class in HTML.
+        const printButtons = document.querySelectorAll('.btn-cancel[onclick*="print"]');
         printButtons.forEach(btn => {
             btn.addEventListener('click', function (e) {
                 if (this.getAttribute('onclick') && this.getAttribute('onclick').includes('print')) {

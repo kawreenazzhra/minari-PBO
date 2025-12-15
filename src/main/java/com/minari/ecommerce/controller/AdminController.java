@@ -23,6 +23,8 @@ import org.springframework.web.servlet.mvc.support.RedirectAttributes;
 import java.io.IOException;
 import java.util.List;
 
+import org.springframework.format.annotation.DateTimeFormat;
+
 @Controller
 @RequestMapping("/admin")
 public class AdminController {
@@ -57,21 +59,6 @@ public class AdminController {
     // ... (rest of existing methods, but keeping them as is, only showing
     // additions/replacements for new sections)
 
-    @GetMapping("/customers")
-    public String customerManagement(Model model) {
-        List<User> allUsers = userRepository.findAll();
-        List<User> customers = allUsers.stream()
-                .filter(u -> u instanceof com.minari.ecommerce.entity.Customer)
-                .collect(java.util.stream.Collectors.toList());
-
-        // Note: Thymeleaf will handle accessing .orders or .totalSpent if
-        // available/public
-        // RegisteredCustomer has totalSpent and totalOrders fields.
-
-        model.addAttribute("customers", customers);
-        return "admin/customers";
-    }
-
     @GetMapping("/reviews")
     public String reviewManagement(Model model) {
         model.addAttribute("reviews", reviewRepository.findAll());
@@ -93,8 +80,8 @@ public class AdminController {
     public String addPromotion(@RequestParam String code,
             @RequestParam String description,
             @RequestParam Double discountPercentage,
-            @RequestParam java.time.LocalDate startDate,
-            @RequestParam java.time.LocalDate endDate,
+            @RequestParam @DateTimeFormat(iso = DateTimeFormat.ISO.DATE) java.time.LocalDate startDate,
+            @RequestParam @DateTimeFormat(iso = DateTimeFormat.ISO.DATE) java.time.LocalDate endDate,
             @RequestParam Boolean isActive,
             RedirectAttributes redirectAttributes) {
         try {
@@ -131,8 +118,8 @@ public class AdminController {
             @RequestParam String code,
             @RequestParam String description,
             @RequestParam Double discountValue,
-            @RequestParam java.time.LocalDate startDate,
-            @RequestParam java.time.LocalDate endDate,
+            @RequestParam @DateTimeFormat(iso = DateTimeFormat.ISO.DATE) java.time.LocalDate startDate,
+            @RequestParam @DateTimeFormat(iso = DateTimeFormat.ISO.DATE) java.time.LocalDate endDate,
             @RequestParam Boolean isActive,
             RedirectAttributes redirectAttributes) {
         try {
@@ -263,7 +250,7 @@ public class AdminController {
 
     @PostMapping("/products/create")
     public String createProduct(@RequestParam String name,
-            @RequestParam String description,
+            @RequestParam(required = false) String description,
             @RequestParam Double price,
             @RequestParam(required = false) Double discountPrice,
             @RequestParam(required = false) Double compareAtPrice,
@@ -273,6 +260,7 @@ public class AdminController {
             @RequestParam(required = false) String sku,
             @RequestParam(required = false) Boolean isFeatured,
             @RequestParam(required = false) Boolean isActive,
+            @RequestParam(required = false) List<String> tags,
             @RequestParam(required = false) MultipartFile image,
             RedirectAttributes redirectAttributes) {
         try {
@@ -284,9 +272,17 @@ public class AdminController {
             product.setCompareAtPrice(compareAtPrice);
             product.setStockQuantity(stockQuantity);
             product.setBrand(brand);
-            product.setSku(sku);
+            product.setBrand(brand);
+            if (sku != null && sku.trim().isEmpty()) {
+                product.setSku(null);
+            } else {
+                product.setSku(sku);
+            }
             product.setIsFeatured(isFeatured != null && isFeatured);
             product.setIsActive(isActive != null ? isActive : true);
+            if (tags != null && !tags.isEmpty()) {
+                product.setTags(String.join(",", tags));
+            }
 
             // Set category
             ProductCategory category = catalogService.getCategoryById(categoryId);
@@ -312,10 +308,10 @@ public class AdminController {
         return "redirect:/admin/products";
     }
 
-    @PostMapping("/products/{id}/update")
-    public String updateProduct(@PathVariable Long id,
+    @PostMapping("/products/update")
+    public String updateProduct(@RequestParam Long id,
             @RequestParam String name,
-            @RequestParam String description,
+            @RequestParam(required = false) String description,
             @RequestParam Double price,
             @RequestParam(required = false) Double discountPrice,
             @RequestParam(required = false) Double compareAtPrice,
@@ -325,6 +321,7 @@ public class AdminController {
             @RequestParam(required = false) String sku,
             @RequestParam(required = false) Boolean isFeatured,
             @RequestParam(required = false) Boolean isActive,
+            @RequestParam(required = false) List<String> tags,
             @RequestParam(required = false) MultipartFile image,
             RedirectAttributes redirectAttributes) {
         try {
@@ -341,9 +338,20 @@ public class AdminController {
             product.setCompareAtPrice(compareAtPrice);
             product.setStockQuantity(stockQuantity);
             product.setBrand(brand);
-            product.setSku(sku);
+            product.setBrand(brand);
+            if (sku != null && sku.trim().isEmpty()) {
+                product.setSku(null);
+            } else {
+                product.setSku(sku);
+            }
             product.setIsFeatured(isFeatured != null && isFeatured);
             product.setIsActive(isActive != null ? isActive : true);
+
+            if (tags != null && !tags.isEmpty()) {
+                product.setTags(String.join(",", tags));
+            } else {
+                product.setTags(null);
+            }
 
             // Set category
             ProductCategory category = catalogService.getCategoryById(categoryId);
@@ -388,6 +396,7 @@ public class AdminController {
         } catch (IOException e) {
             redirectAttributes.addFlashAttribute("error", "Failed to delete image: " + e.getMessage());
         } catch (Exception e) {
+            e.printStackTrace();
             redirectAttributes.addFlashAttribute("error", "Failed to delete product: " + e.getMessage());
         }
         return "redirect:/admin/products";

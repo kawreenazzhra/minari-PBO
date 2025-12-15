@@ -1,0 +1,42 @@
+[INFO] Scanning for projects...
+[INFO] 
+[INFO] -------------------------< com.minari:MINARI >--------------------------
+[INFO] Building MINARI 0.0.1-SNAPSHOT
+[INFO]   from pom.xml
+[INFO] --------------------------------[ jar ]---------------------------------
+[INFO] 
+[INFO] --- clean:3.3.2:clean (default-clean) @ MINARI ---
+[INFO] Deleting D:\minari-PBO\target
+[INFO] 
+[INFO] --- resources:3.3.1:resources (default-resources) @ MINARI ---
+[INFO] Copying 4 resources from src\main\resources to target\classes
+[INFO] Copying 138 resources from src\main\resources to target\classes
+[INFO] 
+[INFO] --- compiler:3.13.0:compile (default-compile) @ MINARI ---
+[INFO] Recompiling the module because of changed source code.
+[INFO] Compiling 75 source files with javac [debug parameters release 21] to target\classes
+[INFO] /D:/minari-PBO/src/main/java/com/minari/ecommerce/controller/AuthController.java: Some input files use unchecked or unsafe operations.
+[INFO] /D:/minari-PBO/src/main/java/com/minari/ecommerce/controller/AuthController.java: Recompile with -Xlint:unchecked for details.
+[INFO] 
+[INFO] --- resources:3.3.1:testResources (default-testResources) @ MINARI ---
+[INFO] skip non existing resourceDirectory D:\minari-PBO\src\test\resources
+[INFO] 
+[INFO] --- compiler:3.13.0:testCompile (default-testCompile) @ MINARI ---
+[INFO] Recompiling the module because of changed dependency.
+[INFO] Compiling 1 source file with javac [debug parameters release 21] to target\test-classes
+[INFO] 
+[INFO] --- surefire:3.2.5:test (default-test) @ MINARI ---
+[INFO] Tests are skipped.
+[INFO] 
+[INFO] --- jar:3.4.2:jar (default-jar) @ MINARI ---
+[INFO] Building jar: D:\minari-PBO\target\MINARI-0.0.1-SNAPSHOT.jar
+[INFO] 
+[INFO] --- spring-boot:3.3.5:repackage (repackage) @ MINARI ---
+[INFO] Replacing main artifact D:\minari-PBO\target\MINARI-0.0.1-SNAPSHOT.jar with repackaged archive, adding nested dependencies in BOOT-INF/.
+[INFO] The original artifact has been renamed to D:\minari-PBO\target\MINARI-0.0.1-SNAPSHOT.jar.original
+[INFO] ------------------------------------------------------------------------
+[INFO] BUILD SUCCESS
+[INFO] ------------------------------------------------------------------------
+[INFO] Total time:  10.824 s
+[INFO] Finished at: 2025-12-15T12:45:49+07:00
+[INFO] ------------------------------------------------------------------------
