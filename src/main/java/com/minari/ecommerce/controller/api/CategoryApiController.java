@@ -2,15 +2,15 @@ package com.minari.ecommerce.controller.api;
 
 import com.minari.ecommerce.entity.ProductCategory;
 import com.minari.ecommerce.service.ProductCategoryService;
-import lombok.RequiredArgsConstructor;
-import lombok.extern.slf4j.Slf4j;
+
 import org.springframework.http.HttpStatus;
 import org.springframework.http.ResponseEntity;
-import org.springframework.security.access.prepost.PreAuthorize;
 import org.springframework.web.bind.annotation.*;
 
 import java.util.List;
-import java.util.Map;
+
+import org.slf4j.Logger;
+import org.slf4j.LoggerFactory;
 
 /**
  * REST Controller for Category API
@@ -18,12 +18,16 @@ import java.util.Map;
  */
 @RestController
 @RequestMapping("/api/categories")
-@RequiredArgsConstructor
-@Slf4j
 @CrossOrigin(origins = "*", maxAge = 3600)
 public class CategoryApiController {
 
+    private static final Logger log = LoggerFactory.getLogger(CategoryApiController.class);
+
     private final ProductCategoryService categoryService;
+
+    public CategoryApiController(ProductCategoryService categoryService) {
+        this.categoryService = categoryService;
+    }
 
     /**
      * GET /api/categories - Get all categories

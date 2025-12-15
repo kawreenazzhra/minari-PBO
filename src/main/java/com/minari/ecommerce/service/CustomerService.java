@@ -2,10 +2,6 @@ package com.minari.ecommerce.service;
 
 import com.minari.ecommerce.entity.Customer;
 import com.minari.ecommerce.repository.CustomerRepository;
-import lombok.AllArgsConstructor;
-import lombok.Builder;
-import lombok.RequiredArgsConstructor;
-import lombok.extern.slf4j.Slf4j;
 import org.springframework.data.domain.Page;
 import org.springframework.data.domain.PageRequest;
 import org.springframework.data.domain.Pageable;
@@ -16,17 +12,24 @@ import java.time.LocalDateTime;
 import java.util.List;
 import java.util.Optional;
 
+import org.slf4j.Logger;
+import org.slf4j.LoggerFactory;
+
 /**
  * Service class for Customer management
  * Handles business logic for customer operations
  */
 @Service
-@RequiredArgsConstructor
-@Slf4j
 @Transactional
 public class CustomerService {
 
+    private static final Logger log = LoggerFactory.getLogger(CustomerService.class);
+
     private final CustomerRepository customerRepository;
+
+    public CustomerService(CustomerRepository customerRepository) {
+        this.customerRepository = customerRepository;
+    }
 
     /**
      * Get all customers with pagination
@@ -57,21 +60,21 @@ public class CustomerService {
      */
     public Customer createCustomer(Customer customer) {
         log.info("Creating new customer: {}", customer.getEmail());
-        
+
         if (customerRepository.existsByEmail(customer.getEmail())) {
             throw new IllegalArgumentException("Email already exists: " + customer.getEmail());
         }
-        
+
         if (customer.getPhone() != null && customerRepository.existsByPhone(customer.getPhone())) {
             throw new IllegalArgumentException("Phone number already exists: " + customer.getPhone());
         }
-        
+
         customer.setIsActive(true);
         customer.setEmailVerified(false);
         customer.setLoyaltyPoints(0);
         customer.setNewsletterSubscribed(false);
         customer.setMemberSince(LocalDateTime.now());
-        
+
         Customer savedCustomer = customerRepository.save(customer);
         log.info("Customer created successfully with ID: {}", savedCustomer.getId());
         return savedCustomer;
@@ -82,29 +85,29 @@ public class CustomerService {
      */
     public Customer updateCustomer(Long id, Customer customerDetails) {
         log.info("Updating customer with ID: {}", id);
-        
+
         Customer customer = customerRepository.findById(id)
                 .orElseThrow(() -> new IllegalArgumentException("Customer not found with ID: " + id));
-        
+
         if (customerDetails.getFullName() != null) {
             customer.setFullName(customerDetails.getFullName());
         }
-        
+
         if (customerDetails.getPhone() != null && !customerDetails.getPhone().equals(customer.getPhone())) {
             if (customerRepository.existsByPhone(customerDetails.getPhone())) {
                 throw new IllegalArgumentException("Phone number already exists: " + customerDetails.getPhone());
             }
             customer.setPhone(customerDetails.getPhone());
         }
-        
+
         if (customerDetails.getAvatarUrl() != null) {
             customer.setAvatarUrl(customerDetails.getAvatarUrl());
         }
-        
+
         if (customerDetails.getShippingAddress() != null) {
             customer.setShippingAddress(customerDetails.getShippingAddress());
         }
-        
+
         customer.setUpdatedAt(LocalDateTime.now());
         Customer updatedCustomer = customerRepository.save(customer);
         log.info("Customer updated successfully: {}", id);
@@ -116,10 +119,10 @@ public class CustomerService {
      */
     public void deleteCustomer(Long id) {
         log.info("Deleting customer with ID: {}", id);
-        
+
         Customer customer = customerRepository.findById(id)
                 .orElseThrow(() -> new IllegalArgumentException("Customer not found with ID: " + id));
-        
+
         customerRepository.delete(customer);
         log.info("Customer deleted successfully: {}", id);
     }
@@ -129,10 +132,10 @@ public class CustomerService {
      */
     public Customer toggleCustomerStatus(Long id) {
         log.info("Toggling status for customer ID: {}", id);
-        
+
         Customer customer = customerRepository.findById(id)
                 .orElseThrow(() -> new IllegalArgumentException("Customer not found with ID: " + id));
-        
+
         customer.setIsActive(!customer.getIsActive());
         Customer updatedCustomer = customerRepository.save(customer);
         log.info("Customer status toggled: {} - New status: {}", id, updatedCustomer.getIsActive());
@@ -144,10 +147,10 @@ public class CustomerService {
      */
     public Customer toggleNewsletterSubscription(Long id) {
         log.info("Toggling newsletter subscription for customer ID: {}", id);
-        
+
         Customer customer = customerRepository.findById(id)
                 .orElseThrow(() -> new IllegalArgumentException("Customer not found with ID: " + id));
-        
+
         customer.setNewsletterSubscribed(!customer.getNewsletterSubscribed());
         Customer updatedCustomer = customerRepository.save(customer);
         log.info("Newsletter subscription toggled: {} - New status: {}", id, updatedCustomer.getNewsletterSubscribed());
@@ -159,10 +162,10 @@ public class CustomerService {
      */
     public Customer addLoyaltyPoints(Long id, Integer points) {
         log.info("Adding {} loyalty points to customer ID: {}", points, id);
-        
+
         Customer customer = customerRepository.findById(id)
                 .orElseThrow(() -> new IllegalArgumentException("Customer not found with ID: " + id));
-        
+
         customer.setLoyaltyPoints(customer.getLoyaltyPoints() + points);
         Customer updatedCustomer = customerRepository.save(customer);
         log.info("Loyalty points added: {} - Total points: {}", id, updatedCustomer.getLoyaltyPoints());
@@ -174,16 +177,16 @@ public class CustomerService {
      */
     public Customer deductLoyaltyPoints(Long id, Integer points) {
         log.info("Deducting {} loyalty points from customer ID: {}", points, id);
-        
+
         Customer customer = customerRepository.findById(id)
                 .orElseThrow(() -> new IllegalArgumentException("Customer not found with ID: " + id));
-        
+
         Integer newPoints = customer.getLoyaltyPoints() - points;
         if (newPoints < 0) {
             log.warn("Insufficient loyalty points for customer ID: {}", id);
             newPoints = 0;
         }
-        
+
         customer.setLoyaltyPoints(newPoints);
         Customer updatedCustomer = customerRepository.save(customer);
         log.info("Loyalty points deducted: {} - Remaining points: {}", id, updatedCustomer.getLoyaltyPoints());
@@ -332,10 +335,10 @@ public class CustomerService {
      */
     public void updateLastLogin(Long customerId) {
         log.info("Updating last login for customer ID: {}", customerId);
-        
+
         Customer customer = customerRepository.findById(customerId)
                 .orElseThrow(() -> new IllegalArgumentException("Customer not found with ID: " + customerId));
-        
+
         customer.setLastLogin(LocalDateTime.now());
         customerRepository.save(customer);
     }
@@ -345,10 +348,10 @@ public class CustomerService {
      */
     public Customer verifyCustomerEmail(Long customerId) {
         log.info("Verifying email for customer ID: {}", customerId);
-        
+
         Customer customer = customerRepository.findById(customerId)
                 .orElseThrow(() -> new IllegalArgumentException("Customer not found with ID: " + customerId));
-        
+
         customer.setEmailVerified(true);
         Customer updatedCustomer = customerRepository.save(customer);
         log.info("Email verified for customer ID: {}", customerId);
@@ -360,13 +363,13 @@ public class CustomerService {
      */
     public CustomerStatistics getCustomerStatistics() {
         log.info("Fetching customer statistics");
-        
+
         Long totalCustomers = getTotalCustomerCount();
         Long activeCustomers = getActiveCustomerCount();
         Long inactiveCustomers = getInactiveCustomerCount();
         Long newCustomersToday = getNewCustomersToday();
         List<Customer> vipCustomers = getTopLoyalCustomers();
-        
+
         return CustomerStatistics.builder()
                 .totalCustomers(totalCustomers)
                 .activeCustomers(activeCustomers)
@@ -379,13 +382,65 @@ public class CustomerService {
     /**
      * Statistics DTO for customer data
      */
-    @Builder
-    @AllArgsConstructor
     public static class CustomerStatistics {
         public Long totalCustomers;
         public Long activeCustomers;
         public Long inactiveCustomers;
         public Long newCustomersToday;
         public Long vipCustomersCount;
+
+        public CustomerStatistics(Long totalCustomers, Long activeCustomers, Long inactiveCustomers,
+                Long newCustomersToday, Long vipCustomersCount) {
+            this.totalCustomers = totalCustomers;
+            this.activeCustomers = activeCustomers;
+            this.inactiveCustomers = inactiveCustomers;
+            this.newCustomersToday = newCustomersToday;
+            this.vipCustomersCount = vipCustomersCount;
+        }
+
+        public static CustomerStatisticsBuilder builder() {
+            return new CustomerStatisticsBuilder();
+        }
+
+        public static class CustomerStatisticsBuilder {
+            private Long totalCustomers;
+            private Long activeCustomers;
+            private Long inactiveCustomers;
+            private Long newCustomersToday;
+            private Long vipCustomersCount;
+
+            CustomerStatisticsBuilder() {
+            }
+
+            public CustomerStatisticsBuilder totalCustomers(Long totalCustomers) {
+                this.totalCustomers = totalCustomers;
+                return this;
+            }
+
+            public CustomerStatisticsBuilder activeCustomers(Long activeCustomers) {
+                this.activeCustomers = activeCustomers;
+                return this;
+            }
+
+            public CustomerStatisticsBuilder inactiveCustomers(Long inactiveCustomers) {
+                this.inactiveCustomers = inactiveCustomers;
+                return this;
+            }
+
+            public CustomerStatisticsBuilder newCustomersToday(Long newCustomersToday) {
+                this.newCustomersToday = newCustomersToday;
+                return this;
+            }
+
+            public CustomerStatisticsBuilder vipCustomersCount(Long vipCustomersCount) {
+                this.vipCustomersCount = vipCustomersCount;
+                return this;
+            }
+
+            public CustomerStatistics build() {
+                return new CustomerStatistics(totalCustomers, activeCustomers, inactiveCustomers, newCustomersToday,
+                        vipCustomersCount);
+            }
+        }
     }
 }

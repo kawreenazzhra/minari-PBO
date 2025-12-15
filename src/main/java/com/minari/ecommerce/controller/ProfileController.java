@@ -36,4 +36,32 @@ public class ProfileController {
         userRepository.save(existingUser);
         return "redirect:/profile";
     }
+
+    @GetMapping("/address")
+    public String address(Authentication authentication, Model model) {
+        String email = authentication.getName();
+        User user = userRepository.findByEmail(email).orElseThrow();
+        if (user instanceof com.minari.ecommerce.entity.Customer) {
+            model.addAttribute("addresses", ((com.minari.ecommerce.entity.Customer) user).getSavedAddresses());
+        } else {
+            model.addAttribute("addresses", new java.util.ArrayList<>());
+        }
+        return "profile/address";
+    }
+
+    @PostMapping("/address")
+    public String addAddress(com.minari.ecommerce.entity.Address address, Authentication authentication) {
+        String email = authentication.getName();
+        User user = userRepository.findByEmail(email).orElseThrow();
+
+        // rudimentary binding, assumes entity fields match form
+        address.setCustomer((com.minari.ecommerce.entity.Customer) user); // Cast might be unsafe if User is not
+                                                                          // Customer
+        if (user instanceof com.minari.ecommerce.entity.Customer) {
+            ((com.minari.ecommerce.entity.Customer) user).getSavedAddresses().add(address);
+            userRepository.save(user);
+        }
+
+        return "redirect:/profile/address"; // or redirect to payment if query param exists
+    }
 }

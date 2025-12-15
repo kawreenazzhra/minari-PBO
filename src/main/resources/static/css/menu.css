@@ -1,0 +1,90 @@
+body {
+  background-color: #FFF6F0;
+  font-family: "Times New Roman", serif;
+}
+
+/* Logo dan tombol atas */
+.menu {
+  color: #b0b0b0;
+  font-weight: 500;
+}
+
+.logo-img {
+  height: 40px;
+  width: auto;
+  cursor: pointer;
+}
+
+.close-btn {
+  border: none;
+  background: none;
+  font-size: 20px;
+  cursor: pointer;
+  color: #4b3a2b;
+}
+
+/* Search bar */
+.search-container {
+  display: flex;
+  justify-content: space-between;
+  align-items: center;
+}
+
+.search-wrapper {
+  display: flex;
+  align-items: center;
+  background-color: #E6E6E6;
+  border-radius: 25px;
+  padding: 8px 16px;
+}
+
+.search-bar {
+  background-color: transparent;
+  border: none;
+  width: 100%;
+  outline: none;
+  padding-left: 10px;
+  font-size: 16px;
+  color: #555;
+}
+
+.search-icon {
+  color: #777;
+  font-size: 18px;
+}
+
+/* Kartu kategori */
+.card-item {
+  background-color: transparent;
+  border: none;
+  color: black;
+  display: flex;
+  align-items: center;
+  justify-content: left;
+  gap: 25px;
+  transition: transform 0.2s ease, opacity 0.2s ease;
+}
+
+.card-item img {
+  width: 140px;
+  height: 140px;
+  object-fit: contain; /* biar semua gambar proporsional */
+}
+
+.card-item h6 {
+  font-size: 18px; /* lebih besar dari sebelumnya */
+  font-weight: 600;
+  color: #3a2b21;
+  max-width: 150px;
+  text-align: left;
+  margin: 0;
+}
+
+.card-item:hover {
+  transform: scale(1.05);
+  opacity: 0.9;
+}
+
+.section {
+  margin-top: 40px;
+}

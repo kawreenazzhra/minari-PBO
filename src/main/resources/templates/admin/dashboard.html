@@ -1,467 +1,199 @@
 <!DOCTYPE html>
-<html xmlns:th="http://www.thymeleaf.org"
-      xmlns:layout="http://www.thymeleaf.org"
-      layout:decorate="~{admin/layout}">
+<html lang="en" xmlns:th="http://www.thymeleaf.org">
+
 <head>
-    <title>Dashboard - MINARI Admin</title>
-    <!-- Chart.js -->
-    <script src="https://cdn.jsdelivr.net/npm/chart.js"></script>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>MINARI - Admin Dashboard</title>
+    <link href="https://cdn.jsdelivr.net/npm/bootstrap@5.3.0/dist/css/bootstrap.min.css" rel="stylesheet">
+    <link
+        href="https://fonts.googleapis.com/css2?family=Playfair+Display:wght@700&family=Poppins:wght@400;500;600&display=swap"
+        rel="stylesheet">
+    <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.4.0/css/all.min.css">
+    <link rel="stylesheet" th:href="@{/css/style1.css}">
+
+    <!-- Navbar Meta & Scripts -->
+    <meta name="_csrf" th:content="${_csrf != null ? _csrf.token : ''}" />
+    <meta name="_csrf_header" th:content="${_csrf != null ? _csrf.headerName : ''}" />
 </head>
+
 <body>
-    <div layout:fragment="content">
-        <!-- Page Header -->
-        <div class="d-flex justify-content-between align-items-center mb-4">
-            <div>
-                <h1 class="h3 mb-0">Dashboard</h1>
-                <nav aria-label="breadcrumb">
-                    <ol class="breadcrumb">
-                        <li class="breadcrumb-item active">Dashboard</li>
-                    </ol>
-                </nav>
-            </div>
-            <div class="d-flex gap-2">
-                <button class="btn btn-outline-primary" onclick="refreshDashboard()">
-                    <i class="fas fa-sync-alt me-2"></i>Refresh
-                </button>
-                <div class="dropdown">
-                    <button class="btn btn-outline-secondary dropdown-toggle" type="button" data-bs-toggle="dropdown">
-                        <i class="fas fa-calendar me-2"></i>Last 30 Days
-                    </button>
-                    <ul class="dropdown-menu">
-                        <li><a class="dropdown-item" href="#" onclick="changePeriod('7')">Last 7 Days</a></li>
-                        <li><a class="dropdown-item active" href="#" onclick="changePeriod('30')">Last 30 Days</a></li>
-                        <li><a class="dropdown-item" href="#" onclick="changePeriod('90')">Last 90 Days</a></li>
-                        <li><a class="dropdown-item" href="#" onclick="changePeriod('365')">Last Year</a></li>
-                    </ul>
+    <!-- Placeholder for Navbar if needed, or static sidebar -->
+    <!-- @include('admin.partials.navbar') -->
+
+    <div class="sidebar">
+        <a th:href="@{/admin/dashboard}" class="sidebar-item active">
+            <i class="fas fa-table-columns"></i>
+            <span>Dashboard</span>
+        </a>
+        <a th:href="@{/admin/products}" class="sidebar-item">
+            <i class="fas fa-box"></i>
+            <span>Product</span>
+        </a>
+        <a th:href="@{/admin/categories}" class="sidebar-item">
+            <i class="fas fa-layer-group"></i>
+            <span>Categories</span>
+        </a>
+        <a th:href="@{/admin/orders}" class="sidebar-item">
+            <i class="fas fa-file-invoice"></i>
+            <span>Orders</span>
+        </a>
+        <a th:href="@{/admin/customers}" class="sidebar-item">
+            <i class="fas fa-users"></i>
+            <span>Customers</span>
+        </a>
+        <a th:href="@{/admin/reviews}" class="sidebar-item">
+            <i class="fas fa-thumbs-up"></i>
+            <span>Review</span>
+        </a>
+        <a th:href="@{/admin/promotions}" class="sidebar-item">
+            <i class="fas fa-ad"></i>
+            <span>Promotions</span>
+        </a>
+    </div>
+
+    <div class="main-content">
+        <div class="stats-grid">
+            <div class="stat-card">
+                <h6>Total Sales</h6>
+                <div class="value" style="color: #F4B4A1;"
+                    th:text="'Rp ' + ${(stats != null && stats['total_revenue'] != null) ? #numbers.formatDecimal(stats['total_revenue'], 0, 'POINT', 0, 'COMMA') : '0'}">
+                    Rp 0
                 </div>
+            </div>
+            <div class="stat-card">
+                <h6>Total Orders</h6>
+                <div class="value"
+                    th:text="${(stats != null && stats['total_orders'] != null) ? stats['total_orders'] : 0}">0</div>
+            </div>
+            <div class="stat-card">
+                <h6>Total Customers</h6>
+                <div class="value"
+                    th:text="${(stats != null && stats['total_customers'] != null) ? stats['total_customers'] + ' Users' : '0 Users'}">
+                    0 Users</div>
             </div>
         </div>
 
-        <!-- Welcome Message -->
-        <div class="alert alert-info mb-4" role="alert">
-            <i class="fas fa-info-circle me-2"></i>
-            Welcome back, <strong th:text="${currentUser.firstName + ' ' + currentUser.lastName}">Admin</strong>!
-            Here's what's happening with your store today.
-        </div>
-
-        <!-- Statistics Cards -->
-        <div class="row mb-4">
-            <div class="col-xl-3 col-md-6 mb-4">
-                <div class="card border-left-primary shadow h-100 py-2">
-                    <div class="card-body">
-                        <div class="row no-gutters align-items-center">
-                            <div class="col mr-2">
-                                <div class="text-xs font-weight-bold text-primary text-uppercase mb-1">
-                                    Total Revenue</div>
-                                <div class="h5 mb-0 font-weight-bold text-gray-800" th:text="'Rp ' + ${totalRevenue}">Rp 0</div>
-                                <div class="small text-muted mt-1">
-                                    <span th:classappend="${revenueChange >= 0 ? 'text-success' : 'text-danger'}">
-                                        <i th:classappend="${revenueChange >= 0 ? 'fas fa-arrow-up' : 'fas fa-arrow-down'}" class="me-1"></i>
-                                        <span th:text="${#numbers.formatDecimal(revenueChange, 1, 1, 'ID')} + '%'">0%</span> from last period
-                                    </span>
-                                </div>
-                            </div>
-                            <div class="col-auto">
-                                <i class="fas fa-dollar-sign fa-2x text-gray-300"></i>
-                            </div>
-                        </div>
-                    </div>
-                </div>
-            </div>
-
-            <div class="col-xl-3 col-md-6 mb-4">
-                <div class="card border-left-success shadow h-100 py-2">
-                    <div class="card-body">
-                        <div class="row no-gutters align-items-center">
-                            <div class="col mr-2">
-                                <div class="text-xs font-weight-bold text-success text-uppercase mb-1">
-                                    Total Orders</div>
-                                <div class="h5 mb-0 font-weight-bold text-gray-800" th:text="${totalOrders}">0</div>
-                                <div class="small text-muted mt-1">
-                                    <span th:classappend="${ordersChange >= 0 ? 'text-success' : 'text-danger'}">
-                                        <i th:classappend="${ordersChange >= 0 ? 'fas fa-arrow-up' : 'fas fa-arrow-down'}" class="me-1"></i>
-                                        <span th:text="${#numbers.formatDecimal(ordersChange, 1, 1, 'ID')} + '%'">0%</span> from last period
-                                    </span>
-                                </div>
-                            </div>
-                            <div class="col-auto">
-                                <i class="fas fa-shopping-cart fa-2x text-gray-300"></i>
-                            </div>
-                        </div>
-                    </div>
-                </div>
-            </div>
-
-            <div class="col-xl-3 col-md-6 mb-4">
-                <div class="card border-left-info shadow h-100 py-2">
-                    <div class="card-body">
-                        <div class="row no-gutters align-items-center">
-                            <div class="col mr-2">
-                                <div class="text-xs font-weight-bold text-info text-uppercase mb-1">
-                                    Total Customers</div>
-                                <div class="h5 mb-0 font-weight-bold text-gray-800" th:text="${totalCustomers}">0</div>
-                                <div class="small text-muted mt-1">
-                                    <span th:classappend="${customersChange >= 0 ? 'text-success' : 'text-danger'}">
-                                        <i th:classappend="${customersChange >= 0 ? 'fas fa-arrow-up' : 'fas fa-arrow-down'}" class="me-1"></i>
-                                        <span th:text="${#numbers.formatDecimal(customersChange, 1, 1, 'ID')} + '%'">0%</span> from last period
-                                    </span>
-                                </div>
-                            </div>
-                            <div class="col-auto">
-                                <i class="fas fa-users fa-2x text-gray-300"></i>
-                            </div>
-                        </div>
-                    </div>
-                </div>
-            </div>
-
-            <div class="col-xl-3 col-md-6 mb-4">
-                <div class="card border-left-warning shadow h-100 py-2">
-                    <div class="card-body">
-                        <div class="row no-gutters align-items-center">
-                            <div class="col mr-2">
-                                <div class="text-xs font-weight-bold text-warning text-uppercase mb-1">
-                                    Avg. Order Value</div>
-                                <div class="h5 mb-0 font-weight-bold text-gray-800" th:text="'Rp ' + ${avgOrderValue}">Rp 0</div>
-                                <div class="small text-muted mt-1">
-                                    <span th:classappend="${avgOrderValueChange >= 0 ? 'text-success' : 'text-danger'}">
-                                        <i th:classappend="${avgOrderValueChange >= 0 ? 'fas fa-arrow-up' : 'fas fa-arrow-down'}" class="me-1"></i>
-                                        <span th:text="${#numbers.formatDecimal(avgOrderValueChange, 1, 1, 'ID')} + '%'">0%</span> from last period
-                                    </span>
-                                </div>
-                            </div>
-                            <div class="col-auto">
-                                <i class="fas fa-calculator fa-2x text-gray-300"></i>
-                            </div>
-                        </div>
-                    </div>
-                </div>
-            </div>
-        </div>
-
-        <!-- Quick Actions Section -->
-        <div class="row mb-4">
-            <div class="col-12">
-                <div class="card shadow">
-                    <div class="card-header py-3 d-flex justify-content-between align-items-center">
-                        <h6 class="m-0 font-weight-bold text-primary">Quick Actions</h6>
-                    </div>
-                    <div class="card-body">
-                        <div class="row">
-                            <div class="col-md-3 mb-3">
-                                <a href="/admin/customers" class="btn btn-light w-100 text-start">
-                                    <i class="fas fa-users text-info me-2"></i>
-                                    <div>
-                                        <strong>Customer Management</strong>
-                                        <small class="d-block text-muted">View all customers</small>
-                                    </div>
-                                </a>
-                            </div>
-                            <div class="col-md-3 mb-3">
-                                <a href="/admin/orders" class="btn btn-light w-100 text-start">
-                                    <i class="fas fa-shopping-cart text-success me-2"></i>
-                                    <div>
-                                        <strong>Orders</strong>
-                                        <small class="d-block text-muted">Manage orders</small>
-                                    </div>
-                                </a>
-                            </div>
-                            <div class="col-md-3 mb-3">
-                                <a href="/admin/products" class="btn btn-light w-100 text-start">
-                                    <i class="fas fa-box text-warning me-2"></i>
-                                    <div>
-                                        <strong>Products</strong>
-                                        <small class="d-block text-muted">Manage inventory</small>
-                                    </div>
-                                </a>
-                            </div>
-                            <div class="col-md-3 mb-3">
-                                <a href="/admin/reports" class="btn btn-light w-100 text-start">
-                                    <i class="fas fa-chart-bar text-danger me-2"></i>
-                                    <div>
-                                        <strong>Reports</strong>
-                                        <small class="d-block text-muted">View analytics</small>
-                                    </div>
-                                </a>
-                            </div>
-                        </div>
-                    </div>
-                </div>
-            </div>
-        </div>
-
-        <!-- Charts Section -->
-        <div class="row mb-4">
-            <!-- Sales Trend -->
-            <div class="col-xl-8 col-lg-7 mb-4">
-                <div class="card shadow">
-                    <div class="card-header py-3 d-flex justify-content-between align-items-center">
-                        <h6 class="m-0 font-weight-bold text-primary">Sales Trend</h6>
-                        <div class="dropdown">
-                            <button class="btn btn-sm btn-outline-secondary dropdown-toggle" type="button" data-bs-toggle="dropdown">
-                                Daily
-                            </button>
-                            <ul class="dropdown-menu">
-                                <li><a class="dropdown-item active" href="#" onclick="changeChartPeriod('daily')">Daily</a></li>
-                                <li><a class="dropdown-item" href="#" onclick="changeChartPeriod('weekly')">Weekly</a></li>
-                                <li><a class="dropdown-item" href="#" onclick="changeChartPeriod('monthly')">Monthly</a></li>
-                            </ul>
-                        </div>
-                    </div>
-                    <div class="card-body">
-                        <canvas id="salesTrendChart" width="100%" height="300"></canvas>
-                    </div>
-                </div>
-            </div>
-
-            <!-- Order Status -->
-            <div class="col-xl-4 col-lg-5 mb-4">
-                <div class="card shadow">
-                    <div class="card-header py-3">
-                        <h6 class="m-0 font-weight-bold text-primary">Order Status</h6>
-                    </div>
-                    <div class="card-body">
-                        <canvas id="orderStatusChart" width="100%" height="300"></canvas>
-                        <div class="mt-3">
-                            <div class="d-flex justify-content-between align-items-center mb-2">
-                                <span class="text-muted">Pending</span>
-                                <div>
-                                    <span class="fw-bold me-2" th:text="${pendingOrders}">0</span>
-                                    <small class="text-muted" th:text="'(' + ${#numbers.formatDecimal(pendingOrdersPercent, 1, 1, 'ID')} + '%)'">(0%)</small>
-                                </div>
-                            </div>
-                            <div class="d-flex justify-content-between align-items-center mb-2">
-                                <span class="text-muted">Confirmed</span>
-                                <div>
-                                    <span class="fw-bold me-2" th:text="${confirmedOrders}">0</span>
-                                    <small class="text-muted" th:text="'(' + ${#numbers.formatDecimal(confirmedOrdersPercent, 1, 1, 'ID')} + '%)'">(0%)</small>
-                                </div>
-                            </div>
-                            <div class="d-flex justify-content-between align-items-center mb-2">
-                                <span class="text-muted">Shipped</span>
-                                <div>
-                                    <span class="fw-bold me-2" th:text="${shippedOrders}">0</span>
-                                    <small class="text-muted" th:text="'(' + ${#numbers.formatDecimal(shippedOrdersPercent, 1, 1, 'ID')} + '%)'">(0%)</small>
-                                </div>
-                            </div>
-                            <div class="d-flex justify-content-between align-items-center mb-2">
-                                <span class="text-muted">Delivered</span>
-                                <div>
-                                    <span class="fw-bold me-2" th:text="${deliveredOrders}">0</span>
-                                    <small class="text-muted" th:text="'(' + ${#numbers.formatDecimal(deliveredOrdersPercent, 1, 1, 'ID')} + '%)'">(0%)</small>
-                                </div>
-                            </div>
-                            <div class="d-flex justify-content-between align-items-center mb-2">
-                                <span class="text-muted">Cancelled</span>
-                                <div>
-                                    <span class="fw-bold me-2" th:text="${cancelledOrders}">0</span>
-                                    <small class="text-muted" th:text="'(' + ${#numbers.formatDecimal(cancelledOrdersPercent, 1, 1, 'ID')} + '%)'">(0%)</small>
-                                </div>
-                            </div>
-                        </div>
-                    </div>
-                </div>
-            </div>
-        </div>
-
-        <!-- Bottom Section -->
         <div class="row">
-            <!-- Top Selling Products -->
-            <div class="col-xl-6 mb-4">
-                <div class="card shadow">
-                    <div class="card-header py-3 d-flex justify-content-between align-items-center">
-                        <h6 class="m-0 font-weight-bold text-primary">Top Selling Products</h6>
-                        <a href="/admin/products" class="btn btn-sm btn-outline-primary">View All</a>
-                    </div>
-                    <div class="card-body">
-                        <div class="table-responsive">
-                            <table class="table table-hover">
-                                <thead>
-                                    <tr>
-                                        <th>Product</th>
-                                        <th>Sold</th>
-                                        <th>Revenue</th>
-                                    </tr>
-                                </thead>
-                                <tbody>
-                                    <tr th:each="product : ${topSellingProducts}">
-                                        <td>
-                                            <div class="d-flex align-items-center">
-                                                <img th:src="${product.imageUrl ?: '/images/placeholder.png'}" alt="Product"
-                                                     class="rounded me-2" style="width: 30px; height: 30px; object-fit: cover;">
-                                                <span th:text="${product.name}">Product Name</span>
-                                            </div>
-                                        </td>
-                                        <td th:text="${product.soldQuantity}">0</td>
-                                        <td th:text="'Rp ' + ${product.revenue}">Rp 0</td>
-                                    </tr>
-                                </tbody>
-                            </table>
-                        </div>
-                        <div th:if="${#lists.isEmpty(topSellingProducts)}" class="text-center py-4">
-                            <i class="fas fa-chart-line fa-3x text-muted mb-3"></i>
-                            <p class="text-muted">No sales data available yet.</p>
-                        </div>
+            <div class="col-lg-8">
+                <div class="content-card">
+                    <h5 class="mb-4">Recent Orders</h5>
+                    <div class="table-custom">
+                        <table class="table mb-0">
+                            <thead>
+                                <tr>
+                                    <th>Name</th>
+                                    <th>Date</th>
+                                    <th>Status</th>
+                                </tr>
+                            </thead>
+                            <tbody>
+                                <tr th:each="order : ${recentOrders}">
+                                    <td th:text="${order.customerName != null ? order.customerName : 'Guest'}">Guest
+                                    </td>
+                                    <td th:text="${#temporals.format(order.orderDate, 'dd MMM yyyy')}">Date</td>
+                                    <td>
+                                        <span
+                                            th:class="'badge-status ' + (${order.status == 'PROCESSED' ? 'status-processed' : (order.status == 'SHIPPED' ? 'status-shipped' : 'status-pending')})"
+                                            th:text="${order.status}">PENDING</span>
+                                    </td>
+                                </tr>
+                                <tr th:if="${recentOrders == null or recentOrders.isEmpty()}">
+                                    <td colspan="3" class="text-center text-muted">No recent orders</td>
+                                </tr>
+                            </tbody>
+                        </table>
                     </div>
                 </div>
             </div>
 
-            <!-- Recent Orders -->
-            <div class="col-xl-6 mb-4">
-                <div class="card shadow">
-                    <div class="card-header py-3 d-flex justify-content-between align-items-center">
-                        <h6 class="m-0 font-weight-bold text-primary">Recent Orders</h6>
-                        <a href="/admin/orders" class="btn btn-sm btn-outline-primary">View All</a>
-                    </div>
-                    <div class="card-body">
-                        <div th:if="${!#lists.isEmpty(recentOrders)}">
-                            <div th:each="order : ${recentOrders}" class="d-flex justify-content-between align-items-center mb-3 pb-3 border-bottom">
-                                <div>
-                                    <div class="fw-bold" th:text="'#' + ${order.id}">Order #123</div>
-                                    <small class="text-muted" th:text="${#temporals.format(order.createdAt, 'dd MMM yyyy HH:mm')}">Date</small>
-                                </div>
-                                <div class="text-end">
-                                    <div class="fw-bold" th:text="'Rp ' + ${order.totalAmount}">Rp 0</div>
-                                    <span th:classappend="${order.status == 'DELIVERED' ? 'badge bg-success' : order.status == 'PENDING' ? 'badge bg-warning' : order.status == 'CANCELLED' ? 'badge bg-danger' : 'badge bg-info'}"
-                                          th:text="${order.status}">Status</span>
-                                </div>
+            <div class="col-lg-4">
+                <div class="content-card mb-3">
+                    <h5 class="mb-3">Top Selling Products</h5>
+                    <div th:each="product : ${topProducts}" class="d-flex align-items-center mb-3">
+                        <div class="product-img me-3">
+                            <img th:src="@{${product.imageUrl != null ? product.imageUrl : '/images/default-product.png'}}"
+                                alt="Product" style="width: 100%; height: 100%; object-fit: cover; border-radius: 8px;">
+                        </div>
+                        <div>
+                            <strong th:text="${product.name}">Product Name</strong>
+                            <div class="text-muted"
+                                th:text="${(product.salesCount != null ? product.salesCount : 0) + ' sales'}">0 sales
                             </div>
                         </div>
-                        <div th:if="${#lists.isEmpty(recentOrders)}" class="text-center py-4">
-                            <i class="fas fa-shopping-cart fa-3x text-muted mb-3"></i>
-                            <p class="text-muted">No recent orders.</p>
-                        </div>
                     </div>
+                    <div th:if="${topProducts == null or topProducts.isEmpty()}" class="text-center text-muted">No sales
+                        yet</div>
                 </div>
-            </div>
-        </div>
 
-        <!-- Low Stock Alert -->
-        <div class="row">
-            <div class="col-12 mb-4">
-                <div class="card shadow">
-                    <div class="card-header py-3 d-flex justify-content-between align-items-center">
-                        <h6 class="m-0 font-weight-bold text-primary">Low Stock Alert</h6>
-                        <a href="/admin/products?stock=low" class="btn btn-sm btn-outline-warning">View All</a>
+                <div class="content-card mb-3">
+                    <div class="d-flex justify-content-between align-items-center mb-3">
+                        <h5 class="mb-0">Customers Feedback</h5>
+                        <a th:href="@{/admin/reviews}" class="text-decoration-none"
+                            style="color: #FBAF99; font-size: 14px;">View All</a>
                     </div>
-                    <div class="card-body">
-                        <div th:if="${!#lists.isEmpty(lowStockProducts)}">
-                            <div class="row">
-                                <div th:each="product : ${lowStockProducts}" class="col-xl-3 col-lg-4 col-md-6 mb-3">
-                                    <div class="card h-100 border-warning">
-                                        <div class="card-body text-center">
-                                            <img th:src="${product.imageUrl ?: '/images/placeholder.png'}" alt="Product"
-                                                 class="rounded mb-2" style="width: 50px; height: 50px; object-fit: cover;">
-                                            <h6 class="card-title mb-1" th:text="${product.name}">Product Name</h6>
-                                            <p class="text-warning mb-2">
-                                                <i class="fas fa-exclamation-triangle me-1"></i>
-                                                Only <span th:text="${product.stockQuantity}">0</span> left in stock
-                                            </p>
-                                            <a href="/admin/products" class="btn btn-sm btn-warning">Restock</a>
-                                        </div>
-                                    </div>
+
+                    <div th:each="review : ${recentReviews}" class="d-flex align-items-start mb-3">
+                        <div class="customer-avatar me-3">
+                            <i class="fas fa-user"></i>
+                        </div>
+                        <div class="flex-grow-1">
+                            <div class="d-flex justify-content-between align-items-start">
+                                <strong style="font-size: 14px;" th:text="${review.customerName}">User</strong>
+                                <div class="rating" style="color: #f3a8a8; font-size: 12px;">
+                                    <i class="fas fa-star" th:each="i : ${#numbers.sequence(1, review.rating)}"></i>
                                 </div>
                             </div>
-                        </div>
-                        <div th:if="${#lists.isEmpty(lowStockProducts)}" class="text-center py-4">
-                            <i class="fas fa-check-circle fa-3x text-success mb-3"></i>
-                            <p class="text-muted">All products are sufficiently stocked.</p>
+                            <p class="text-muted mb-1" style="font-size: 13px; line-height: 1.4;"
+                                th:text="${#strings.abbreviate(review.comment, 60)}">Comment</p>
+                            <small class="text-muted"
+                                th:text="${#temporals.format(review.createdAt, 'dd MMM yyyy')}">Date</small>
                         </div>
                     </div>
+                    <div th:if="${recentReviews == null or recentReviews.isEmpty()}" class="text-center text-muted">No
+                        reviews yet</div>
+                </div>
+
+                <div class="content-card">
+                    <h5 class="mb-3">Quick Actions</h5>
+                    <a th:href="@{/admin/products/add}" class="btn-add w-100 mb-2"
+                        style="display: block; text-decoration: none; text-align: center;">
+                        <i class="fas fa-plus"></i> Add New Product
+                    </a>
+                    <a th:href="@{/admin/categories}" class="btn-add w-100 mb-2"
+                        style="display: block; text-decoration: none; text-align: center;">
+                        <i class="fas fa-pen"></i> Manage Categories
+                    </a>
                 </div>
             </div>
         </div>
     </div>
 
-    <div layout:fragment="scripts">
-        <script>
-            // Sales Trend Chart
-            const salesTrendCtx = document.getElementById('salesTrendChart').getContext('2d');
-            const salesTrendChart = new Chart(salesTrendCtx, {
-                type: 'line',
-                data: {
-                    labels: /*[[${salesTrendLabels}]]*/ [],
-                    datasets: [{
-                        label: 'Sales (Rp)',
-                        data: /*[[${salesTrendData}]]*/ [],
-                        borderColor: 'rgb(78, 115, 223)',
-                        backgroundColor: 'rgba(78, 115, 223, 0.1)',
-                        tension: 0.4,
-                        fill: true
-                    }]
-                },
-                options: {
-                    responsive: true,
-                    maintainAspectRatio: false,
-                    scales: {
-                        y: {
-                            beginAtZero: true,
-                            ticks: {
-                                callback: function(value) {
-                                    return 'Rp ' + value.toLocaleString('id-ID');
-                                }
-                            }
-                        }
-                    },
-                    plugins: {
-                        tooltip: {
-                            callbacks: {
-                                label: function(context) {
-                                    return 'Sales: Rp ' + context.parsed.y.toLocaleString('id-ID');
-                                }
-                            }
-                        }
-                    }
-                }
-            });
-
-            // Order Status Chart
-            const orderStatusCtx = document.getElementById('orderStatusChart').getContext('2d');
-            const orderStatusChart = new Chart(orderStatusCtx, {
-                type: 'doughnut',
-                data: {
-                    labels: ['Pending', 'Confirmed', 'Shipped', 'Delivered', 'Cancelled'],
-                    datasets: [{
-                        data: /*[[${orderStatusData}]]*/ [],
-                        backgroundColor: [
-                            '#f6c23e', '#36b9cc', '#1cc88a', '#4e73df', '#e74a3b'
-                        ],
-                        borderWidth: 0
-                    }]
-                },
-                options: {
-                    responsive: true,
-                    maintainAspectRatio: false,
-                    plugins: {
-                        legend: {
-                            position: 'bottom'
-                        }
-                    }
-                }
-            });
-
-            // Change period
-            function changePeriod(days) {
-                const url = new URL(window.location);
-                url.searchParams.set('period', days);
-                window.location.href = url.toString();
-            }
-
-            // Change chart period
-            function changeChartPeriod(period) {
-                // This would typically make an AJAX call to get new data
-                console.log('Changing chart period to:', period);
-                // For now, just update the button text
-                event.target.closest('.dropdown').querySelector('.dropdown-toggle').textContent =
-                    period.charAt(0).toUpperCase() + period.slice(1);
-            }
-
-            // Refresh dashboard
-            function refreshDashboard() {
-                window.location.reload();
-            }
-        </script>
-    </div>
+    <footer>
+        <div class="container">
+            <div class="row align-items-center">
+                <div class="col-md-6">
+                    <div class="logo">
+                        <img th:src="@{/images/logofix.png}" alt="Logo MINARI" style="height: 40px; width: auto;">
+                    </div>
+                    <p>Your everyday fashion boutique</p>
+                </div>
+                <div class="col-md-6 text-end">
+                    <p>Give us suggestions for future progress</p>
+                    <div class="footer-form">
+                        <input type="text" placeholder="your message . . .">
+                        <button>Send</button>
+                    </div>
+                </div>
+            </div>
+            <div class="footer-divider"></div>
+            <div class="copyright">
+                © 2025 MINARI. All Rights Reserved.
+            </div>
+        </div>
+    </footer>
+    <script src="https://cdn.jsdelivr.net/npm/bootstrap@5.3.0/dist/js/bootstrap.bundle.min.js"></script>
+    <script th:src="@{/js/navigation.js}"></script>
 </body>
-</html>
 
+</html>

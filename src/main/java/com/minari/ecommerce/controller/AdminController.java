@@ -26,83 +26,230 @@ import java.util.List;
 @Controller
 @RequestMapping("/admin")
 public class AdminController {
-    
+
     private final DashboardService dashboardService;
     private final ProductService productService;
     private final OrderService orderService;
     private final CatalogService catalogService;
     private final UserRepository userRepository;
     private final FileUploadService fileUploadService;
-    
+    private final com.minari.ecommerce.repository.ProductReviewRepository reviewRepository;
+    private final com.minari.ecommerce.repository.PromotionRepository promotionRepository;
+
     public AdminController(DashboardService dashboardService,
-                          ProductService productService,
-                          OrderService orderService,
-                          CatalogService catalogService,
-                          UserRepository userRepository,
-                          FileUploadService fileUploadService) {
+            ProductService productService,
+            OrderService orderService,
+            CatalogService catalogService,
+            UserRepository userRepository,
+            FileUploadService fileUploadService,
+            com.minari.ecommerce.repository.ProductReviewRepository reviewRepository,
+            com.minari.ecommerce.repository.PromotionRepository promotionRepository) {
         this.dashboardService = dashboardService;
         this.productService = productService;
         this.orderService = orderService;
         this.catalogService = catalogService;
         this.userRepository = userRepository;
         this.fileUploadService = fileUploadService;
+        this.reviewRepository = reviewRepository;
+        this.promotionRepository = promotionRepository;
     }
-    
+
+    // ... (rest of existing methods, but keeping them as is, only showing
+    // additions/replacements for new sections)
+
+    @GetMapping("/customers")
+    public String customerManagement(Model model) {
+        List<User> allUsers = userRepository.findAll();
+        List<User> customers = allUsers.stream()
+                .filter(u -> u instanceof com.minari.ecommerce.entity.Customer)
+                .collect(java.util.stream.Collectors.toList());
+
+        // Note: Thymeleaf will handle accessing .orders or .totalSpent if
+        // available/public
+        // RegisteredCustomer has totalSpent and totalOrders fields.
+
+        model.addAttribute("customers", customers);
+        return "admin/customers";
+    }
+
+    @GetMapping("/reviews")
+    public String reviewManagement(Model model) {
+        model.addAttribute("reviews", reviewRepository.findAll());
+        return "admin/reviews";
+    }
+
+    @GetMapping("/promotions")
+    public String promotionManagement(Model model) {
+        model.addAttribute("promotions", promotionRepository.findAll());
+        return "admin/promotions";
+    }
+
+    @GetMapping("/promotions/add")
+    public String showAddPromotionForm(Model model) {
+        return "admin/promotions/add";
+    }
+
+    @PostMapping("/promotions")
+    public String addPromotion(@RequestParam String code,
+            @RequestParam String description,
+            @RequestParam Double discountPercentage,
+            @RequestParam java.time.LocalDate startDate,
+            @RequestParam java.time.LocalDate endDate,
+            @RequestParam Boolean isActive,
+            RedirectAttributes redirectAttributes) {
+        try {
+            com.minari.ecommerce.entity.Promotion promo = new com.minari.ecommerce.entity.Promotion();
+            promo.setName(code);
+            promo.setPromoCode(code);
+            promo.setDescription(description);
+            promo.setDiscountType(com.minari.ecommerce.entity.Promotion.DiscountType.PERCENTAGE);
+            promo.setDiscountValue(discountPercentage);
+            promo.setStartDate(startDate.atStartOfDay());
+            promo.setEndDate(endDate.atTime(23, 59, 59));
+            promo.setIsActive(isActive);
+
+            promotionRepository.save(promo);
+            redirectAttributes.addFlashAttribute("success", "Promotion created successfully!");
+        } catch (Exception e) {
+            redirectAttributes.addFlashAttribute("error", "Error creating promotion: " + e.getMessage());
+        }
+        return "redirect:/admin/promotions";
+    }
+
+    @GetMapping("/promotions/{id}/edit")
+    public String showEditPromotionForm(@PathVariable Long id, Model model) {
+        com.minari.ecommerce.entity.Promotion promotion = promotionRepository.findById(id).orElse(null);
+        if (promotion == null) {
+            return "redirect:/admin/promotions";
+        }
+        model.addAttribute("promotion", promotion);
+        return "admin/promotions/edit";
+    }
+
+    @PostMapping("/promotions/update/{id}")
+    public String updatePromotion(@PathVariable Long id,
+            @RequestParam String code,
+            @RequestParam String description,
+            @RequestParam Double discountValue,
+            @RequestParam java.time.LocalDate startDate,
+            @RequestParam java.time.LocalDate endDate,
+            @RequestParam Boolean isActive,
+            RedirectAttributes redirectAttributes) {
+        try {
+            com.minari.ecommerce.entity.Promotion promo = promotionRepository.findById(id).orElse(null);
+            if (promo != null) {
+                promo.setPromoCode(code);
+                promo.setDescription(description);
+                promo.setDiscountValue(discountValue);
+                promo.setStartDate(startDate.atStartOfDay());
+                promo.setEndDate(endDate.atTime(23, 59, 59));
+                promo.setIsActive(isActive);
+                promotionRepository.save(promo);
+                redirectAttributes.addFlashAttribute("success", "Promotion updated successfully!");
+            } else {
+                redirectAttributes.addFlashAttribute("error", "Promotion not found.");
+            }
+        } catch (Exception e) {
+            redirectAttributes.addFlashAttribute("error", "Error updating promotion: " + e.getMessage());
+        }
+        return "redirect:/admin/promotions";
+    }
+
+    @PostMapping("/promotions/delete/{id}")
+    public String deletePromotion(@PathVariable Long id, RedirectAttributes redirectAttributes) {
+        try {
+            promotionRepository.deleteById(id);
+            redirectAttributes.addFlashAttribute("success", "Promotion deleted successfully!");
+        } catch (Exception e) {
+            redirectAttributes.addFlashAttribute("error", "Error deleting promotion: " + e.getMessage());
+        }
+        return "redirect:/admin/promotions";
+
+    }
+
     @GetMapping("")
     public String adminRedirect() {
         return "redirect:/admin/dashboard";
     }
-    
+
     @GetMapping("/dashboard")
     public String dashboard(Model model) {
-        dashboardService.showAdminDashboard();
-        
-        // Get current user from security context and load from repository
+        // Fetch stats
+        try {
+            model.addAttribute("stats", orderService.getOrderStatistics());
+
+            // Recent orders (fetch 5 most recent)
+            List<OrderDTO> allOrders = orderService.getAllOrders(null, null);
+            if (allOrders != null) {
+                int limit = Math.min(allOrders.size(), 5);
+                model.addAttribute("recentOrders", allOrders.subList(0, limit));
+            }
+
+            // Top products
+            try {
+                model.addAttribute("topProducts", orderService.getTopSellingProducts(5));
+            } catch (Exception e) {
+                model.addAttribute("topProducts", java.util.Collections.emptyList());
+            }
+
+            // Recent Reviews
+            try {
+                List<java.util.Map<String, Object>> recentReviews = reviewRepository.findAll().stream()
+                        .sorted((a, b) -> b.getReviewDate().compareTo(a.getReviewDate()))
+                        .limit(3)
+                        .map(r -> {
+                            java.util.Map<String, Object> map = new java.util.HashMap<>();
+                            map.put("customerName",
+                                    r.getCustomer() != null ? r.getCustomer().getFullName() : "Anonymous");
+                            map.put("rating", r.getRating());
+                            map.put("comment", r.getReviewText());
+                            map.put("createdAt", r.getReviewDate());
+                            return map;
+                        })
+                        .collect(java.util.stream.Collectors.toList());
+                model.addAttribute("recentReviews", recentReviews);
+            } catch (Exception e) {
+                model.addAttribute("recentReviews", java.util.Collections.emptyList());
+            }
+
+        } catch (Exception e) {
+            e.printStackTrace();
+        }
+
+        // Get current user details
         Authentication auth = SecurityContextHolder.getContext().getAuthentication();
         String email = (auth != null) ? auth.getName() : null;
-
         ViewUser viewUser = new ViewUser();
         if (email != null) {
             userRepository.findByEmail(email).ifPresent(u -> {
-                String fullName = u.getFullName() != null ? u.getFullName() : "Admin";
-                String firstName = fullName.split(" ")[0];
-                String lastName = "";
-                String[] parts = fullName.split(" ");
-                if (parts.length > 1) {
-                    StringBuilder sb = new StringBuilder();
-                    for (int i = 1; i < parts.length; i++) {
-                        if (sb.length() > 0) sb.append(' ');
-                        sb.append(parts[i]);
-                    }
-                    lastName = sb.toString();
-                }
-                viewUser.setFirstName(firstName);
-                viewUser.setLastName(lastName);
+                viewUser.setFirstName(u.getFullName());
                 viewUser.setEmail(u.getEmail());
             });
         }
-
-        // Fallback if user not found
-        if (viewUser.getFirstName() == null) {
-            viewUser.setFirstName("Admin");
-            viewUser.setLastName("");
-            viewUser.setEmail(email != null ? email : "");
-        }
-
         model.addAttribute("currentUser", viewUser);
-        
-        return "admin/dashboard-oop";
+
+        return "admin/dashboard";
     }
 
     @GetMapping("/products/add")
     public String showAddProductForm(Model model) {
         List<ProductCategory> categories = catalogService.getAllCategories();
         model.addAttribute("categories", categories);
-        model.addAttribute("product", new Product());
-        return "admin/products";
+        return "admin/products/add";
     }
 
-    
+    @GetMapping("/products/{id}/edit")
+    public String showEditProductForm(@PathVariable Long id, Model model) {
+        Product product = productService.getProductById(id).orElse(null);
+        if (product == null) {
+            return "redirect:/admin/products";
+        }
+        model.addAttribute("product", product);
+        List<ProductCategory> categories = catalogService.getAllCategories();
+        model.addAttribute("categories", categories);
+        return "admin/products/edit";
+    }
+
     @PostMapping("/products")
     public String addProduct(@ModelAttribute Product product) {
         // Set the category using CatalogService
@@ -116,18 +263,18 @@ public class AdminController {
 
     @PostMapping("/products/create")
     public String createProduct(@RequestParam String name,
-                                @RequestParam String description,
-                                @RequestParam Double price,
-                                @RequestParam(required = false) Double discountPrice,
-                                @RequestParam(required = false) Double compareAtPrice,
-                                @RequestParam Integer stockQuantity,
-                                @RequestParam Long categoryId,
-                                @RequestParam(required = false) String brand,
-                                @RequestParam(required = false) String sku,
-                                @RequestParam(required = false) Boolean isFeatured,
-                                @RequestParam(required = false) Boolean isActive,
-                                @RequestParam(required = false) MultipartFile image,
-                                RedirectAttributes redirectAttributes) {
+            @RequestParam String description,
+            @RequestParam Double price,
+            @RequestParam(required = false) Double discountPrice,
+            @RequestParam(required = false) Double compareAtPrice,
+            @RequestParam Integer stockQuantity,
+            @RequestParam Long categoryId,
+            @RequestParam(required = false) String brand,
+            @RequestParam(required = false) String sku,
+            @RequestParam(required = false) Boolean isFeatured,
+            @RequestParam(required = false) Boolean isActive,
+            @RequestParam(required = false) MultipartFile image,
+            RedirectAttributes redirectAttributes) {
         try {
             Product product = new Product();
             product.setName(name);
@@ -167,19 +314,19 @@ public class AdminController {
 
     @PostMapping("/products/{id}/update")
     public String updateProduct(@PathVariable Long id,
-                                @RequestParam String name,
-                                @RequestParam String description,
-                                @RequestParam Double price,
-                                @RequestParam(required = false) Double discountPrice,
-                                @RequestParam(required = false) Double compareAtPrice,
-                                @RequestParam Integer stockQuantity,
-                                @RequestParam Long categoryId,
-                                @RequestParam(required = false) String brand,
-                                @RequestParam(required = false) String sku,
-                                @RequestParam(required = false) Boolean isFeatured,
-                                @RequestParam(required = false) Boolean isActive,
-                                @RequestParam(required = false) MultipartFile image,
-                                RedirectAttributes redirectAttributes) {
+            @RequestParam String name,
+            @RequestParam String description,
+            @RequestParam Double price,
+            @RequestParam(required = false) Double discountPrice,
+            @RequestParam(required = false) Double compareAtPrice,
+            @RequestParam Integer stockQuantity,
+            @RequestParam Long categoryId,
+            @RequestParam(required = false) String brand,
+            @RequestParam(required = false) String sku,
+            @RequestParam(required = false) Boolean isFeatured,
+            @RequestParam(required = false) Boolean isActive,
+            @RequestParam(required = false) MultipartFile image,
+            RedirectAttributes redirectAttributes) {
         try {
             Product product = productService.getProductById(id).orElse(null);
             if (product == null) {
@@ -245,11 +392,36 @@ public class AdminController {
         }
         return "redirect:/admin/products";
     }
+
     @GetMapping("/orders")
     public String orderManagement(Model model) {
         List<OrderDTO> orders = orderService.getAllOrders("", "");
         model.addAttribute("orders", orders);
-        return "admin/orders-oop";
+        return "admin/orders";
+    }
+
+    @GetMapping("/orders/{id}")
+    public String orderDetail(@PathVariable Long id, Model model) {
+        com.minari.ecommerce.entity.Order order = orderService.getOrderEntityById(id);
+        if (order == null) {
+            return "redirect:/admin/orders";
+        }
+        model.addAttribute("order", order);
+        return "admin/orders/detail";
+    }
+
+    @PostMapping("/orders/{id}/status")
+    public String updateOrderStatus(@PathVariable Long id,
+            @RequestParam String orderStatus,
+            @RequestParam(required = false) String trackingNumber,
+            RedirectAttributes redirectAttributes) {
+        try {
+            orderService.updateOrderDetails(id, orderStatus, trackingNumber);
+            redirectAttributes.addFlashAttribute("success", "Order status updated successfully!");
+        } catch (Exception e) {
+            redirectAttributes.addFlashAttribute("error", "Error updating order status: " + e.getMessage());
+        }
+        return "redirect:/admin/orders/" + id;
     }
 
     @GetMapping("/products")
@@ -261,8 +433,104 @@ public class AdminController {
         return "admin/products";
     }
 
-    @GetMapping("/customers")
-    public String customerManagement(Model model) {
-        return "admin/customers-oop";
+    // --- Category Management ---
+
+    @GetMapping("/categories")
+    public String listCategories(Model model) {
+        List<ProductCategory> categories = catalogService.getAllCategories();
+        model.addAttribute("categories", categories);
+        return "admin/categories";
+    }
+
+    @GetMapping("/categories/add")
+    public String showAddCategoryForm(Model model) {
+        model.addAttribute("category", new ProductCategory());
+        return "admin/categories/add";
+    }
+
+    @PostMapping("/categories")
+    public String addCategory(@RequestParam String name,
+            @RequestParam(required = false) String description,
+            @RequestParam(required = false) MultipartFile image,
+            RedirectAttributes redirectAttributes) {
+        try {
+            ProductCategory category = new ProductCategory();
+            category.setName(name);
+            category.setDescription(description);
+
+            if (image != null && !image.isEmpty()) {
+                String imagePath = fileUploadService.uploadProductImage(image); // Reusing product image upload logic
+                category.setImageUrl(imagePath);
+            }
+
+            catalogService.saveCategory(category);
+            redirectAttributes.addFlashAttribute("success", "Category created successfully!");
+        } catch (Exception e) {
+            redirectAttributes.addFlashAttribute("error", "Error creating category: " + e.getMessage());
+        }
+        return "redirect:/admin/categories";
+    }
+
+    @GetMapping("/categories/{id}/edit")
+    public String showEditCategoryForm(@PathVariable Long id, Model model) {
+        ProductCategory category = catalogService.getCategoryById(id);
+        if (category == null) {
+            return "redirect:/admin/categories";
+        }
+        model.addAttribute("category", category);
+        return "admin/categories/edit";
+    }
+
+    @PostMapping("/categories/{id}/update")
+    public String updateCategory(@PathVariable Long id,
+            @RequestParam String name,
+            @RequestParam(required = false) String description,
+            @RequestParam(required = false) MultipartFile image,
+            RedirectAttributes redirectAttributes) {
+        try {
+            ProductCategory category = catalogService.getCategoryById(id);
+            if (category == null) {
+                redirectAttributes.addFlashAttribute("error", "Category not found");
+                return "redirect:/admin/categories";
+            }
+            category.setName(name);
+            category.setDescription(description);
+
+            if (image != null && !image.isEmpty()) {
+                // Should delete old image ideally
+                if (category.getImageUrl() != null) {
+                    try {
+                        fileUploadService.deleteFile(category.getImageUrl());
+                    } catch (Exception ignored) {
+                    }
+                }
+                String imagePath = fileUploadService.uploadProductImage(image);
+                category.setImageUrl(imagePath);
+            }
+
+            catalogService.saveCategory(category);
+            redirectAttributes.addFlashAttribute("success", "Category updated successfully!");
+        } catch (Exception e) {
+            redirectAttributes.addFlashAttribute("error", "Error updating category: " + e.getMessage());
+        }
+        return "redirect:/admin/categories";
+    }
+
+    @PostMapping("/categories/{id}/delete")
+    public String deleteCategory(@PathVariable Long id, RedirectAttributes redirectAttributes) {
+        try {
+            ProductCategory category = catalogService.getCategoryById(id);
+            if (category != null && category.getImageUrl() != null) {
+                try {
+                    fileUploadService.deleteFile(category.getImageUrl());
+                } catch (Exception ignored) {
+                }
+            }
+            catalogService.deleteCategory(id);
+            redirectAttributes.addFlashAttribute("success", "Category deleted successfully!");
+        } catch (Exception e) {
+            redirectAttributes.addFlashAttribute("error", "Error deleting category: " + e.getMessage());
+        }
+        return "redirect:/admin/categories";
     }
 }

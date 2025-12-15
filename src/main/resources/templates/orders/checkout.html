@@ -1,0 +1,176 @@
+<!DOCTYPE html>
+<html lang="en" xmlns:th="http://www.thymeleaf.org">
+
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>MINARI - Checkout</title>
+
+    <!-- Bootstrap -->
+    <link href="https://cdn.jsdelivr.net/npm/bootstrap@5.3.0/dist/css/bootstrap.min.css" rel="stylesheet">
+
+    <!-- Fonts -->
+    <link href="https://fonts.googleapis.com/css2?family=Playfair+Display:wght@400;500;600;700&display=swap"
+        rel="stylesheet">
+    <link href="https://fonts.googleapis.com/icon?family=Material+Icons" rel="stylesheet">
+
+    <!-- Icons -->
+    <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.4.0/css/all.min.css">
+
+    <!-- Navbar Meta -->
+    <meta name="_csrf" th:content="${_csrf != null ? _csrf.token : ''}" />
+    <meta name="_csrf_header" th:content="${_csrf != null ? _csrf.headerName : ''}" />
+    <script th:inline="javascript">
+        window.APP_ROLE = /*[[${#authorization.expression('isAuthenticated()') ? 'user' : 'guest'}]]*/ 'guest';
+        window.APP_URL = /*[[@{/}]]*/ '/';
+    </script>
+
+    <!-- CSS -->
+    <link rel="stylesheet" th:href="@{/css/style5.css}">
+    <link rel="stylesheet" th:href="@{/css/navbar.css}">
+</head>
+
+<body>
+
+    <header id="navMount"></header>
+
+    <!-- ORDER HEADER -->
+    <div class="order-header-section">
+        <div class="container">
+            <div class="order-header-content">
+                <h1 class="order-title" id="orderTitle">Checkout Review</h1>
+            </div>
+        </div>
+    </div>
+
+    <form th:action="@{/checkout/place}" method="POST" id="checkoutForm">
+        <input type="hidden" name="shipping_address" id="inputShippingAddress" value="">
+        <input type="hidden" name="shipping_city" id="inputShippingCity" value="">
+        <input type="hidden" name="shipping_postal_code" id="inputShippingPostalCode" value="">
+        <input type="hidden" name="payment_method" id="inputPaymentMethod" value="cash_on_delivery">
+        <input type="hidden" name="notes" value="">
+
+        <!-- MAIN CONTENT -->
+        <div class="main-content">
+            <div class="container">
+
+                <!-- PRODUCT SECTION -->
+                <div class="product-section" id="productSection">
+                    <div th:each="item : ${cartItems}" class="product-item">
+                        <div class="product-image">
+                            <img th:src="@{${item.product.imageUrl != null ? item.product.imageUrl : '/images/default-product.png'}}"
+                                th:alt="${item.product.name}">
+                        </div>
+                        <div class="product-info">
+                            <h3 class="product-name" th:text="${item.product.name}">Product Name</h3>
+                            <p class="product-price"
+                                th:text="'Rp ' + ${#numbers.formatDecimal(item.unitPrice, 0, 'POINT', 0, 'COMMA')}">Rp 0
+                            </p>
+                            <p class="product-quantity" th:text="'Quantity: ' + ${item.quantity}">Quantity: 1</p>
+                            <!-- Note: CartItem doesn't store size/color explicitly in some versions, check Entity -->
+                        </div>
+                    </div>
+                </div>
+
+                <!-- SHIPPING -->
+                <div class="info-section">
+                    <!-- Using ID shippingSection for JS listener -->
+                    <div class="section-header clickable" id="shippingSection">
+                        <h3 class="section-title">Shipping to</h3>
+                        <div class="section-action">
+                            <div class="text-end" id="selectedAddressContainer">
+                                <span class="address-name d-block fw-bold" id="selectedAddressDisplay">Loading
+                                    Address...</span>
+                                <span class="small text-muted d-block text-truncate" style="max-width: 200px;"
+                                    id="selectedAddressDetails">...</span>
+                            </div>
+                            <i class="fas fa-chevron-right ms-2"></i>
+                        </div>
+                    </div>
+                </div>
+
+                <!-- SUMMARY -->
+                <div class="info-section">
+                    <h3 class="section-title">Subtotal product</h3>
+                    <div class="summary-details">
+                        <div class="summary-row">
+                            <!-- Calculating total quantity in thymeleaf or relying on backend model -->
+                            <span class="summary-label" th:text="${cartItems.size()} + ' Product(s)'">0
+                                Product(s)</span>
+                            <span class="summary-value"
+                                th:text="'Rp ' + ${#numbers.formatDecimal(subtotal, 0, 'POINT', 0, 'COMMA')}">Rp
+                                0</span>
+                        </div>
+                        <div class="summary-row">
+                            <span class="summary-label">Shipping fee</span>
+                            <span class="summary-value"
+                                th:text="${shippingCost == 0 ? 'Free Shipping' : 'Rp ' + #numbers.formatDecimal(shippingCost, 0, 'POINT', 0, 'COMMA')}">Rp
+                                0</span>
+                        </div>
+                        <div class="summary-row total-row">
+                            <span class="summary-label">Total</span>
+                            <span class="summary-value"
+                                th:text="'Rp ' + ${#numbers.formatDecimal(total, 0, 'POINT', 0, 'COMMA')}">Rp 0</span>
+                        </div>
+                    </div>
+                </div>
+
+                <!-- PAYMENT -->
+                <div class="info-section">
+                    <!-- Using ID paymentSection for JS listener -->
+                    <div class="section-header clickable" id="paymentSection">
+                        <h3 class="section-title">Payment method</h3>
+                        <div class="section-action">
+                            <span class="payment-method" id="selectedPaymentDisplay">Cash on Delivery</span>
+                            <i class="fas fa-chevron-right"></i>
+                        </div>
+                    </div>
+                </div>
+
+            </div>
+        </div>
+
+        <!-- FOOTER CHECKOUT -->
+        <div class="checkout-footer">
+            <div class="container">
+                <div class="checkout-content">
+                    <div class="total-price">
+                        <span class="total-amount"
+                            th:text="'Rp ' + ${#numbers.formatDecimal(total, 0, 'POINT', 0, 'COMMA')}">Rp 0</span>
+                    </div>
+                    <button type="submit" class="checkout-btn" id="realCheckoutBtn">Check Out</button>
+                </div>
+            </div>
+        </div>
+    </form>
+
+    <!-- BOOTSTRAP -->
+    <script src="https://cdn.jsdelivr.net/npm/bootstrap@5.3.0/dist/js/bootstrap.bundle.min.js"></script>
+
+    <!-- Scripts -->
+    <script th:src="@{/js/navbar.js}"></script>
+    <script th:src="@{/js/detailorder.js}"></script>
+
+    <script th:inline="javascript">
+        /*<![CDATA[*/
+        // Route mapping for JS
+        window.ROUTE_SHIPPING = /*[[@{/profile/address}]]*/ '/profile/address';
+        window.ROUTE_PAYMENT_METHOD = /*[[@{/checkout/payment-method}]]*/ '/checkout/payment-method';
+
+        // Pre-populate if primary address exists in model, acts as fallback/default
+        /*
+        document.addEventListener('DOMContentLoaded', () => {
+             const hasSaved = localStorage.getItem('selectedAddressData');
+             if (!hasSaved) {
+                 // Logic to use first address from Thymeleaf model if available
+                 // But detailorder.js relies heavily on localStorage.
+                 // Ideally we should push server-side default to localStorage if empty?
+             }
+        });
+        */
+        /*]]>*/
+    </script>
+
+</body>
+
+</html>

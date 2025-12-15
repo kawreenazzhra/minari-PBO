@@ -13,3 +13,38 @@ org.h2.jdbc.JdbcSQLSyntaxErrorException: Syntax error in SQL statement "\000d\00
 
     alter table if exists order_items 
        alter column return_status set data type VARCHAR(20) DEFAULT 'NONE' [42000-224]
+2025-12-15 07:53:02.754991+07:00 jdbc[3]: exception
+org.h2.jdbc.JdbcSQLSyntaxErrorException: Syntax error in SQL statement "\000d\000a    alter table if exists order_items \000d\000a       alter column return_status set data type VARCHAR(20) [*]DEFAULT 'NONE'"; SQL statement:
+
+    alter table if exists order_items 
+       alter column return_status set data type VARCHAR(20) DEFAULT 'NONE' [42000-224]
+2025-12-15 07:53:34.532424+07:00 jdbc[3]: exception
+org.h2.jdbc.JdbcSQLSyntaxErrorException: Syntax error in SQL statement "\000d\000a    alter table if exists order_items \000d\000a       alter column return_status set data type VARCHAR(20) [*]DEFAULT 'NONE'"; SQL statement:
+
+    alter table if exists order_items 
+       alter column return_status set data type VARCHAR(20) DEFAULT 'NONE' [42000-224]
+2025-12-15 07:58:24.955081+07:00 jdbc[3]: exception
+org.h2.jdbc.JdbcSQLSyntaxErrorException: Syntax error in SQL statement "\000d\000a    alter table if exists order_items \000d\000a       alter column return_status set data type VARCHAR(20) [*]DEFAULT 'NONE'"; SQL statement:
+
+    alter table if exists order_items 
+       alter column return_status set data type VARCHAR(20) DEFAULT 'NONE' [42000-224]
+2025-12-15 08:08:21.765692+07:00 jdbc[3]: exception
+org.h2.jdbc.JdbcSQLSyntaxErrorException: Syntax error in SQL statement "\000d\000a    alter table if exists order_items \000d\000a       alter column return_status set data type VARCHAR(20) [*]DEFAULT 'NONE'"; SQL statement:
+
+    alter table if exists order_items 
+       alter column return_status set data type VARCHAR(20) DEFAULT 'NONE' [42000-224]
+2025-12-15 08:44:02.083439+07:00 jdbc[3]: exception
+org.h2.jdbc.JdbcSQLSyntaxErrorException: Syntax error in SQL statement "\000d\000a    alter table if exists order_items \000d\000a       alter column return_status set data type VARCHAR(20) [*]DEFAULT 'NONE'"; SQL statement:
+
+    alter table if exists order_items 
+       alter column return_status set data type VARCHAR(20) DEFAULT 'NONE' [42000-224]
+2025-12-15 08:44:33.781200+07:00 jdbc[3]: exception
+org.h2.jdbc.JdbcSQLSyntaxErrorException: Syntax error in SQL statement "\000d\000a    alter table if exists order_items \000d\000a       alter column return_status set data type VARCHAR(20) [*]DEFAULT 'NONE'"; SQL statement:
+
+    alter table if exists order_items 
+       alter column return_status set data type VARCHAR(20) DEFAULT 'NONE' [42000-224]
+2025-12-15 08:46:56.212859+07:00 jdbc[3]: exception
+org.h2.jdbc.JdbcSQLSyntaxErrorException: Syntax error in SQL statement "\000d\000a    alter table if exists order_items \000d\000a       alter column return_status set data type VARCHAR(20) [*]DEFAULT 'NONE'"; SQL statement:
+
+    alter table if exists order_items 
+       alter column return_status set data type VARCHAR(20) DEFAULT 'NONE' [42000-224]

@@ -1,492 +1,126 @@
 <!DOCTYPE html>
-<html xmlns:th="http://www.thymeleaf.org"
-      xmlns:layout="http://www.thymeleaf.org"
-      layout:decorate="~{admin/layout}">
+<html lang="en" xmlns:th="http://www.thymeleaf.org">
+
 <head>
-    <title>Customer Management - MINARI Admin</title>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>MINARI - Customers</title>
+    <link href="https://cdn.jsdelivr.net/npm/bootstrap@5.3.0/dist/css/bootstrap.min.css" rel="stylesheet">
+    <link
+        href="https://fonts.googleapis.com/css2?family=Playfair+Display:wght@700&family=Poppins:wght@400;500;600&display=swap"
+        rel="stylesheet">
+    <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.4.0/css/all.min.css">
+    <link rel="stylesheet" th:href="@{/css/style1.css}">
 </head>
+
 <body>
-    <div layout:fragment="content">
-        <!-- Page Header -->
+    <!-- Navbar placeholder -->
+
+    <div class="sidebar">
+        <a th:href="@{/admin/dashboard}" class="sidebar-item">
+            <i class="fas fa-table-columns"></i>
+            <span>Dashboard</span>
+        </a>
+        <a th:href="@{/admin/products}" class="sidebar-item">
+            <i class="fas fa-box"></i>
+            <span>Product</span>
+        </a>
+        <a th:href="@{/admin/categories}" class="sidebar-item">
+            <i class="fas fa-layer-group"></i>
+            <span>Categories</span>
+        </a>
+        <a th:href="@{/admin/orders}" class="sidebar-item">
+            <i class="fas fa-file-invoice"></i>
+            <span>Orders</span>
+        </a>
+        <a th:href="@{/admin/customers}" class="sidebar-item active">
+            <i class="fas fa-users"></i>
+            <span>Customers</span>
+        </a>
+        <a th:href="@{/admin/reviews}" class="sidebar-item">
+            <i class="fas fa-thumbs-up"></i>
+            <span>Review</span>
+        </a>
+        <a th:href="@{/admin/promotions}" class="sidebar-item">
+            <i class="fas fa-ad"></i>
+            <span>Promotions</span>
+        </a>
+    </div>
+
+    <div class="main-content">
         <div class="d-flex justify-content-between align-items-center mb-4">
-            <div>
-                <h1 class="h3 mb-0">Customer Management</h1>
-                <nav aria-label="breadcrumb">
-                    <ol class="breadcrumb">
-                        <li class="breadcrumb-item"><a href="/admin/dashboard">Dashboard</a></li>
-                        <li class="breadcrumb-item active">Customers</li>
-                    </ol>
-                </nav>
-            </div>
+            <h2 class="page-title">Customers</h2>
         </div>
 
-        <!-- Statistics Cards -->
-        <div class="row mb-4">
-            <div class="col-xl-3 col-md-6 mb-4">
-                <div class="card border-left-primary shadow h-100 py-2">
-                    <div class="card-body">
-                        <div class="row no-gutters align-items-center">
-                            <div class="col mr-2">
-                                <div class="text-xs font-weight-bold text-primary text-uppercase mb-1">
-                                    Total Customers</div>
-                                <div class="h5 mb-0 font-weight-bold text-gray-800" th:text="${totalCustomers}">0</div>
-                            </div>
-                            <div class="col-auto">
-                                <i class="fas fa-users fa-2x text-gray-300"></i>
-                            </div>
-                        </div>
-                    </div>
-                </div>
-            </div>
-
-            <div class="col-xl-3 col-md-6 mb-4">
-                <div class="card border-left-success shadow h-100 py-2">
-                    <div class="card-body">
-                        <div class="row no-gutters align-items-center">
-                            <div class="col mr-2">
-                                <div class="text-xs font-weight-bold text-success text-uppercase mb-1">
-                                    Active Customers</div>
-                                <div class="h5 mb-0 font-weight-bold text-gray-800" th:text="${activeCustomers}">0</div>
-                            </div>
-                            <div class="col-auto">
-                                <i class="fas fa-user-check fa-2x text-gray-300"></i>
-                            </div>
-                        </div>
-                    </div>
-                </div>
-            </div>
-
-            <div class="col-xl-3 col-md-6 mb-4">
-                <div class="card border-left-info shadow h-100 py-2">
-                    <div class="card-body">
-                        <div class="row no-gutters align-items-center">
-                            <div class="col mr-2">
-                                <div class="text-xs font-weight-bold text-info text-uppercase mb-1">
-                                    New This Month</div>
-                                <div class="h5 mb-0 font-weight-bold text-gray-800" th:text="${newCustomersThisMonth}">0</div>
-                            </div>
-                            <div class="col-auto">
-                                <i class="fas fa-user-plus fa-2x text-gray-300"></i>
-                            </div>
-                        </div>
-                    </div>
-                </div>
-            </div>
-
-            <div class="col-xl-3 col-md-6 mb-4">
-                <div class="card border-left-warning shadow h-100 py-2">
-                    <div class="card-body">
-                        <div class="row no-gutters align-items-center">
-                            <div class="col mr-2">
-                                <div class="text-xs font-weight-bold text-warning text-uppercase mb-1">
-                                    Avg. Order Value</div>
-                                <div class="h5 mb-0 font-weight-bold text-gray-800" th:text="'Rp ' + ${avgOrderValue}">Rp 0</div>
-                            </div>
-                            <div class="col-auto">
-                                <i class="fas fa-dollar-sign fa-2x text-gray-300"></i>
-                            </div>
-                        </div>
-                    </div>
-                </div>
-            </div>
+        <div class="filter-section">
+            <input type="text" class="search-box" placeholder="Search customers...">
+            <button class="filter-btn active">All Customers</button>
         </div>
 
-        <!-- Filters and Search -->
-        <div class="card mb-4">
-            <div class="card-body">
-                <div class="row g-3">
-                    <div class="col-md-4">
-                        <input type="text" class="form-control" id="searchInput" placeholder="Search customers by name or email...">
-                    </div>
-                    <div class="col-md-2">
-                        <select class="form-select" id="statusFilter">
-                            <option value="">All Status</option>
-                            <option value="ACTIVE">Active</option>
-                            <option value="INACTIVE">Inactive</option>
-                            <option value="SUSPENDED">Suspended</option>
-                        </select>
-                    </div>
-                    <div class="col-md-2">
-                        <input type="date" class="form-control" id="dateFrom" placeholder="Registration from">
-                    </div>
-                    <div class="col-md-2">
-                        <input type="date" class="form-control" id="dateTo" placeholder="Registration to">
-                    </div>
-                    <div class="col-md-2">
-                        <div class="d-flex gap-2">
-                            <button class="btn btn-outline-primary" onclick="applyFilters()">
-                                <i class="fas fa-search me-2"></i>Search
-                            </button>
-                            <button class="btn btn-outline-secondary" onclick="resetFilters()">
-                                <i class="fas fa-undo me-2"></i>Reset
-                            </button>
-                        </div>
-                    </div>
-                </div>
-            </div>
+        <div class="table-custom">
+            <table class="table mb-0">
+                <thead>
+                    <tr>
+                        <th>Customer Name</th>
+                        <th>Email</th>
+                        <th>Phone</th>
+                        <th>Orders</th>
+                        <th>Total Spent</th>
+                        <th>Status Limit</th>
+                    </tr>
+                </thead>
+                <tbody>
+                    <tr th:each="customer : ${customers}">
+                        <td th:text="${customer.fullName}">Customer Name</td>
+                        <td th:text="${customer.email}">Email</td>
+                        <td th:text="${customer.phone != null ? customer.phone : '-'}">Phone</td>
+                        <!-- Using safe navigation or DTO fields -->
+                        <td
+                            th:text="${customer instanceof T(com.minari.ecommerce.entity.RegisteredCustomer) ? customer.totalOrders : (customer.orders != null ? customer.orders.size() : 0)}">
+                            0</td>
+                        <td
+                            th:text="${customer instanceof T(com.minari.ecommerce.entity.RegisteredCustomer) ? #numbers.formatCurrency(customer.totalSpent) : (customer.orders != null ? #numbers.formatCurrency(customer.orders.stream().map(T(com.minari.ecommerce.entity.Order).totalAmount).reduce(0, (a, b) -> a + b)) : 0)}">
+                            Rp 0</td>
+
+                        <td>
+                            <span
+                                th:if="${(customer instanceof T(com.minari.ecommerce.entity.RegisteredCustomer) ? customer.totalOrders : (customer.orders != null ? customer.orders.size() : 0)) > 0}"
+                                class="badge-status badge-active">Active</span>
+                            <span
+                                th:unless="${(customer instanceof T(com.minari.ecommerce.entity.RegisteredCustomer) ? customer.totalOrders : (customer.orders != null ? customer.orders.size() : 0)) > 0}"
+                                class="badge-status badge-pending">New</span>
+                        </td>
+                    </tr>
+                    <tr th:if="${customers == null or customers.isEmpty()}">
+                        <td colspan="6" class="text-center py-4">No customers found.</td>
+                    </tr>
+                </tbody>
+            </table>
         </div>
 
-        <!-- Customers Table -->
-        <div class="card">
-            <div class="card-header">
-                <h6 class="mb-0">Customers (<span id="customerCount" th:text="${customers.totalElements}">0</span>)</h6>
-            </div>
-            <div class="card-body p-0">
-                <div class="table-responsive">
-                    <table class="table table-hover mb-0">
-                        <thead class="table-light">
-                            <tr>
-                                <th>Customer</th>
-                                <th>Contact</th>
-                                <th>Registration Date</th>
-                                <th>Status</th>
-                                <th>Orders</th>
-                                <th>Total Spent</th>
-                                <th>Last Order</th>
-                                <th>Actions</th>
-                            </tr>
-                        </thead>
-                        <tbody id="customersTableBody">
-                            <tr th:each="customer : ${customers.content}">
-                                <td>
-                                    <div class="d-flex align-items-center">
-                                        <div class="avatar-circle me-3" style="width: 40px; height: 40px; border-radius: 50%; background-color: #e3f2fd; display: flex; align-items: center; justify-content: center;">
-                                            <i class="fas fa-user text-primary"></i>
-                                        </div>
-                                        <div>
-                                            <div class="fw-bold" th:text="${customer.firstName + ' ' + customer.lastName}">Customer Name</div>
-                                            <small class="text-muted">ID: <span th:text="${customer.id}">#12345</span></small>
-                                        </div>
-                                    </div>
-                                </td>
-                                <td>
-                                    <div th:text="${customer.email}">email@example.com</div>
-                                    <small class="text-muted" th:if="${customer.phone}" th:text="${customer.phone}">+62 812-3456-7890</small>
-                                </td>
-                                <td th:text="${#temporals.format(customer.createdAt, 'dd MMM yyyy')}">01 Jan 2024</td>
-                                <td>
-                                    <select class="form-select form-select-sm status-select"
-                                            th:value="${customer.accountStatus}"
-                                            th:onchange="'updateCustomerStatus(' + ${customer.id} + ', this.value)'">
-                                        <option value="ACTIVE" th:selected="${customer.accountStatus == 'ACTIVE'}">Active</option>
-                                        <option value="INACTIVE" th:selected="${customer.accountStatus == 'INACTIVE'}">Inactive</option>
-                                        <option value="SUSPENDED" th:selected="${customer.accountStatus == 'SUSPENDED'}">Suspended</option>
-                                    </select>
-                                </td>
-                                <td>
-                                    <span class="badge bg-primary" th:text="${customer.orderCount}">0</span>
-                                </td>
-                                <td th:text="'Rp ' + ${customer.totalSpent}">Rp 0</td>
-                                <td>
-                                    <span th:if="${customer.lastOrderDate}" th:text="${#temporals.format(customer.lastOrderDate, 'dd MMM yyyy')}">Never</span>
-                                    <span th:unless="${customer.lastOrderDate}" class="text-muted">Never</span>
-                                </td>
-                                <td>
-                                    <div class="btn-group" role="group">
-                                        <button class="btn btn-sm btn-outline-primary" th:onclick="'viewCustomer(' + ${customer.id} + ')'">
-                                            <i class="fas fa-eye"></i>
-                                        </button>
-                                        <button class="btn btn-sm btn-outline-secondary" th:onclick="'editCustomer(' + ${customer.id} + ')'">
-                                            <i class="fas fa-edit"></i>
-                                        </button>
-                                        <div class="dropdown">
-                                            <button class="btn btn-sm btn-outline-secondary dropdown-toggle" type="button" data-bs-toggle="dropdown">
-                                                <i class="fas fa-ellipsis-v"></i>
-                                            </button>
-                                            <ul class="dropdown-menu">
-                                                <li><a class="dropdown-item" th:href="@{/admin/customers/{id}/orders(id=${customer.id})}">
-                                                    <i class="fas fa-shopping-cart me-2"></i>View Orders</a></li>
-                                                <li><a class="dropdown-item" href="#" th:onclick="'sendEmail(' + ${customer.id} + ')'">
-                                                    <i class="fas fa-envelope me-2"></i>Send Email</a></li>
-                                                <li><hr class="dropdown-divider"></li>
-                                                <li><a class="dropdown-item text-danger" href="#" th:onclick="'deleteCustomer(' + ${customer.id} + ')'">
-                                                    <i class="fas fa-trash me-2"></i>Delete</a></li>
-                                            </ul>
-                                        </div>
-                                    </div>
-                                </td>
-                            </tr>
-                        </tbody>
-                    </table>
-                </div>
-            </div>
-        </div>
-
-        <!-- Pagination -->
-        <div class="d-flex justify-content-center mt-4" th:if="${customers.totalPages > 1}">
-            <nav aria-label="Customer pagination">
-                <ul class="pagination">
-                    <li class="page-item" th:classappend="${customers.first ? 'disabled' : ''}">
-                        <a class="page-link" href="#" th:href="@{/admin/customers(page=${customers.number - 1})}">Previous</a>
-                    </li>
-                    <li class="page-item" th:each="i : ${#numbers.sequence(0, customers.totalPages - 1)}"
-                        th:classappend="${i == customers.number ? 'active' : ''}">
-                        <a class="page-link" href="#" th:href="@{/admin/customers(page=${i})}" th:text="${i + 1}">1</a>
-                    </li>
-                    <li class="page-item" th:classappend="${customers.last ? 'disabled' : ''}">
-                        <a class="page-link" href="#" th:href="@{/admin/customers(page=${customers.number + 1})}">Next</a>
-                    </li>
-                </ul>
-            </nav>
+        <div class="d-flex justify-content-center mt-4">
+            <!-- Pagination -->
         </div>
     </div>
 
-    <!-- Customer Detail Modal -->
-    <div class="modal fade" id="customerDetailModal" tabindex="-1">
-        <div class="modal-dialog modal-xl">
-            <div class="modal-content">
-                <div class="modal-header">
-                    <h5 class="modal-title">Customer Details</h5>
-                    <button type="button" class="btn-close" data-bs-dismiss="modal"></button>
-                </div>
-                <div class="modal-body" id="customerDetailContent">
-                    <!-- Customer details will be loaded here -->
+    <footer>
+        <div class="container">
+            <div class="row align-items-center">
+                <div class="col-md-6">
+                    <div class="logo">
+                        <img th:src="@{/images/logofix.png}" alt="Logo MINARI" style="height: 40px; width: auto;">
+                    </div>
+                    <p>Your everyday fashion boutique</p>
                 </div>
             </div>
-        </div>
-    </div>
-
-    <!-- Edit Customer Modal -->
-    <div class="modal fade" id="editCustomerModal" tabindex="-1">
-        <div class="modal-dialog modal-lg">
-            <div class="modal-content">
-                <div class="modal-header">
-                    <h5 class="modal-title">Edit Customer</h5>
-                    <button type="button" class="btn-close" data-bs-dismiss="modal"></button>
-                </div>
-                <form id="editCustomerForm">
-                    <div class="modal-body">
-                        <div class="row">
-                            <div class="col-md-6 mb-3">
-                                <label for="editFirstName" class="form-label">First Name</label>
-                                <input type="text" class="form-control" id="editFirstName" name="firstName" required>
-                            </div>
-                            <div class="col-md-6 mb-3">
-                                <label for="editLastName" class="form-label">Last Name</label>
-                                <input type="text" class="form-control" id="editLastName" name="lastName" required>
-                            </div>
-                        </div>
-                        <div class="mb-3">
-                            <label for="editEmail" class="form-label">Email</label>
-                            <input type="email" class="form-control" id="editEmail" name="email" required>
-                        </div>
-                        <div class="mb-3">
-                            <label for="editPhone" class="form-label">Phone</label>
-                            <input type="tel" class="form-control" id="editPhone" name="phone">
-                        </div>
-                        <div class="mb-3">
-                            <label for="editStatus" class="form-label">Status</label>
-                            <select class="form-select" id="editStatus" name="accountStatus">
-                                <option value="ACTIVE">Active</option>
-                                <option value="INACTIVE">Inactive</option>
-                                <option value="SUSPENDED">Suspended</option>
-                            </select>
-                        </div>
-                    </div>
-                    <div class="modal-footer">
-                        <button type="button" class="btn btn-secondary" data-bs-dismiss="modal">Cancel</button>
-                        <button type="submit" class="btn btn-primary">Save Changes</button>
-                    </div>
-                </form>
+            <div class="footer-divider"></div>
+            <div class="copyright">
+                © 2025 MINARI. All Rights Reserved.
             </div>
         </div>
-    </div>
-
-    <div layout:fragment="scripts">
-        <script>
-            // Update customer status
-            function updateCustomerStatus(customerId, newStatus) {
-                fetch('/admin/customers/' + customerId + '/status', {
-                    method: 'POST',
-                    headers: {
-                        'Content-Type': 'application/json',
-                    },
-                    body: JSON.stringify({ status: newStatus })
-                })
-                .then(response => response.json())
-                .then(data => {
-                    if (data.success) {
-                        showAlert('Customer status updated successfully', 'success');
-                    } else {
-                        showAlert('Failed to update customer status', 'danger');
-                        location.reload();
-                    }
-                })
-                .catch(error => {
-                    console.error('Error:', error);
-                    showAlert('An error occurred', 'danger');
-                    location.reload();
-                });
-            }
-
-            // View customer details
-            function viewCustomer(customerId) {
-                fetch('/admin/customers/' + customerId)
-                .then(response => response.text())
-                .then(html => {
-                    document.getElementById('customerDetailContent').innerHTML = html;
-                    new bootstrap.Modal(document.getElementById('customerDetailModal')).show();
-                })
-                .catch(error => {
-                    console.error('Error:', error);
-                    showAlert('Failed to load customer details', 'danger');
-                });
-            }
-
-            // Edit customer
-            function editCustomer(customerId) {
-                fetch('/admin/customers/' + customerId + '/edit')
-                .then(response => response.json())
-                .then(customer => {
-                    document.getElementById('editFirstName').value = customer.firstName;
-                    document.getElementById('editLastName').value = customer.lastName;
-                    document.getElementById('editEmail').value = customer.email;
-                    document.getElementById('editPhone').value = customer.phone || '';
-                    document.getElementById('editStatus').value = customer.accountStatus;
-
-                    const form = document.getElementById('editCustomerForm');
-                    form.onsubmit = function(e) {
-                        e.preventDefault();
-                        saveCustomer(customerId);
-                    };
-
-                    new bootstrap.Modal(document.getElementById('editCustomerModal')).show();
-                })
-                .catch(error => {
-                    console.error('Error:', error);
-                    showAlert('Failed to load customer data', 'danger');
-                });
-            }
-
-            // Save customer changes
-            function saveCustomer(customerId) {
-                const formData = new FormData(document.getElementById('editCustomerForm'));
-                const customerData = Object.fromEntries(formData);
-
-                fetch('/admin/customers/' + customerId, {
-                    method: 'PUT',
-                    headers: {
-                        'Content-Type': 'application/json',
-                    },
-                    body: JSON.stringify(customerData)
-                })
-                .then(response => response.json())
-                .then(data => {
-                    if (data.success) {
-                        bootstrap.Modal.getInstance(document.getElementById('editCustomerModal')).hide();
-                        showAlert('Customer updated successfully', 'success');
-                        setTimeout(() => location.reload(), 1000);
-                    } else {
-                        showAlert('Failed to update customer', 'danger');
-                    }
-                })
-                .catch(error => {
-                    console.error('Error:', error);
-                    showAlert('An error occurred', 'danger');
-                });
-            }
-
-            // Send email to customer
-            function sendEmail(customerId) {
-                const subject = prompt('Enter email subject:');
-                if (subject) {
-                    const message = prompt('Enter email message:');
-                    if (message) {
-                        fetch('/admin/customers/' + customerId + '/email', {
-                            method: 'POST',
-                            headers: {
-                                'Content-Type': 'application/json',
-                            },
-                            body: JSON.stringify({ subject, message })
-                        })
-                        .then(response => response.json())
-                        .then(data => {
-                            if (data.success) {
-                                showAlert('Email sent successfully', 'success');
-                            } else {
-                                showAlert('Failed to send email', 'danger');
-                            }
-                        })
-                        .catch(error => {
-                            console.error('Error:', error);
-                            showAlert('An error occurred', 'danger');
-                        });
-                    }
-                }
-            }
-
-            // Delete customer
-            function deleteCustomer(customerId) {
-                if (confirm('Are you sure you want to delete this customer? This action cannot be undone.')) {
-                    fetch('/admin/customers/' + customerId, {
-                        method: 'DELETE'
-                    })
-                    .then(response => response.json())
-                    .then(data => {
-                        if (data.success) {
-                            showAlert('Customer deleted successfully', 'success');
-                            setTimeout(() => location.reload(), 1000);
-                        } else {
-                            showAlert('Failed to delete customer', 'danger');
-                        }
-                    })
-                    .catch(error => {
-                        console.error('Error:', error);
-                        showAlert('An error occurred', 'danger');
-                    });
-                }
-            }
-
-            // Filters and search
-            function applyFilters() {
-                const search = document.getElementById('searchInput').value;
-                const status = document.getElementById('statusFilter').value;
-                const dateFrom = document.getElementById('dateFrom').value;
-                const dateTo = document.getElementById('dateTo').value;
-
-                const params = new URLSearchParams();
-                if (search) params.set('search', search);
-                if (status) params.set('status', status);
-                if (dateFrom) params.set('dateFrom', dateFrom);
-                if (dateTo) params.set('dateTo', dateTo);
-
-                window.location.href = '/admin/customers?' + params.toString();
-            }
-
-            function resetFilters() {
-                window.location.href = '/admin/customers';
-            }
-
-            // Alert function
-            function showAlert(message, type) {
-                const alertHtml = `
-                    <div class="alert alert-${type} alert-dismissible fade show position-fixed" role="alert"
-                         style="top: 20px; right: 20px; z-index: 9999; min-width: 300px;">
-                        <i class="fas fa-${type === 'success' ? 'check-circle' : 'exclamation-triangle'} me-2"></i>
-                        ${message}
-                        <button type="button" class="btn-close" data-bs-dismiss="alert"></button>
-                    </div>
-                `;
-                document.body.insertAdjacentHTML('beforeend', alertHtml);
-
-                setTimeout(() => {
-                    const alert = document.querySelector('.alert');
-                    if (alert) {
-                        alert.remove();
-                    }
-                }, 3000);
-            }
-
-            // Initialize filters from URL params
-            document.addEventListener('DOMContentLoaded', function() {
-                const urlParams = new URLSearchParams(window.location.search);
-                document.getElementById('searchInput').value = urlParams.get('search') || '';
-                document.getElementById('statusFilter').value = urlParams.get('status') || '';
-                document.getElementById('dateFrom').value = urlParams.get('dateFrom') || '';
-                document.getElementById('dateTo').value = urlParams.get('dateTo') || '';
-            });
-        </script>
-    </div>
+    </footer>
+    <script src="https://cdn.jsdelivr.net/npm/bootstrap@5.3.0/dist/js/bootstrap.bundle.min.js"></script>
+    <script th:src="@{/js/navigation.js}"></script>
 </body>
-</html>
 
+</html>

@@ -1,0 +1,170 @@
+
+/* wrapper */
+.account-wrapper{
+  padding: 12px 0 24px;
+}
+
+/* card */
+.account-card{
+  max-width: 820px;
+  border: none;
+  background: var(--panel-bg);
+  box-shadow: 0 6px 18px rgba(0,0,0,.06);
+  border-radius: 12px;
+}
+
+/* user icon circle */
+.user-circle{
+  width: 72px; height: 72px;
+  border-radius: 50%;
+  background: #fff;
+  border: 1px solid #E8D8D3;
+  display: grid; place-items: center;
+}
+.user-emoji{ font-size: 32px; }
+
+/* fields */
+.acc-field{ margin-bottom: 22px; }
+.acc-label{
+  font-family: 'Playfair Display', serif;
+  letter-spacing: .04em;
+  font-size: 14px;
+  color: var(--ink);
+}
+.acc-value{
+  font-size: 15px;
+  color: var(--ink);
+}
+
+/* add address */
+.acc-add-address{
+  display: inline-block;
+  margin-top: 2px;
+  font-size: 13px;
+  color: var(--ink);
+  text-decoration: underline;
+  text-underline-offset: 3px;
+}
+.acc-add-address:hover{ color: var(--muted); }
+
+/* primary button (black like mockup) */
+.btn-account{
+  background: #000;
+  color: #fff;
+  border-radius: 10px;
+  height: 46px;
+  font-weight: 700;
+  letter-spacing: .02em;
+  border: 1px solid #000;
+  transition: transform .08s ease, opacity .2s ease;
+}
+.btn-account:hover{ opacity: .92; }
+.btn-account:active{ transform: scale(.99); }
+
+/* Footer */
+footer {
+    background: #D9AF9C;
+    margin-top: 10px;
+    padding: 15px 0;
+}
+
+footer .container {
+    padding: 0 15px;
+}
+
+footer .logo {
+    font-size: 20px;
+    color: #FFF3CC;
+    display: flex;
+    align-items: center;
+    gap: 10px;
+    margin-top: 0;
+}
+
+footer .logo-img {
+    height: 35px;
+    width: auto;
+    filter: brightness(0) invert(1);
+}
+
+footer p {
+    color: #FFF3CC;
+    margin-top: 5px;
+    font-size: 12px;
+}
+
+/* Footer Form Right Alignment */
+footer .text-end.input-end {
+    text-align: right;
+    display: flex;
+    flex-direction: column;
+    align-items: flex-end;
+}
+
+footer .text-end.input-end p {
+    text-align: right;
+    margin-bottom: 10px;
+    width: 100%;
+}
+
+footer .text-end .footer-form {
+    display: flex;
+    justify-content: flex-end;
+    gap: 8px;
+    align-items: center;
+    width: 100%;
+}
+
+footer .text-end .footer-form input {
+    background: #FFFFFF;
+    border: 2px solid #FFF3CC;
+    border-radius: 6px;
+    padding: 6px 12px;
+    width: 200px;
+    font-size: 12px;
+    text-align: left;
+    transition: all 0.3s;
+}
+
+footer .text-end .footer-form input:focus {
+    outline: none;
+    border-color: #FBAF99;
+}
+
+footer .text-end .footer-form button {
+    background: #FBAF99;
+    border: 2px solid #FFFFFF;
+    border-radius: 6px;
+    padding: 6px 15px;
+    color: #1E1E1E;
+    font-size: 12px;
+    cursor: pointer;
+    transition: all 0.3s;
+    font-weight: 500;
+    white-space: nowrap;
+}
+
+footer .text-end .footer-form button:hover {
+    background: #F99D84;
+    transform: translateY(-2px);
+}
+
+.footer-divider {
+    border-top: 1px solid #FFF3CC;
+    margin: 10px 0;
+    opacity: 0.6;
+}
+
+.copyright {
+    text-align: center;
+    color: #FFF3CC;
+    opacity: 0.8;
+    font-size: 12px;
+    margin-top: 5px;
+}
+
+/* responsive */
+@media (max-width: 576px){
+  .card-body{ padding: 24px !important; }
+}
+

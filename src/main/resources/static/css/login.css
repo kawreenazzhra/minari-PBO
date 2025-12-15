@@ -1,0 +1,233 @@
+body {
+  margin: 0;
+  font-family: 'Poppins', sans-serif;
+  background-color: #ffffff;
+  background-image: url('/images/image_2025-11-09_18-53-51.png'); /* ganti sesuai file kamu */
+  background-size: cover;
+  background-repeat: no-repeat;
+  background-position: center;
+  background-attachment: fixed; /* biar gambar tetap saat scroll */
+  min-height: 100vh;
+}
+
+/* Navbar */
+.navbar {
+  background-color: #FFF6F0 !important;
+  box-shadow: 0 4px 10px rgba(0, 0, 0, 0.15);
+}
+
+.navbar.scrolled {
+  transition: background-color 0.4s ease, box-shadow 0.4s ease;
+  background-color: transparent !important;
+  box-shadow: none;
+}
+
+
+.navbar-brand img {
+  filter: drop-shadow(0 1px 1px rgba(0,0,0,0.2));
+}
+
+.navbar a img {
+  transition: transform 0.2s ease;
+}
+
+.navbar a img:hover {
+  transform: scale(1.15);
+}
+
+/* Section posisi login lebih ke bawah */
+.login-section {
+  margin-top: 80px; /* jarak dari navbar */
+  display: flex;
+  justify-content: center;
+  align-items: flex-start;
+  padding-top: 60px;
+  padding-bottom: 80px; /* ruang bawah ekstra */
+  min-height: calc(100vh - 70px);
+}
+
+/* Kotak login */
+.login-box {
+  background-color: #fcf9ed;
+  border: 3px solid black;
+  width: 500px;              /* 🔹 dari 340px jadi 380px */
+  padding: 40px; 
+  border-radius: 20px;
+  transition: transform 0.2s ease, box-shadow 0.2s ease;
+}
+
+.login-box:hover {
+  transform: translateY(-3px);
+  box-shadow: 0 8px 20px rgba(0, 0, 0, 0.15);
+}
+
+/* Form input */
+input.form-control {
+  background-color: #ffffff;
+  border: 3px solid #FBAF99;
+  border-radius: 6px;
+  font-size: 14px;
+  height: 42px;             /* 🔹 dari 36px jadi 42px */
+  padding: 8px 12px;  
+}
+
+input.form-control:focus {
+  border-color: #F07260;
+  box-shadow: 0 0 0 0.25rem rgba(240, 114, 96, 0.25);
+}
+
+/* Tombol login */
+.login-btn {
+  background-color: #F8B6A8;
+  color: white;
+  font-weight: 600;
+  border: 3px solid white;
+  border-radius: 8px;
+  height: 38px;
+  transition: background-color 0.3s ease;
+}
+
+.login-btn:hover {
+  background-color: #f39d8c;
+}
+
+/* Tombol Google */
+.google-btn {
+  background-color: #fff;
+  border: 3px solid #FBAF99;
+  color: #333;
+  font-weight: 500;
+  border-radius: 8px;
+  height: 38px;
+  transition: all 0.3s ease;
+}
+
+.google-btn:hover {
+  background-color: white;
+  color: #000;
+}
+
+/* Account dropdown menu */
+:root{
+  --acc-bg:#fff;
+  --acc-text:#1f1f1f;
+  --acc-border:#ececec;
+  --acc-shadow:0 12px 28px rgba(0,0,0,.15);
+  --acc-brand:#FBAF99;
+  --acc-brand-600:#F99D84;
+}
+
+.accmenu{
+  position: fixed;
+  top: 0; left: 0;
+  transform: translate(-9999px,-9999px) scale(.98);
+  opacity: 0;
+  pointer-events: none;
+  background: var(--acc-bg);
+  color: var(--acc-text);
+  border: 1px solid var(--acc-border);
+  border-radius: 12px;
+  box-shadow: var(--acc-shadow);
+  width: 220px;
+  z-index: 2000;
+  padding: 8px 8px 10px 8px;
+}
+
+.accmenu.show{
+  opacity: 1;
+  pointer-events: auto;
+  transform: translate(var(--acc-x,0), var(--acc-y,0)) scale(1);
+  transition: opacity .15s ease, transform .15s ease;
+}
+
+:root{
+  --acc-bg: #FFF6F0;
+  --acc-text: #1f1f1f;
+  --acc-border: #ead9d2;
+  --acc-shadow: 0 12px 28px rgba(0,0,0,.15);
+}
+
+.accmini {
+  position: fixed;
+  top: 70px;          /* sesuaikan jarak dari atas navbar */
+  right: 30px;        /* jarak dari kanan */
+  background: var(--acc-bg);
+  border: 1px solid var(--acc-border);
+  border-radius: 12px;
+  box-shadow: var(--acc-shadow);
+  padding: 14px 12px 12px;
+  z-index: 3000;
+  opacity: 0;
+  pointer-events: none;
+  transform: scale(0.98);
+  transition: opacity 0.2s ease, transform 0.2s ease;
+}
+
+.accmini.show {
+  opacity: 1;
+  pointer-events: auto;
+  transform: scale(1);
+}
+
+
+/* caret */
+.accmini::before{
+  content:"";
+  position:absolute;
+  top:-7px; right:18px;
+  width:12px; height:12px;
+  background: var(--acc-bg);
+  border-left:1px solid var(--acc-border);
+  border-top:1px solid var(--acc-border);
+  transform: rotate(45deg);
+}
+
+.accmini__row{
+  display:flex; align-items:center; gap:8px;
+  margin-bottom:10px;
+}
+
+.accmini__icon{ font-size:16px; opacity:.9; }
+.accmini__name {
+  font-weight: 600;
+  color: #1f1f1f;
+  text-decoration: none;
+  cursor: pointer;
+  transition: color 0.25s ease;
+}
+
+.accmini__name:hover {
+  color: #f99d84; /* warna oranye pastel khas Minari */
+}
+
+/* Tombol Log in / Log out */
+.accmini__btn {
+  display: inline-flex;
+  align-items: center;
+  justify-content: center;
+  width: 100%;
+  height: 36px;
+  background-color: #ffffff;
+  border: 1.5px solid #d9c8c1;      /* warna border lembut */
+  border-radius: 10px;
+  color: #1e1e1e;
+  font-weight: 600;
+  text-decoration: none;
+  font-size: 14px;
+  cursor: pointer;
+  transition: all 0.25s ease;
+  box-shadow: 0 1px 2px rgba(0, 0, 0, 0.05);
+}
+
+.accmini__btn:hover {
+  background-color: #fff9f6;        /* putih sedikit krem */
+  border-color: #f0b8a2;            /* sesuai palet Minari */
+  transform: translateY(-1px);
+  box-shadow: 0 2px 5px rgba(0, 0, 0, 0.08);
+}
+
+.accmini__btn:active {
+  transform: scale(0.98);
+  background-color: #fff2ea;
+  box-shadow: none;
+}

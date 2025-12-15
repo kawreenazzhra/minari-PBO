@@ -1,0 +1,238 @@
+<!DOCTYPE html>
+<html lang="en" xmlns:th="http://www.thymeleaf.org">
+
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>MINARI - Order Details</title>
+    <link href="https://cdn.jsdelivr.net/npm/bootstrap@5.3.0/dist/css/bootstrap.min.css" rel="stylesheet">
+    <link
+        href="https://fonts.googleapis.com/css2?family=Playfair+Display:wght@700&family=Poppins:wght@400;500;600&display=swap"
+        rel="stylesheet">
+    <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.4.0/css/all.min.css">
+    <link rel="stylesheet" th:href="@{/css/style1.css}">
+</head>
+
+<body>
+
+    <div class="sidebar">
+        <a th:href="@{/admin/dashboard}" class="sidebar-item">
+            <i class="fas fa-table-columns"></i>
+            <span>Dashboard</span>
+        </a>
+        <a th:href="@{/admin/products}" class="sidebar-item">
+            <i class="fas fa-box"></i>
+            <span>Product</span>
+        </a>
+        <a th:href="@{/admin/categories}" class="sidebar-item">
+            <i class="fas fa-layer-group"></i>
+            <span>Categories</span>
+        </a>
+        <a th:href="@{/admin/orders}" class="sidebar-item active">
+            <i class="fas fa-file-invoice"></i>
+            <span>Orders</span>
+        </a>
+        <a th:href="@{/admin/customers}" class="sidebar-item">
+            <i class="fas fa-users"></i>
+            <span>Customers</span>
+        </a>
+        <a th:href="@{/admin/reviews}" class="sidebar-item">
+            <i class="fas fa-thumbs-up"></i>
+            <span>Review</span>
+        </a>
+        <a th:href="@{/admin/promotions}" class="sidebar-item">
+            <i class="fas fa-ad"></i>
+            <span>Promotions</span>
+        </a>
+    </div>
+
+    <div class="main-content">
+        <div class="order-detail-header">
+            <div>
+                <a th:href="@{/admin/orders}" class="back-btn">
+                    <i class="fas fa-arrow-left"></i> Back to Orders
+                </a>
+                <h2 class="page-title mt-3" th:text="'Order #' + ${order.orderNumber}">Order #123</h2>
+            </div>
+            <div class="d-flex align-items-center gap-3">
+                <!-- Payment Status Badge -->
+                <span class="order-status-badge"
+                    th:classappend="${order.payment != null && order.payment.status.name() == 'PAID' ? 'status-completed' : 'status-pending'}"
+                    th:text="${order.payment != null ? order.payment.status : 'UNPAID'}">
+                    PAID
+                </span>
+
+                <!-- Order Status Badge -->
+                <span class="order-status-badge" th:classappend="${order.status.name() == 'PENDING' ? 'status-pending' : 
+                                    (order.status.name() == 'PROCESSING' ? 'status-processing' : 
+                                    (order.status.name() == 'SHIPPED' ? 'status-shipped' : 
+                                    (order.status.name() == 'DELIVERED' ? 'status-completed' : 'status-cancelled')))}"
+                    th:text="${order.status}">
+                    PENDING
+                </span>
+                <span class="detail-value"
+                    th:text="${#temporals.format(order.orderDate, 'dd.MM.yyyy HH:mm')}">Date</span>
+            </div>
+        </div>
+
+        <div class="order-detail-grid">
+            <div class="order-detail-card">
+                <h5>Customer Information</h5>
+                <div class="detail-row">
+                    <span class="detail-label">Customer</span>
+                    <span class="detail-value" th:text="${order.customer.fullName}">Name</span>
+                </div>
+                <div class="detail-row">
+                    <span class="detail-label">Email</span>
+                    <span class="detail-value" th:text="${order.customer.email}">Email</span>
+                </div>
+                <div class="detail-row">
+                    <span class="detail-label">Phone</span>
+                    <span class="detail-value"
+                        th:text="${order.customer.phoneNumber != null ? order.customer.phoneNumber : '-'}">-</span>
+                </div>
+                <div class="detail-row">
+                    <span class="detail-label">User Type</span>
+                    <span class="detail-value"
+                        th:text="${order.user != null ? 'Registered User' : 'Guest'}">Guest</span>
+                </div>
+            </div>
+
+            <div class="order-detail-card">
+                <h5>Shipping Address</h5>
+                <div class="detail-value">
+                    <span th:if="${order.shippingAddress != null}">
+                        <span th:text="${order.shippingAddress.fullAddress}">Address</span>
+                    </span>
+                    <span th:if="${order.shippingAddress == null}">No shipping address</span>
+                </div>
+            </div>
+        </div>
+
+        <div class="order-detail-card">
+            <h5>Order Items</h5>
+            <div th:each="item : ${order.items}" class="product-item">
+                <div class="product-info">
+                    <div class="product-img">
+                        <img th:if="${item.product != null && item.product.imageUrl != null}"
+                            th:src="@{${item.product.imageUrl}}" th:alt="${item.product.name}">
+                        <div th:if="${item.product == null || item.product.imageUrl == null}"
+                            style="width:60px; height:60px; background:#eee; display:flex; justify-content:center; align-items:center;">
+                            No Img
+                        </div>
+                    </div>
+                    <div>
+                        <div class="product-name"
+                            th:text="${item.product != null ? item.product.name : 'Deleted Product'}">Product Name</div>
+                        <div class="product-category">
+                            <!-- Item variants not explicitly in OrderItem but maybe in product variants or description? 
+                                  Assuming just product name for now or stored in specialized fields if implemented -->
+                            Qty: <span th:text="${item.quantity}">1</span>
+                        </div>
+                    </div>
+                </div>
+                <div class="product-price"
+                    th:text="'Rp ' + ${#numbers.formatDecimal(item.totalPrice, 0, 'POINT', 0, 'COMMA')}">Rp 0</div>
+            </div>
+        </div>
+
+        <div class="order-detail-grid">
+            <div class="order-detail-card">
+                <h5>Delivery Information</h5>
+                <div class="detail-row">
+                    <span class="detail-label">Tracking Number</span>
+                    <span class="detail-value"
+                        th:text="${order.shipment != null ? order.shipment.trackingNumber : '-'}">-</span>
+                </div>
+                <div class="detail-row">
+                    <span class="detail-label">Shipping Cost</span>
+                    <span class="detail-value"
+                        th:text="'Rp ' + ${#numbers.formatDecimal(order.shippingCost, 0, 'POINT', 0, 'COMMA')}">Rp
+                        0</span>
+                </div>
+
+                <div class="mt-4 pt-3 border-top">
+                    <h6>Update Shipping Status</h6>
+                    <form th:action="@{/admin/orders/{id}/status(id=${order.id})}" method="POST" class="mt-2">
+                        <div class="mb-3">
+                            <label class="form-label small">Status</label>
+                            <select name="orderStatus" class="form-select form-select-sm">
+                                <option value="PENDING" th:selected="${order.status.name() == 'PENDING'}">Pending
+                                </option>
+                                <option value="PROCESSING" th:selected="${order.status.name() == 'PROCESSING'}">
+                                    Processing</option>
+                                <option value="SHIPPED" th:selected="${order.status.name() == 'SHIPPED'}">Shipped
+                                </option>
+                                <option value="DELIVERED" th:selected="${order.status.name() == 'DELIVERED'}">Delivered
+                                </option>
+                                <option value="CANCELLED" th:selected="${order.status.name() == 'CANCELLED'}">Cancelled
+                                </option>
+                            </select>
+                        </div>
+                        <div class="mb-3">
+                            <label class="form-label small">Tracking Number (Required for Shipped)</label>
+                            <input type="text" name="trackingNumber" class="form-control form-control-sm"
+                                th:value="${order.shipment != null ? order.shipment.trackingNumber : ''}"
+                                placeholder="Enter receipt number">
+                        </div>
+                        <button type="submit" class="btn btn-dark btn-sm w-100">Update Status</button>
+                    </form>
+                </div>
+            </div>
+
+            <div class="order-detail-card">
+                <h5>Payment Summary</h5>
+                <div class="detail-row">
+                    <span class="detail-label">Subtotal</span>
+                    <span class="detail-value"
+                        th:text="'Rp ' + ${#numbers.formatDecimal(order.subtotalAmount, 0, 'POINT', 0, 'COMMA')}">Rp
+                        0</span>
+                </div>
+                <div class="detail-row">
+                    <span class="detail-label">Delivery</span>
+                    <span class="detail-value"
+                        th:text="'Rp ' + ${#numbers.formatDecimal(order.shippingCost, 0, 'POINT', 0, 'COMMA')}">Rp
+                        0</span>
+                </div>
+                <div class="detail-row">
+                    <span class="detail-label">Discount</span>
+                    <span class="detail-value"
+                        th:text="'- Rp ' + ${#numbers.formatDecimal(order.discountAmount, 0, 'POINT', 0, 'COMMA')}">Rp
+                        0</span>
+                </div>
+                <!-- Tax omitted from blade but field exists in entity. Include if desired -->
+                <div class="detail-row" style="border-top: 2px solid #f0f0f0; font-weight: 600;">
+                    <span class="detail-label">Grand Total</span>
+                    <span class="detail-value"
+                        th:text="'Rp ' + ${#numbers.formatDecimal(order.totalAmount, 0, 'POINT', 0, 'COMMA')}">Rp
+                        0</span>
+                </div>
+            </div>
+        </div>
+
+        <div class="d-flex justify-content-end gap-3 mt-4">
+            <button class="btn-cancel" onclick="window.print()">Print Invoice</button>
+        </div>
+    </div>
+
+    <footer>
+        <div class="container">
+            <div class="row align-items-center">
+                <div class="col-md-6">
+                    <div class="logo">
+                        <img th:src="@{/images/logofix.png}" alt="Logo MINARI" style="height: 40px; width: auto;">
+                    </div>
+                    <p>Your everyday fashion boutique</p>
+                </div>
+            </div>
+            <div class="footer-divider"></div>
+            <div class="copyright">
+                © 2025 MINARI. All Rights Reserved.
+            </div>
+        </div>
+    </footer>
+    <script src="https://cdn.jsdelivr.net/npm/bootstrap@5.3.0/dist/js/bootstrap.bundle.min.js"></script>
+    <script th:src="@{/js/navigation.js}"></script>
+</body>
+
+</html>

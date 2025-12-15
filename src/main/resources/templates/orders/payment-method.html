@@ -1,0 +1,122 @@
+<!DOCTYPE html>
+<html lang="id" xmlns:th="http://www.thymeleaf.org">
+
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>MINARI - Payment Method</title>
+    <!-- Navbar Meta -->
+    <meta name="_csrf" th:content="${_csrf != null ? _csrf.token : ''}" />
+    <meta name="_csrf_header" th:content="${_csrf != null ? _csrf.headerName : ''}" />
+
+    <link href="https://cdn.jsdelivr.net/npm/bootstrap@5.3.0/dist/css/bootstrap.min.css" rel="stylesheet">
+    <link href="https://fonts.googleapis.com/css2?family=Playfair+Display:wght@400;500;600;700&display=swap"
+        rel="stylesheet">
+    <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.4.0/css/all.min.css">
+
+    <link rel="stylesheet" th:href="@{/css/style5.css}">
+    <link rel="stylesheet" th:href="@{/css/navbar.css}">
+
+    <style>
+        .payment-method-item {
+            display: flex;
+            align-items: center;
+            padding: 15px;
+            border: 1px solid #eee;
+            border-radius: 12px;
+            margin-bottom: 12px;
+            cursor: pointer;
+            transition: all 0.3s;
+        }
+
+        .payment-method-item:hover {
+            background-color: #f8f9fa;
+        }
+
+        .payment-method-item.selected {
+            border-color: #F99D84;
+            background-color: #fff9f6;
+        }
+
+        .payment-icon {
+            width: 40px;
+            height: 40px;
+            margin-right: 15px;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            background: #f8f9fa;
+            border-radius: 8px;
+            color: #555;
+        }
+    </style>
+</head>
+
+<body>
+
+    <header id="navMount"></header>
+
+    <div class="back-navigation">
+        <div class="container">
+            <a href="javascript:history.back()" class="back-link">
+                <i class="fas fa-arrow-left"></i>
+                <span>Back to checkout</span>
+            </a>
+        </div>
+    </div>
+
+    <div class="container mt-5 pt-5 mb-5">
+        <div class="row justify-content-center">
+            <div class="col-md-8">
+                <h2 class="mb-4" style="font-family: 'Playfair Display', serif;">Payment Method</h2>
+
+                <div class="payment-method-item" id="codMethod">
+                    <div class="payment-icon">
+                        <i class="fas fa-money-bill-wave"></i>
+                    </div>
+                    <div>
+                        <h5 class="mb-1">Cash on Delivery</h5>
+                        <p class="mb-0 text-muted small">Pay when you receive</p>
+                    </div>
+                </div>
+
+                <div class="payment-method-item" id="virtualMethod">
+                    <div class="payment-icon">
+                        <i class="fas fa-university"></i>
+                    </div>
+                    <div>
+                        <h5 class="mb-1">Virtual Account Transfer</h5>
+                        <p class="mb-0 text-muted small">BCA, Mandiri, BNI, BRI</p>
+                    </div>
+                </div>
+
+                <div class="payment-method-item" id="ewalletMethod">
+                    <div class="payment-icon">
+                        <i class="fas fa-wallet"></i>
+                    </div>
+                    <div>
+                        <h5 class="mb-1">E-Wallet</h5>
+                        <p class="mb-0 text-muted small">GoPay, OVO, Dana</p>
+                    </div>
+                </div>
+
+            </div>
+        </div>
+    </div>
+
+    <script src="https://cdn.jsdelivr.net/npm/bootstrap@5.3.0/dist/js/bootstrap.bundle.min.js"></script>
+    <script th:src="@{/js/navbar.js}"></script>
+    <script th:src="@{/js/paymentmeth.js}"></script>
+
+    <script th:inline="javascript">
+        /*<![CDATA[*/
+        window.APP_ROLE = /*[[${#authorization.expression('isAuthenticated()') ? 'user' : 'guest'}]]*/ 'guest';
+        window.APP_URL = /*[[@{/}]]*/ '/';
+        // Override route for js redirect
+        window.ROUTE_PAYMENT = /*[[@{/checkout}]]*/ '/checkout';
+        /*]]>*/
+    </script>
+
+</body>
+
+</html>
