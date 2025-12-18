@@ -37,6 +37,7 @@ public class AdminController {
     private final FileUploadService fileUploadService;
     private final com.minari.ecommerce.repository.ProductReviewRepository reviewRepository;
     private final com.minari.ecommerce.repository.PromotionRepository promotionRepository;
+    private final com.minari.ecommerce.service.PromotionService promotionService;
 
     public AdminController(DashboardService dashboardService,
             ProductService productService,
@@ -45,7 +46,8 @@ public class AdminController {
             UserRepository userRepository,
             FileUploadService fileUploadService,
             com.minari.ecommerce.repository.ProductReviewRepository reviewRepository,
-            com.minari.ecommerce.repository.PromotionRepository promotionRepository) {
+            com.minari.ecommerce.repository.PromotionRepository promotionRepository,
+            com.minari.ecommerce.service.PromotionService promotionService) {
         this.dashboardService = dashboardService;
         this.productService = productService;
         this.orderService = orderService;
@@ -54,6 +56,7 @@ public class AdminController {
         this.fileUploadService = fileUploadService;
         this.reviewRepository = reviewRepository;
         this.promotionRepository = promotionRepository;
+        this.promotionService = promotionService;
     }
 
     // ... (rest of existing methods, but keeping them as is, only showing
@@ -67,12 +70,14 @@ public class AdminController {
 
     @GetMapping("/promotions")
     public String promotionManagement(Model model) {
+        promotionService.updateExpiredPromotions();
         model.addAttribute("promotions", promotionRepository.findAll());
         return "admin/promotions";
     }
 
     @GetMapping("/promotions/add")
     public String showAddPromotionForm(Model model) {
+        model.addAttribute("categories", catalogService.getAllCategories());
         return "admin/promotions/add";
     }
 
@@ -83,6 +88,9 @@ public class AdminController {
             @RequestParam @DateTimeFormat(iso = DateTimeFormat.ISO.DATE) java.time.LocalDate startDate,
             @RequestParam @DateTimeFormat(iso = DateTimeFormat.ISO.DATE) java.time.LocalDate endDate,
             @RequestParam Boolean isActive,
+            @RequestParam(required = false) Integer usageLimit,
+            @RequestParam(required = false) Double minPurchaseAmount,
+            @RequestParam(required = false) List<Long> categoryIds,
             RedirectAttributes redirectAttributes) {
         try {
             com.minari.ecommerce.entity.Promotion promo = new com.minari.ecommerce.entity.Promotion();
@@ -94,6 +102,12 @@ public class AdminController {
             promo.setStartDate(startDate.atStartOfDay());
             promo.setEndDate(endDate.atTime(23, 59, 59));
             promo.setIsActive(isActive);
+            promo.setUsageLimit(usageLimit);
+            promo.setMinPurchaseAmount(minPurchaseAmount != null ? minPurchaseAmount : 0.0);
+
+            if (categoryIds != null && !categoryIds.isEmpty()) {
+                promo.setApplicableCategories(categoryIds.toString()); // Simple substitution, ideally JSON
+            }
 
             promotionRepository.save(promo);
             redirectAttributes.addFlashAttribute("success", "Promotion created successfully!");
@@ -110,6 +124,8 @@ public class AdminController {
             return "redirect:/admin/promotions";
         }
         model.addAttribute("promotion", promotion);
+        model.addAttribute("categories", catalogService.getAllCategories());
+        // Simple logic to pass selected IDs if needed, though Thymeleaf handles iteration
         return "admin/promotions/edit";
     }
 
@@ -121,6 +137,9 @@ public class AdminController {
             @RequestParam @DateTimeFormat(iso = DateTimeFormat.ISO.DATE) java.time.LocalDate startDate,
             @RequestParam @DateTimeFormat(iso = DateTimeFormat.ISO.DATE) java.time.LocalDate endDate,
             @RequestParam Boolean isActive,
+            @RequestParam(required = false) Integer usageLimit,
+            @RequestParam(required = false) Double minPurchaseAmount,
+            @RequestParam(required = false) List<Long> categoryIds,
             RedirectAttributes redirectAttributes) {
         try {
             com.minari.ecommerce.entity.Promotion promo = promotionRepository.findById(id).orElse(null);
@@ -131,6 +150,15 @@ public class AdminController {
                 promo.setStartDate(startDate.atStartOfDay());
                 promo.setEndDate(endDate.atTime(23, 59, 59));
                 promo.setIsActive(isActive);
+                promo.setUsageLimit(usageLimit);
+                promo.setMinPurchaseAmount(minPurchaseAmount != null ? minPurchaseAmount : 0.0);
+
+                 if (categoryIds != null && !categoryIds.isEmpty()) {
+                    promo.setApplicableCategories(categoryIds.toString());
+                } else {
+                    promo.setApplicableCategories(null);
+                }
+
                 promotionRepository.save(promo);
                 redirectAttributes.addFlashAttribute("success", "Promotion updated successfully!");
             } else {

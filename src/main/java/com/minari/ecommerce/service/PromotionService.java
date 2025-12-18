@@ -19,4 +19,20 @@ public class PromotionService {
     public Promotion savePromotion(Promotion promotion) {
         return promotionRepository.save(promotion);
     }
+
+    public void updateExpiredPromotions() {
+        java.util.List<Promotion> activePromotions = promotionRepository.findByIsActive(true);
+        java.time.LocalDateTime now = java.time.LocalDateTime.now();
+
+        for (Promotion promo : activePromotions) {
+            if (promo.getEndDate() != null && promo.getEndDate().isBefore(now)) {
+                promo.setIsActive(false);
+                promotionRepository.save(promo);
+            }
+        }
+    }
+
+    public java.util.List<Promotion> getActivePromotions() {
+        return promotionRepository.findByIsActive(true);
+    }
 }

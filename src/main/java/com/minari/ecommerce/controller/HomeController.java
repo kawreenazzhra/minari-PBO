@@ -15,10 +15,12 @@ public class HomeController {
 
     private final ProductService productService;
     private final CatalogService catalogService;
+    private final com.minari.ecommerce.service.PromotionService promotionService;
 
-    public HomeController(ProductService productService, CatalogService catalogService) {
+    public HomeController(ProductService productService, CatalogService catalogService, com.minari.ecommerce.service.PromotionService promotionService) {
         this.productService = productService;
         this.catalogService = catalogService;
+        this.promotionService = promotionService;
     }
 
     @GetMapping("/")
@@ -43,6 +45,11 @@ public class HomeController {
         model.addAttribute("navCategories", productService.getAllCategories().stream()
                 .filter(cat -> cat.getIsActive() != null && cat.getIsActive())
                 .collect(Collectors.toList()));
+        
+        // Add active promotions
+        promotionService.updateExpiredPromotions();
+        model.addAttribute("promotions", promotionService.getActivePromotions());
+
         model.addAttribute("pageTitle", "MINARI - Fashion E-Commerce");
 
         return "home";
