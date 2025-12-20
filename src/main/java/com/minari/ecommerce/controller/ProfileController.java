@@ -14,16 +14,21 @@ import org.springframework.web.bind.annotation.RequestMapping;
 @RequestMapping("/profile")
 public class ProfileController {
     private final UserRepository userRepository;
+    private final com.minari.ecommerce.repository.AddressRepository addressRepository;
 
-    public ProfileController(UserRepository userRepository) {
+    public ProfileController(UserRepository userRepository, com.minari.ecommerce.repository.AddressRepository addressRepository) {
         this.userRepository = userRepository;
+        this.addressRepository = addressRepository;
     }
 
     @GetMapping
     public String profile(Authentication authentication, Model model) {
-        String email = authentication.getName();
-        User user = userRepository.findByEmail(email).orElseThrow();
-        model.addAttribute("user", user);
+        if (authentication != null && authentication.isAuthenticated() && !authentication.getPrincipal().equals("anonymousUser")) {
+            String email = authentication.getName();
+            userRepository.findByEmail(email).ifPresent(user -> model.addAttribute("user", user));
+        } else {
+            model.addAttribute("user", null);
+        }
         return "profile/view";
     }
 
@@ -41,11 +46,15 @@ public class ProfileController {
     public String address(Authentication authentication, Model model) {
         String email = authentication.getName();
         User user = userRepository.findByEmail(email).orElseThrow();
+        
+        List<com.minari.ecommerce.entity.Address> addressList = new java.util.ArrayList<>();
         if (user instanceof com.minari.ecommerce.entity.Customer) {
-            model.addAttribute("addresses", ((com.minari.ecommerce.entity.Customer) user).getSavedAddresses());
-        } else {
-            model.addAttribute("addresses", new java.util.ArrayList<>());
+            com.minari.ecommerce.entity.Customer customer = (com.minari.ecommerce.entity.Customer) user;
+            // Force initialization of the lazy collection
+            addressList.addAll(customer.getSavedAddresses());
         }
+        
+        model.addAttribute("addresses", addressList);
         return "profile/address";
     }
 
@@ -54,14 +63,20 @@ public class ProfileController {
         String email = authentication.getName();
         User user = userRepository.findByEmail(email).orElseThrow();
 
-        // rudimentary binding, assumes entity fields match form
-        address.setCustomer((com.minari.ecommerce.entity.Customer) user); // Cast might be unsafe if User is not
-                                                                          // Customer
         if (user instanceof com.minari.ecommerce.entity.Customer) {
-            ((com.minari.ecommerce.entity.Customer) user).getSavedAddresses().add(address);
-            userRepository.save(user);
+            com.minari.ecommerce.entity.Customer customer = (com.minari.ecommerce.entity.Customer) user;
+            address.setCustomer(customer);
+            // Ensure required fields
+            if (address.getCountry() == null || address.getCountry().isBlank()) address.setCountry("Indonesia");
+            if (address.getState() == null || address.getState().isBlank()) address.setState("NA");
+            if (address.getProvince() == null || address.getProvince().isBlank()) address.setProvince("NA");
+            if (address.getCity() == null) address.setCity("Unknown");
+            if (address.getZipcode() == null) address.setZipcode("00000");
+            if (address.getStreetAddress() == null) address.setStreetAddress("-");
+            
+            addressRepository.save(address);
         }
 
-        return "redirect:/profile/address"; // or redirect to payment if query param exists
+        return "redirect:/profile/address";
     }
 }

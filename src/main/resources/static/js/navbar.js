@@ -84,7 +84,7 @@ function tplGuest() {
           <img src="/images/akun.png" alt="User" width="24" height="24">
         </button>
         <a href="/products"><img src="/images/whislist.png" alt="Favorite" width="24" height="24"></a>
-        <a href="/products"><img src="/images/searchnav.png" alt="Search" width="24" height="24"></a>
+        <a href="#" id="navSearchBtn"><img src="/images/searchnav.png" alt="Search" width="24" height="24"></a>
         <a href="/cart"><img src="/images/chart.png" alt="Cart" width="24" height="24"></a>
         ${tplHamburgerBtn()}
       </div>
@@ -114,7 +114,7 @@ function tplUser() {
           <img src="/images/akun.png" alt="User" width="24" height="24">
         </button>
         <a href="/products"><img src="/images/whislist.png" alt="Favorite" width="24" height="24"></a>
-        <a href="/products"><img src="/images/searchnav.png" alt="Search" width="24" height="24"></a>
+        <a href="#" id="navSearchBtn"><img src="/images/searchnav.png" alt="Search" width="24" height="24"></a>
         <a href="/cart"><img src="/images/chart.png" alt="Cart" width="24" height="24"></a>
         ${tplHamburgerBtn()}
       </div>
@@ -124,7 +124,7 @@ function tplUser() {
   <div id="accMini" class="accmini" style="display: none;">
     <div class="accmini__row">
       <img src="/images/akun.png" class="accmini__icon" alt="">
-      <a class="accmini__link" href="/account">Account</a>
+      <a class="accmini__link" href="/profile">Account</a>
     </div>
     <div class="accmini__row">
       <img src="/images/order history.png" class="accmini__icon" alt="">
@@ -224,12 +224,27 @@ function attachEventListeners() {
     hamburgerBtn.addEventListener('click', function (e) {
       e.preventDefault();
       fullMenuOverlay.classList.add('active');
-      document.body.style.overflow = 'hidden'; // Prevent background scrolling
+      fullMenuOverlay.classList.remove('search-mode'); // Ensure menu mode
+      fullMenuOverlay.classList.add('menu-mode');
+
+      // Show categories, ensure search is hidden or secondary if desired
+      // Based on request: "Button garis 3 saja yang menampilkan kategori"
+      // "Button search ... ga perlu nampilin kategori"
+
+      const grid = fullMenuOverlay.querySelector('.full-menu-grid');
+      if (grid) grid.style.display = 'grid';
+
+      const searchBox = fullMenuOverlay.querySelector('.full-menu-search');
+      if (searchBox) searchBox.style.display = 'none'; // Menu only shows categories per request context implication
+
+      document.body.style.overflow = 'hidden';
     });
 
     closeMenuBtn.addEventListener('click', function (e) {
       e.preventDefault();
       fullMenuOverlay.classList.remove('active');
+      fullMenuOverlay.classList.remove('search-mode');
+      fullMenuOverlay.classList.remove('menu-mode');
       document.body.style.overflow = '';
     });
 
@@ -240,6 +255,30 @@ function attachEventListeners() {
           const query = this.value;
           window.location.href = '/products?search=' + encodeURIComponent(query);
         }
+      });
+    }
+
+    // === Search Button (Nav) Logic ===
+    const navSearchBtn = document.getElementById('navSearchBtn');
+    if (navSearchBtn) {
+      navSearchBtn.addEventListener('click', function (e) {
+        e.preventDefault();
+        fullMenuOverlay.classList.add('active');
+        fullMenuOverlay.classList.add('search-mode');
+        fullMenuOverlay.classList.remove('menu-mode');
+
+        // Hide categories for search mode
+        const grid = fullMenuOverlay.querySelector('.full-menu-grid');
+        if (grid) grid.style.display = 'none';
+
+        // Show search box
+        const searchBox = fullMenuOverlay.querySelector('.full-menu-search');
+        if (searchBox) searchBox.style.display = 'block';
+
+        document.body.style.overflow = 'hidden';
+        setTimeout(() => {
+          if (menuSearchInput) menuSearchInput.focus();
+        }, 100);
       });
     }
   }

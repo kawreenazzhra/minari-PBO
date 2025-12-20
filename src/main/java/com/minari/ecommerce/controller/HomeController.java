@@ -41,10 +41,18 @@ public class HomeController {
         model.addAttribute("featuredProducts", featuredProducts);
         model.addAttribute("products", allProducts);
         model.addAttribute("categories", categories);
-        // Used for the navbar menu
-        model.addAttribute("navCategories", productService.getAllCategories().stream()
+        // Used for the navbar menu - mapped to avoid serialization issues
+        List<java.util.Map<String, Object>> navCategoryMaps = productService.getAllCategories().stream()
                 .filter(cat -> cat.getIsActive() != null && cat.getIsActive())
-                .collect(Collectors.toList()));
+                .map(cat -> {
+                    java.util.Map<String, Object> map = new java.util.HashMap<>();
+                    map.put("id", cat.getId());
+                    map.put("name", cat.getName());
+                    map.put("imageUrl", cat.getImageUrl());
+                    return map;
+                })
+                .collect(Collectors.toList());
+        model.addAttribute("navCategories", navCategoryMaps);
         
         // Add active promotions
         promotionService.updateExpiredPromotions();
