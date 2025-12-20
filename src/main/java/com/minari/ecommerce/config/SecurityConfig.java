@@ -46,7 +46,7 @@ public class SecurityConfig {
                                                 .requestMatchers("/", "/home", "/css/**", "/js/**", "/images/**",
                                                                 "/uploads/**",
                                                                 "/register", "/login", "/products", "/products/**",
-                                                                "/cart", "/cart/**", "/error")
+                                                                "/cart", "/cart/**", "/api/**", "/error")
                                                 .permitAll()
                                                 .requestMatchers("/checkout/**", "/orders/**", "/account/**",
                                                                 "/profile/**", "/wishlist/**")

@@ -9,6 +9,7 @@ import org.springframework.ui.Model;
 import org.springframework.web.bind.annotation.GetMapping;
 import org.springframework.web.bind.annotation.PostMapping;
 import org.springframework.web.bind.annotation.RequestMapping;
+import java.util.List;
 
 @Controller
 @RequestMapping("/profile")
@@ -25,7 +26,21 @@ public class ProfileController {
     public String profile(Authentication authentication, Model model) {
         if (authentication != null && authentication.isAuthenticated() && !authentication.getPrincipal().equals("anonymousUser")) {
             String email = authentication.getName();
-            userRepository.findByEmail(email).ifPresent(user -> model.addAttribute("user", user));
+            userRepository.findByEmail(email).ifPresent(user -> {
+                model.addAttribute("user", user);
+                // Fetch address for display
+                if (user instanceof com.minari.ecommerce.entity.Customer) {
+                    List<com.minari.ecommerce.entity.Address> addresses = addressRepository.findByCustomerId(user.getId());
+                    if (!addresses.isEmpty()) {
+                        // Find default or pick first
+                        com.minari.ecommerce.entity.Address displayAddress = addresses.stream()
+                            .filter(com.minari.ecommerce.entity.Address::getIsDefault)
+                            .findFirst()
+                            .orElse(addresses.get(0));
+                        model.addAttribute("displayAddress", displayAddress);
+                    }
+                }
+            });
         } else {
             model.addAttribute("user", null);
         }
@@ -49,9 +64,7 @@ public class ProfileController {
         
         List<com.minari.ecommerce.entity.Address> addressList = new java.util.ArrayList<>();
         if (user instanceof com.minari.ecommerce.entity.Customer) {
-            com.minari.ecommerce.entity.Customer customer = (com.minari.ecommerce.entity.Customer) user;
-            // Force initialization of the lazy collection
-            addressList.addAll(customer.getSavedAddresses());
+            addressList = addressRepository.findByCustomerId(user.getId());
         }
         
         model.addAttribute("addresses", addressList);

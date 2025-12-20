@@ -7,7 +7,7 @@ document.addEventListener('DOMContentLoaded', () => {
     const cartList = document.getElementById('cartList');
     const totalPrice = document.getElementById('totalPrice');
     const checkoutBtn = document.getElementById('checkoutBtn');
-    const csrfToken = document.querySelector('meta[name="csrf-token"]')?.getAttribute('content');
+    const csrfToken = document.querySelector('meta[name="_csrf"]')?.getAttribute('content');
 
     if (!cartList) return;
 
@@ -220,7 +220,7 @@ document.addEventListener('DOMContentLoaded', () => {
 // === Global function untuk menambahkan ke cart dari halaman lain
 window.addToCart = async function (productId, productName, price, image = '', quantity = 1) {
     const role = window.APP_ROLE || 'guest';
-    const csrfToken = document.querySelector('meta[name="csrf-token"]')?.getAttribute('content');
+    const csrfToken = document.querySelector('meta[name="_csrf"]')?.getAttribute('content');
 
     const endpoint = role === 'guest' ? '/api/guest/cart' : '/api/cart';
     const body = role === 'guest' ? {

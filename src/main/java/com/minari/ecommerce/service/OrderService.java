@@ -334,9 +334,8 @@ public class OrderService {
      */
     public List<OrderDTO> searchOrders(String query) {
         log.info("Searching orders with query: {}", query);
-        List<Order> orders = orderRepository.findAll();
+        List<Order> orders = orderRepository.findByOrderNumberContainingIgnoreCase(query);
         return orders.stream()
-                .filter(o -> o.getOrderNumber().contains(query))
                 .map(this::convertToDTO)
                 .collect(Collectors.toList());
     }

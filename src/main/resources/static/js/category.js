@@ -30,92 +30,63 @@ const fmtIDR = v => {
 
 // addToCart is now handled by cart.js (window.addToCart)
 
-function addToWishlist(productId, buttonElement) {
-  if (isGuestRole()) {
-    const loginModal = new bootstrap.Modal(document.getElementById('loginModal'));
-    loginModal.show();
-    return;
-  }
-
-  // Get product name for toast message
-  const productCard = buttonElement?.closest('[data-product-id]');
-  const productName = productCard ? productCard.querySelector('.p-name')?.textContent : 'Product';
-
-  // Toggle active state visually
-  if (buttonElement) {
-    buttonElement.classList.toggle('active');
-    const img = buttonElement.querySelector('img');
-    if (img && buttonElement.classList.contains('active')) {
-      img.src = "/images/whislist-active.png";
-    } else if (img) {
-      img.src = "/images/whislist.png";
-    }
-  }
-
-  // Send API request
-  fetch('/api/wishlist', {
-    method: 'POST',
-    headers: {
-      'Content-Type': 'application/json',
-      'X-CSRF-TOKEN': window.CSRF_TOKEN || document.querySelector('meta[name="csrf-token"]')?.content
-    },
-    body: JSON.stringify({
-      product_id: productId
-    })
-  })
-    .then(response => response.json())
-    .then(data => {
-      if (data.success) {
-        showToast(`"${productName}" has been added to your wishlist.`);
-      } else {
-        // If already in wishlist, remove it (logic from original code, assuming API behaves this way or we want toggle)
-        if (data.message && data.message.includes('already')) {
-          removeFromWishlist(productId, buttonElement, productName);
-        } else {
-          showToast(data.message || 'Failed to add to wishlist.', true);
-          // Revert visual state
-          if (buttonElement) {
-            buttonElement.classList.toggle('active');
-            const img = buttonElement.querySelector('img');
-            if (img) img.src = "/images/whislist.png";
-          }
-        }
-      }
-    })
-    .catch(error => {
-      console.error('Error:', error);
-      showToast('An error occurred. Please try again.', true);
-      // Revert visual state
-      if (buttonElement) {
-        buttonElement.classList.toggle('active');
-        const img = buttonElement.querySelector('img');
-        if (img) img.src = "/images/whislist.png";
-      }
-    });
+// LocalStorage Wishlist Implementation
+function getWishlist() {
+  const saved = localStorage.getItem('minari_wishlist');
+  return saved ? JSON.parse(saved) : [];
 }
 
-function removeFromWishlist(productId, buttonElement, productName) {
-  fetch(`/api/wishlist/${productId}`, {
-    method: 'DELETE',
-    headers: {
-      'Content-Type': 'application/json',
-      'X-CSRF-TOKEN': window.CSRF_TOKEN || document.querySelector('meta[name="csrf-token"]')?.content
-    }
-  })
-    .then(response => response.json())
-    .then(data => {
-      if (data.success) {
-        showToast(`"${productName}" removed from wishlist.`);
-        if (buttonElement) {
-          buttonElement.classList.remove('active');
-          const img = buttonElement.querySelector('img');
-          if (img) img.src = "/images/whislist.png";
-        }
+function saveWishlist(items) {
+  localStorage.setItem('minari_wishlist', JSON.stringify(items));
+}
+
+function checkWishlistStatus() {
+  const wishlist = getWishlist();
+  document.querySelectorAll('.p-wish').forEach(btn => {
+    const pid = Number(btn.getAttribute('data-product-id'));
+    const icon = btn.querySelector('i');
+    if (wishlist.includes(pid)) {
+      btn.classList.add('active');
+      if (icon) {
+        icon.classList.remove('far');
+        icon.classList.add('fas');
+        icon.style.color = '#ff5978';
       }
-    })
-    .catch(error => {
-      console.error('Error:', error);
-    });
+    } else {
+      btn.classList.remove('active');
+      if (icon) {
+        icon.classList.remove('fas');
+        icon.classList.add('far');
+        icon.style.color = '#6b6b6b';
+      }
+    }
+  });
+}
+
+function addToWishlist(productId, buttonElement) {
+  // Toggle wishlist
+  let wishlist = getWishlist();
+  const pid = Number(productId);
+  const index = wishlist.indexOf(pid);
+
+  let action = '';
+  if (index === -1) {
+    wishlist.push(pid);
+    action = 'added';
+    showToast('Added to wishlist');
+  } else {
+    wishlist.splice(index, 1);
+    action = 'removed';
+    showToast('Removed from wishlist');
+  }
+
+  saveWishlist(wishlist);
+  checkWishlistStatus(); // Update UI
+}
+
+// Remove unused function
+function removeFromWishlist(productId, buttonElement, productName) {
+  // handled by toggle in addToWishlist
 }
 // ------------------------
 // Initialize Event Listeners
@@ -130,30 +101,8 @@ document.addEventListener('DOMContentLoaded', () => {
     });
   }
 
-  // Add hover effects for wishlist buttons
-  const wishButtons = document.querySelectorAll('.p-wish');
-  wishButtons.forEach(button => {
-    // Check initial state (if product is already in wishlist)
-    // This would require an API call to check - for simplicity, we'll assume not
-
-    button.addEventListener('mouseenter', function () {
-      if (!this.classList.contains('active')) {
-        const img = this.querySelector('img');
-        if (img) {
-          img.src = "/images/whislist-active.png";
-        }
-      }
-    });
-
-    button.addEventListener('mouseleave', function () {
-      if (!this.classList.contains('active')) {
-        const img = this.querySelector('img');
-        if (img) {
-          img.src = "/images/whislist.png";
-        }
-      }
-    });
-  });
+  // Check wishlist status on load
+  checkWishlistStatus();
 
   // Add click animation for cart buttons
   const cartButtons = document.querySelectorAll('.p-cart');

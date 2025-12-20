@@ -40,11 +40,11 @@
              1. Shirt and Blouse -> /images/categories/shirtandblouse.png
              2. T-Shirt and Polo -> /images/categories/tshirtandpolo.png
              3. Fallback -> bannerUrl or default -->
-        <img id="heroImg"
-            th:src="${(categoryObj != null and #strings.containsIgnoreCase(categoryObj.name, 'Shirt and Blouse')) ? '/images/categories/shirtandblouse.png' : 
+        <img id="heroImg" th:src="${(categoryObj != null and categoryObj.bannerUrl != null and !categoryObj.bannerUrl.isEmpty()) ? categoryObj.bannerUrl : 
+                      ((categoryObj != null and categoryObj.imageUrl != null and !categoryObj.imageUrl.isEmpty()) ? categoryObj.imageUrl : 
+                      ((categoryObj != null and #strings.containsIgnoreCase(categoryObj.name, 'Shirt and Blouse')) ? '/images/categories/shirtandblouse.png' : 
                       ((categoryObj != null and #strings.containsIgnoreCase(categoryObj.name, 'T-Shirt')) ? '/images/categories/tshirtandpolo.png' : 
-                      (categoryObj != null and categoryObj.bannerUrl != null ? categoryObj.bannerUrl : '/images/default-category.jpg'))}"
-            alt="Category" class="hero__img">
+                      '/images/default-category.jpg')))}" alt="Category" class="hero__img">
 
         <div id="heroTitle" class="hero__title"
             style="font-family: 'Playfair Display', serif; font-size: 4rem; color: #FBAF99; text-shadow: 2px 2px 4px rgba(0,0,0,0.3);"
@@ -68,46 +68,43 @@
                                 <img th:src="${product.imageUrl}" th:alt="${product.name}" loading="lazy">
                             </div>
                             <div class="p-info">
-                                <div class="p-info-row">
+                                <div class="p-info-row d-flex justify-content-between">
                                     <div class="p-text">
                                         <h6 class="p-name" th:text="${product.name}">Product Name</h6>
-                                        <div class="p-meta">
-                                            <div class="p-price">
-                                                <th:block th:if="${product.discountPrice != null}">
-                                                    <span class="old-price"
-                                                        th:text="'Rp ' + ${#numbers.formatDecimal(product.price, 0, 'POINT', 0, 'COMMA')}">
-                                                        Rp 100.000
-                                                    </span>
-                                                    <span class="current-price"
-                                                        th:text="'Rp ' + ${#numbers.formatDecimal(product.discountPrice, 0, 'POINT', 0, 'COMMA')}">
-                                                        Rp 90.000
-                                                    </span>
-                                                </th:block>
-                                                <th:block th:unless="${product.discountPrice != null}">
-                                                    <span class="current-price"
-                                                        th:text="'Rp ' + ${#numbers.formatDecimal(product.price, 0, 'POINT', 0, 'COMMA')}">
-                                                        Rp 100.000
-                                                    </span>
-                                                </th:block>
-                                            </div>
-                                            <div class="product-rating" th:if="${product.averageRating > 0}">
-                                                <i class="fas fa-star"></i> <span
-                                                    th:text="${#numbers.formatDecimal(product.averageRating, 1, 1)}">4.5</span>
-                                            </div>
+                                        <div class="p-price mt-1">
+                                            <th:block th:if="${product.discountPrice != null}">
+                                                <span class="old-price d-block text-decoration-line-through text-muted"
+                                                    style="font-size: 0.8rem;"
+                                                    th:text="'Rp ' + ${#numbers.formatDecimal(product.price, 0, 'POINT', 0, 'COMMA')}">
+                                                    Rp 100.000
+                                                </span>
+                                                <span class="current-price text-primary fw-bold"
+                                                    th:text="'Rp ' + ${#numbers.formatDecimal(product.discountPrice, 0, 'POINT', 0, 'COMMA')}">
+                                                    Rp 90.000
+                                                </span>
+                                            </th:block>
+                                            <th:block th:unless="${product.discountPrice != null}">
+                                                <span class="current-price text-primary fw-bold"
+                                                    th:text="'Rp ' + ${#numbers.formatDecimal(product.price, 0, 'POINT', 0, 'COMMA')}">
+                                                    Rp 100.000
+                                                </span>
+                                            </th:block>
                                         </div>
-                                        <small class="out-of-stock-text"
-                                            th:if="${product.isInStock != null and !product.isInStock}">
-                                            <i class="fas fa-times-circle"></i> Out of Stock
-                                        </small>
+                                        <div class="product-rating mt-1" th:if="${product.averageRating > 0}">
+                                            <i class="fas fa-star text-warning" style="font-size: 0.8rem;"></i>
+                                            <span class="small text-muted"
+                                                th:text="${#numbers.formatDecimal(product.averageRating, 1, 1)}">4.5</span>
+                                        </div>
                                     </div>
+
                                     <div class="p-mini-actions">
                                         <button class="p-cart" aria-label="Add to cart"
-                                            th:onclick="'event.preventDefault(); window.addToCart(' + ${product.id} + ', \'' + ${#strings.escapeJavaScript(product.name)} + '\', ' + ${product.finalPrice ?: product.price} + ', \'' + ${product.imageUrl} + '\')'">
-                                            <img th:src="@{/images/chart.png}" alt="cart">
+                                            th:onclick="'event.preventDefault(); window.addToCart(' + ${product.id} + ', \'' + ${#strings.escapeJavaScript(product.name)} + '\', ' + ${product.finalPrice ?: product.price} + ', \'' + ${product.imageUrl ?: ''} + '\')'">
+                                            <i class="fas fa-shopping-cart" style="font-size: 16px;"></i>
                                         </button>
-                                        <button class="p-wish" aria-label="Wishlist"
+                                        <button class="p-wish" aria-label="Wishlist" th:data-product-id="${product.id}"
                                             th:onclick="'event.preventDefault(); addToWishlist(' + ${product.id} + ', this)'">
-                                            <img th:src="@{/images/whislist.png}" alt="wishlist">
+                                            <i class="far fa-heart" style="font-size: 16px;"></i>
                                         </button>
                                     </div>
                                 </div>

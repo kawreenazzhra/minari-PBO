@@ -159,9 +159,7 @@ body {
   display: flex;
   flex-direction: column;
   gap: 8px;
-  /* Slightly more gap */
-  margin-left: auto;
-  /* Push to right */
+  /* margin-left: auto; Removed to let parent justify-content handle spacing */
 }
 
 .p-mini-actions button {

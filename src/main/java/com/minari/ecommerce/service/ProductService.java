@@ -45,7 +45,7 @@ public class ProductService {
     }
 
     public List<Product> searchProducts(String query) {
-        return productRepository.findByNameContainingIgnoreCase(query);
+        return productRepository.searchByNameOrDescription(query);
     }
 
     public List<Product> getProductsByCategory(Long categoryId) {

@@ -35,6 +35,10 @@ public class CatalogService {
     public List<Product> searchProductsByRating(int minRating) {
         return productRepository.findByMinRating((double) minRating);
     }
+
+    public List<ProductCategory> searchCategories(String keyword) {
+        return categoryRepository.findByNameContainingIgnoreCase(keyword);
+    }
     
     // Category management methods for AdminController
     public List<ProductCategory> getAllCategories() {

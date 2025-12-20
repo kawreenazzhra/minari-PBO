@@ -85,7 +85,12 @@ function tplGuest() {
         </button>
         <a href="/products"><img src="/images/whislist.png" alt="Favorite" width="24" height="24"></a>
         <a href="#" id="navSearchBtn"><img src="/images/searchnav.png" alt="Search" width="24" height="24"></a>
-        <a href="/cart"><img src="/images/chart.png" alt="Cart" width="24" height="24"></a>
+        <a href="/cart" class="position-relative">
+          <img src="/images/chart.png" alt="Cart" width="24" height="24">
+          <span id="cartBadge" class="position-absolute top-0 start-100 translate-middle badge rounded-pill bg-danger" style="font-size: 0.6rem; display: none;">
+            0
+          </span>
+        </a>
         ${tplHamburgerBtn()}
       </div>
     </div>
@@ -115,7 +120,12 @@ function tplUser() {
         </button>
         <a href="/products"><img src="/images/whislist.png" alt="Favorite" width="24" height="24"></a>
         <a href="#" id="navSearchBtn"><img src="/images/searchnav.png" alt="Search" width="24" height="24"></a>
-        <a href="/cart"><img src="/images/chart.png" alt="Cart" width="24" height="24"></a>
+        <a href="/cart" class="position-relative">
+          <img src="/images/chart.png" alt="Cart" width="24" height="24">
+          <span id="cartBadge" class="position-absolute top-0 start-100 translate-middle badge rounded-pill bg-danger" style="font-size: 0.6rem; display: none;">
+            0
+          </span>
+        </a>
         ${tplHamburgerBtn()}
       </div>
     </div>
@@ -310,4 +320,31 @@ if (document.readyState === 'loading') {
 }
 
 // Re-render on window load for safety
-window.addEventListener('load', renderNavbar);
+// Re-render on window load for safety
+// Re-render on window load for safety
+window.addEventListener('load', () => {
+  renderNavbar();
+  // Fetch initial cart count
+  fetch('/api/cart/count')
+    .then(r => r.json())
+    .then(data => {
+      if (window.NavbarRole && window.NavbarRole.updateCartCount) {
+        window.NavbarRole.updateCartCount(data.count);
+      }
+    })
+    .catch(e => console.error("Failed to load cart count", e));
+});
+
+// Expose global helper to update cart count
+window.NavbarRole = window.NavbarRole || {};
+window.NavbarRole.updateCartCount = function (count) {
+  const badges = document.querySelectorAll('#cartBadge');
+  badges.forEach(badge => {
+    if (count > 0) {
+      badge.textContent = count;
+      badge.style.display = 'block';
+    } else {
+      badge.style.display = 'none';
+    }
+  });
+};

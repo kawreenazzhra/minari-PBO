@@ -80,8 +80,14 @@
                 <!-- Address List -->
                 <div id="addressList">
                     <div th:each="address : ${addresses}"
-                        th:class="'address-card ' + (${address.isDefault} ? 'active' : '')"
-                        th:onclick="selectAddress([[${address}]], this)">
+                        th:class="'address-card ' + (${address.isDefault} ? 'active' : '')" th:onclick="selectAddress({
+                            streetAddress: [[${address.streetAddress}]],
+                            city: [[${address.city}]],
+                            zipcode: [[${address.zipcode}]],
+                            recipientName: [[${address.recipientName}]],
+                            phoneNumber: [[${address.phoneNumber}]],
+                            addressType: [[${address.addressType}]]
+                        }, this)">
                         <div class="d-flex justify-content-between align-items-center">
                             <h5 class="mb-1 address-name"
                                 th:text="${address.addressType != null ? address.addressType : 'Home'}">Home</h5>

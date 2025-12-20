@@ -46,8 +46,11 @@
 
             <!-- Select All -->
             <div class="d-flex align-items-center gap-2 mb-2">
-                <input type="checkbox" id="selectAll" class="form-check-input" />
-                <label for="selectAll" class="form-check-label fw-semibold">Select All</label>
+                <div class="custom-check-wrapper">
+                    <input type="checkbox" id="selectAll" class="custom-check-input" />
+                    <label for="selectAll" class="custom-check-label"></label>
+                </div>
+                <label for="selectAll" class="form-check-label fw-semibold" style="cursor: pointer;">Select All</label>
             </div>
             <hr>
 
@@ -59,8 +62,9 @@
                     <!-- Checkbox -->
                     <div class="me-3 me-md-4">
                         <div class="custom-check-wrapper">
-                            <input type="checkbox" class="custom-check-input item-check" />
-                            <label class="custom-check-label"></label>
+                            <input type="checkbox" class="custom-check-input item-check"
+                                th:id="'check-' + ${item.productId}" />
+                            <label class="custom-check-label" th:for="'check-' + ${item.productId}"></label>
                         </div>
                     </div>
 
@@ -79,26 +83,23 @@
                     </div>
                     <div class="d-flex align-items-center gap-3">
                         <div class="qty-wrap">
-                            <button class="qty-btn btnMinus" onclick="updateQuantity(this, -1)">−</button>
+                            <button class="qty-btn btnMinus">−</button>
                             <input type="number" class="qty-input item-qty" min="1" th:value="${item.quantity}"
                                 readonly />
-                            <button class="qty-btn btnPlus" onclick="updateQuantity(this, 1)">+</button>
+                            <button class="qty-btn btnPlus">+</button>
                         </div>
 
-                        <form th:action="@{/cart/remove}" method="POST" style="display:inline;">
-                            <input type="hidden" name="productId"
-                                th:value="${item.productId != null ? item.productId : item.product.id}" />
-                            <button type="submit" class="btn btn-outline-danger btn-sm remove-item">
-                                <i class="bi bi-trash"></i>
-                            </button>
-                        </form>
+                        <button class="btn btn-outline-danger btn-sm remove-item">
+                            <i class="bi bi-trash"></i>
+                        </button>
                     </div>
                 </div>
             </div>
 
-            <div class="mt-4 d-flex justify-content-between align-items-center">
-                <h5>Total: <span id="cartTotal">Rp 0</span></h5>
-                <a th:href="@{/checkout}" class="btn btn-primary btn-lg">Checkout</a>
+            <!-- Sticky Total Footer -->
+            <div class="sticky-total mt-4 d-flex justify-content-between align-items-center px-4">
+                <h5 class="mb-0 text-white">Total: <span id="totalPrice" class="fw-bold">Rp 0</span></h5>
+                <button id="checkoutBtn" class="btn btn-lg" disabled>Checkout</button>
             </div>
         </div>
 
@@ -110,95 +111,26 @@
         </div>
     </div>
 
+    <!-- Login Modal Placeholder (if needed by cart.js) -->
+    <div class="modal fade" id="loginModal" tabindex="-1" aria-hidden="true">
+        <div class="modal-dialog modal-dialog-centered">
+            <div class="modal-content">
+                <div class="modal-header">
+                    <h5 class="modal-title">Please Log In</h5>
+                    <button type="button" class="btn-close" data-bs-dismiss="modal" aria-label="Close"></button>
+                </div>
+                <div class="modal-body text-center">
+                    <p>You need to log in to proceed to checkout.</p>
+                    <a th:href="@{/login}" class="btn btn-primary w-100">Log In</a>
+                    <div class="mt-2">Don't have an account? <a th:href="@{/register}">Register</a></div>
+                </div>
+            </div>
+        </div>
+    </div>
+
     <script src="https://cdn.jsdelivr.net/npm/bootstrap@5.3.3/dist/js/bootstrap.bundle.min.js"></script>
     <script th:src="@{/js/navbar.js}"></script>
-    <script th:inline="javascript">
-        // Simple script to handle totals and checkboxes (simplified from original cart.js reference)
-        document.addEventListener('DOMContentLoaded', () => {
-            const checks = document.querySelectorAll('.item-check');
-            const selectAll = document.getElementById('selectAll');
-            const totalSpan = document.getElementById('cartTotal');
-
-            function calculateTotal() {
-                let total = 0;
-                document.querySelectorAll('.cart-item').forEach(row => {
-                    const check = row.querySelector('.item-check');
-                    if (check && check.checked) {
-                        const price = parseFloat(row.getAttribute('data-price'));
-                        const qty = parseInt(row.querySelector('.item-qty').value);
-                        total += price * qty;
-                    }
-                });
-                if (totalSpan) {
-                    totalSpan.textContent = 'Rp ' + total.toLocaleString('id-ID');
-                }
-            }
-
-            if (selectAll) {
-                selectAll.addEventListener('change', (e) => {
-                    checks.forEach(c => c.checked = e.target.checked);
-                    calculateTotal();
-                });
-            }
-
-            checks.forEach(c => {
-                c.addEventListener('change', calculateTotal);
-            });
-
-            // Initial calc
-            calculateTotal();
-        });
-
-        function updateQuantity(btn, change) {
-            const wrapper = btn.closest('.qty-wrap');
-            const input = wrapper.querySelector('input');
-            const row = btn.closest('.cart-item');
-            const productId = row.dataset.id;
-
-            let val = parseInt(input.value) + change;
-            if (val < 1) val = 1;
-
-            if (parseInt(input.value) === val) return; // No change
-
-            // Optimistic update
-            input.value = val;
-
-            // Recalculate total immediately (client-side)
-            const event = new Event('change');
-            row.querySelector('.item-check').dispatchEvent(event);
-
-            // Send to server
-            updateServerQuantity(productId, val);
-        }
-
-        function updateServerQuantity(productId, quantity) {
-            const csrfToken = document.querySelector('meta[name="_csrf"]')?.getAttribute('content');
-            const csrfHeader = document.querySelector('meta[name="_csrf_header"]')?.getAttribute('content');
-
-            const formData = new FormData();
-            formData.append('productId', productId);
-            formData.append('quantity', quantity);
-
-            fetch('/cart/update', {
-                method: 'POST',
-                headers: {
-                    [csrfHeader]: csrfToken
-                },
-                body: formData
-            })
-                .then(response => response.json())
-                .then(data => {
-                    if (!data.success) {
-                        console.error('Failed to update cart', data);
-                        alert('Failed to update quantity: ' + (data.message || 'Unknown error'));
-                        location.reload();
-                    }
-                })
-                .catch(err => {
-                    console.error('Error:', err);
-                });
-        }
-    </script>
+    <script th:src="@{/js/cart.js}"></script>
 </body>
 
 </html>

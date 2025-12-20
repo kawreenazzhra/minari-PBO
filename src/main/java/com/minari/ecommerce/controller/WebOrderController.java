@@ -25,40 +25,21 @@ public class WebOrderController {
     private final OrderService orderService;
     private final ShoppingCartService cartService;
     private final UserRepository userRepository;
+    private final com.minari.ecommerce.repository.AddressRepository addressRepository;
 
     public WebOrderController(OrderService orderService, ShoppingCartService cartService,
-            UserRepository userRepository) {
+            UserRepository userRepository, com.minari.ecommerce.repository.AddressRepository addressRepository) {
         this.orderService = orderService;
         this.cartService = cartService;
         this.userRepository = userRepository;
+        this.addressRepository = addressRepository;
     }
 
     @GetMapping
     public String checkout(Authentication authentication, Model model) {
-        if (authentication == null) {
-            return "redirect:/login";
-        }
-        String email = authentication.getName();
-        User user = userRepository.findByEmail(email).orElseThrow();
-
-        var cart = cartService.getCartForUser(email);
-        if (cart.getItems().isEmpty()) {
-            return "redirect:/products";
-        }
-
-        model.addAttribute("cartItems", cart.getItems());
-        model.addAttribute("subtotal", cart.getTotalAmount());
-        model.addAttribute("shippingCost", 0.0); // Simple logic for now, standard fee can be added
-        model.addAttribute("total", cart.getTotalAmount()); // + shipping
-
-        // Pass addresses for the "Shipping to" section logic
-        if (user instanceof com.minari.ecommerce.entity.Customer) {
-            model.addAttribute("addresses", ((com.minari.ecommerce.entity.Customer) user).getSavedAddresses());
-        } else {
-            model.addAttribute("addresses", List.of());
-        }
-
-        return "orders/checkout";
+        // Redundant if /payment is used, but keeping for direct access
+        if (authentication == null) return "redirect:/login";
+        return "redirect:/payment"; 
     }
 
     @GetMapping("/payment-method")
@@ -68,22 +49,34 @@ public class WebOrderController {
 
     @PostMapping("/place")
     public String placeOrder(Authentication authentication,
-            @RequestParam("shipping_address") String street,
-            @RequestParam("shipping_city") String city,
-            @RequestParam("shipping_postal_code") String postalCode,
+            @RequestParam(value = "selected_address_id", required = false) Long addressId,
+            @RequestParam(value = "shipping_address", required = false) String street,
+            @RequestParam(value = "shipping_city", required = false) String city,
+            @RequestParam(value = "shipping_postal_code", required = false) String postalCode,
             @RequestParam("payment_method") String paymentMethodStr) {
-        if (authentication == null)
-            return "redirect:/login";
+        
+        if (authentication == null) return "redirect:/login";
 
         String email = authentication.getName();
+        Address address;
 
-        // Construct Address
-        Address address = new Address();
-        address.setStreetAddress(street);
-        address.setCity(city);
-        address.setZipcode(postalCode);
-        address.setCountry("Indonesia"); // Default
-        address.setRecipientName("Recipient"); // Should strictly come from form too, but reusing fields for now
+        // Use selected address if available
+        if (addressId != null) {
+            address = addressRepository.findById(addressId)
+                    .orElseThrow(() -> new RuntimeException("Address not found"));
+        } else {
+            // Construct Address from manual input
+             if (street == null || city == null || postalCode == null) {
+                // Should return error to view
+                return "redirect:/payment?error=Please select or enter an address";
+            }
+            address = new Address();
+            address.setStreetAddress(street);
+            address.setCity(city);
+            address.setZipcode(postalCode);
+            address.setCountry("Indonesia"); 
+            address.setRecipientName("Recipient"); 
+        }
 
         // Map Payment Method
         PaymentMethod method = PaymentMethod.COD;
@@ -97,11 +90,10 @@ public class WebOrderController {
         try {
             orderService.createOrderFromCart(email, address, method);
         } catch (Exception e) {
-            // In a real app, pass error to flash attributes
             e.printStackTrace();
-            return "redirect:/checkout?error=" + e.getMessage();
+            return "redirect:/payment?error=" + e.getMessage();
         }
 
-        return "redirect:/products"; // Or confirmation page
+        return "redirect:/products"; 
     }
 }

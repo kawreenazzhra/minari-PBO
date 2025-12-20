@@ -34,25 +34,34 @@ document.addEventListener('DOMContentLoaded', function () {
     function initializeSearch() {
         const searchBoxes = document.querySelectorAll('.search-box');
         searchBoxes.forEach(box => {
-            box.addEventListener('keypress', function (e) {
-                if (e.key === 'Enter') {
-                    e.preventDefault();
-                    performSearch(this.value);
-                }
+            box.addEventListener('input', function () {
+                const query = this.value.toLowerCase();
+                const table = document.querySelector('table');
+                if (!table) return;
+
+                const rows = table.querySelectorAll('tbody tr');
+                rows.forEach(row => {
+                    // Skip "No content" rows
+                    if (row.cells.length === 1 && row.cells[0].colSpan > 1) return;
+
+                    const text = row.textContent.toLowerCase();
+                    if (text.includes(query)) {
+                        row.style.display = '';
+                    } else {
+                        row.style.display = 'none';
+                    }
+                });
             });
 
-            box.addEventListener('input', function () {
-                if (this.value.length > 0) {
-                    console.log('Searching for:', this.value);
-                }
+            // Prevent form submission if inside a form
+            box.addEventListener('keypress', function (e) {
+                if (e.key === 'Enter') e.preventDefault();
             });
         });
     }
 
     function performSearch(query) {
-        if (query.trim() !== '') {
-            alert('Search functionality would search for: ' + query);
-        }
+        // Deprecated in favor of realtime input search
     }
 
     function initializeFilters() {

@@ -9,4 +9,6 @@ public interface PromotionRepository extends JpaRepository<Promotion, Long> {
     Promotion findByPromoCode(String promoCode);
 
     java.util.List<Promotion> findByIsActive(Boolean isActive);
+
+    java.util.List<Promotion> findByPromoCodeContainingIgnoreCase(String promoCode);
 }

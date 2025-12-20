@@ -63,15 +63,25 @@ public class AdminController {
     // additions/replacements for new sections)
 
     @GetMapping("/reviews")
-    public String reviewManagement(Model model) {
-        model.addAttribute("reviews", reviewRepository.findAll());
+    public String reviewManagement(@RequestParam(required = false) String keyword, Model model) {
+        if (keyword != null && !keyword.trim().isEmpty()) {
+            model.addAttribute("reviews", reviewRepository.findByReviewTextContainingIgnoreCase(keyword));
+            model.addAttribute("keyword", keyword);
+        } else {
+            model.addAttribute("reviews", reviewRepository.findAll());
+        }
         return "admin/reviews";
     }
 
     @GetMapping("/promotions")
-    public String promotionManagement(Model model) {
+    public String promotionManagement(@RequestParam(required = false) String keyword, Model model) {
         promotionService.updateExpiredPromotions();
-        model.addAttribute("promotions", promotionRepository.findAll());
+        if (keyword != null && !keyword.trim().isEmpty()) {
+            model.addAttribute("promotions", promotionRepository.findByPromoCodeContainingIgnoreCase(keyword));
+            model.addAttribute("keyword", keyword);
+        } else {
+            model.addAttribute("promotions", promotionRepository.findAll());
+        }
         return "admin/promotions";
     }
 
@@ -431,8 +441,14 @@ public class AdminController {
     }
 
     @GetMapping("/orders")
-    public String orderManagement(Model model) {
-        List<OrderDTO> orders = orderService.getAllOrders("", "");
+    public String orderManagement(@RequestParam(required = false) String keyword, Model model) {
+        List<OrderDTO> orders;
+        if (keyword != null && !keyword.trim().isEmpty()) {
+            orders = orderService.searchOrders(keyword);
+            model.addAttribute("keyword", keyword);
+        } else {
+            orders = orderService.getAllOrders("", "");
+        }
         model.addAttribute("orders", orders);
         return "admin/orders";
     }
@@ -462,8 +478,14 @@ public class AdminController {
     }
 
     @GetMapping("/products")
-    public String productManagement(Model model) {
-        List<Product> products = productService.getAllProducts();
+    public String productManagement(@RequestParam(required = false) String keyword, Model model) {
+        List<Product> products;
+        if (keyword != null && !keyword.trim().isEmpty()) {
+            products = productService.searchProducts(keyword);
+            model.addAttribute("keyword", keyword);
+        } else {
+            products = productService.getAllProducts();
+        }
         List<ProductCategory> categories = catalogService.getAllCategories();
         model.addAttribute("products", products);
         model.addAttribute("categories", categories);
@@ -473,8 +495,14 @@ public class AdminController {
     // --- Category Management ---
 
     @GetMapping("/categories")
-    public String listCategories(Model model) {
-        List<ProductCategory> categories = catalogService.getAllCategories();
+    public String listCategories(@RequestParam(required = false) String keyword, Model model) {
+        List<ProductCategory> categories;
+        if (keyword != null && !keyword.trim().isEmpty()) {
+            categories = catalogService.searchCategories(keyword);
+            model.addAttribute("keyword", keyword);
+        } else {
+            categories = catalogService.getAllCategories();
+        }
         model.addAttribute("categories", categories);
         return "admin/categories";
     }
@@ -489,6 +517,7 @@ public class AdminController {
     public String addCategory(@RequestParam String name,
             @RequestParam(required = false) String description,
             @RequestParam(required = false) MultipartFile image,
+            @RequestParam(required = false) MultipartFile bannerImage,
             RedirectAttributes redirectAttributes) {
         try {
             ProductCategory category = new ProductCategory();
@@ -498,6 +527,11 @@ public class AdminController {
             if (image != null && !image.isEmpty()) {
                 String imagePath = fileUploadService.uploadProductImage(image); // Reusing product image upload logic
                 category.setImageUrl(imagePath);
+            }
+
+            if (bannerImage != null && !bannerImage.isEmpty()) {
+                String bannerPath = fileUploadService.uploadProductImage(bannerImage);
+                category.setBannerUrl(bannerPath);
             }
 
             catalogService.saveCategory(category);
@@ -523,6 +557,7 @@ public class AdminController {
             @RequestParam String name,
             @RequestParam(required = false) String description,
             @RequestParam(required = false) MultipartFile image,
+            @RequestParam(required = false) MultipartFile bannerImage,
             RedirectAttributes redirectAttributes) {
         try {
             ProductCategory category = catalogService.getCategoryById(id);
@@ -543,6 +578,17 @@ public class AdminController {
                 }
                 String imagePath = fileUploadService.uploadProductImage(image);
                 category.setImageUrl(imagePath);
+            }
+
+            if (bannerImage != null && !bannerImage.isEmpty()) {
+                if (category.getBannerUrl() != null) {
+                    try {
+                        fileUploadService.deleteFile(category.getBannerUrl());
+                    } catch (Exception ignored) {
+                    }
+                }
+                String bannerPath = fileUploadService.uploadProductImage(bannerImage);
+                category.setBannerUrl(bannerPath);
             }
 
             catalogService.saveCategory(category);

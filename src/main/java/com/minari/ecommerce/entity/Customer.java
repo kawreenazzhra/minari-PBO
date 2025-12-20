@@ -70,6 +70,7 @@ public abstract class Customer extends User {
         this.memberSince = memberSince;
     }
 
+    @com.fasterxml.jackson.annotation.JsonIgnore
     public ShoppingCart getShoppingCart() {
         return shoppingCart;
     }
@@ -78,6 +79,7 @@ public abstract class Customer extends User {
         this.shoppingCart = shoppingCart;
     }
 
+    @com.fasterxml.jackson.annotation.JsonIgnore
     public List<Order> getOrders() {
         return orders;
     }
@@ -86,6 +88,7 @@ public abstract class Customer extends User {
         this.orders = orders;
     }
 
+    @com.fasterxml.jackson.annotation.JsonIgnore
     public List<ProductReview> getReviews() {
         return reviews;
     }
@@ -94,6 +97,7 @@ public abstract class Customer extends User {
         this.reviews = reviews;
     }
 
+    @com.fasterxml.jackson.annotation.JsonIgnore
     public List<Address> getSavedAddresses() {
         return savedAddresses;
     }

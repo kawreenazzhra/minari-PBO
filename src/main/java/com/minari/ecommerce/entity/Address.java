@@ -188,6 +188,7 @@ public class Address {
         this.updatedAt = updatedAt;
     }
 
+    @com.fasterxml.jackson.annotation.JsonIgnore
     public Customer getCustomer() {
         return customer;
     }
@@ -218,5 +219,16 @@ public class Address {
     @PreUpdate
     protected void onUpdate() {
         updatedAt = LocalDateTime.now();
+    }
+
+    @Override
+    public String toString() {
+        return "Address{" +
+                "id=" + id +
+                ", streetAddress='" + streetAddress + '\'' +
+                ", city='" + city + '\'' +
+                ", zipcode='" + zipcode + '\'' +
+                ", country='" + country + '\'' +
+                '}';
     }
 }
