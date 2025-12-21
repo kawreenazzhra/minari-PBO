@@ -10,6 +10,7 @@ import com.minari.ecommerce.entity.PaymentMethod;
 import com.minari.ecommerce.entity.PaymentStatus;
 import com.minari.ecommerce.entity.ShoppingCart;
 import com.minari.ecommerce.entity.User;
+import com.minari.ecommerce.repository.CustomerRepository;
 import com.minari.ecommerce.repository.OrderRepository;
 import com.minari.ecommerce.repository.UserRepository;
 import org.slf4j.Logger;
@@ -31,14 +32,16 @@ public class OrderService {
     private final OrderRepository orderRepository;
     private final ShoppingCartService cartService;
     private final UserRepository userRepository;
+    private final CustomerRepository customerRepository;
     private final EmailService emailService;
     private final PromotionService promotionService;
 
     public OrderService(OrderRepository orderRepository, ShoppingCartService cartService, UserRepository userRepository,
-            EmailService emailService, PromotionService promotionService) {
+            CustomerRepository customerRepository, EmailService emailService, PromotionService promotionService) {
         this.orderRepository = orderRepository;
         this.cartService = cartService;
         this.userRepository = userRepository;
+        this.customerRepository = customerRepository;
         this.emailService = emailService;
         this.promotionService = promotionService;
     }
@@ -526,7 +529,15 @@ public class OrderService {
                 .sum());
         stats.put("average_order_value", allOrders.isEmpty() ? 0.0
                 : allOrders.stream().mapToDouble(Order::getTotalAmount).average().orElse(0.0));
-        stats.put("total_customers", 0L);
+        
+        // Get total customers from database
+        try {
+            long totalCustomers = customerRepository.count();
+            stats.put("total_customers", totalCustomers);
+        } catch (Exception e) {
+            log.warn("Failed to fetch total customers: {}", e.getMessage());
+            stats.put("total_customers", 0L);
+        }
 
         return stats;
     }
@@ -548,7 +559,15 @@ public class OrderService {
                 .sum());
         stats.put("averageOrderValue", allOrders.isEmpty() ? 0.0
                 : allOrders.stream().mapToDouble(Order::getTotalAmount).average().orElse(0.0));
-        stats.put("totalCustomers", 0L);
+        
+        // Get total customers from database
+        try {
+            long totalCustomers = customerRepository.count();
+            stats.put("totalCustomers", totalCustomers);
+        } catch (Exception e) {
+            log.warn("Failed to fetch total customers: {}", e.getMessage());
+            stats.put("totalCustomers", 0L);
+        }
 
         return stats;
     }

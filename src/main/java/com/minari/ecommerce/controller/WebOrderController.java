@@ -144,16 +144,21 @@ public class WebOrderController {
     }
 
     @GetMapping("/address")
-    public String selectAddress(Authentication authentication, Model model) {
+    public String selectAddress(Authentication authentication, 
+                                @RequestParam(value = "selectedItems", required = false) String selectedItems,
+                                Model model) {
         if (authentication == null) return "redirect:/login";
         String email = authentication.getName();
         User user = userRepository.findByEmail(email).orElse(null);
         
         List<Address> addresses = List.of();
         if (user instanceof com.minari.ecommerce.entity.Customer) {
-            addresses = addressRepository.findByCustomer((com.minari.ecommerce.entity.Customer) user);
+            addresses = addressRepository.findSavedAddressesByCustomer((com.minari.ecommerce.entity.Customer) user);
         }
         model.addAttribute("addresses", addresses);
+        if (selectedItems != null) {
+            model.addAttribute("selectedItems", selectedItems);
+        }
         return "checkout/address_selection";
     }
     
@@ -194,6 +199,7 @@ public class WebOrderController {
     @GetMapping("/payment")
     public String paymentMethod(Authentication authentication, 
                               @RequestParam(value = "addressId", required = false) Long addressId,
+                              @RequestParam(value = "selectedItems", required = false) String selectedItems,
                               Model model) {
         if (authentication == null) return "redirect:/login";
         
@@ -209,6 +215,9 @@ public class WebOrderController {
         }
         
         model.addAttribute("addressId", addressId);
+        if (selectedItems != null) {
+            model.addAttribute("selectedItems", selectedItems);
+        }
         return "checkout/payment_selection";
     }
 

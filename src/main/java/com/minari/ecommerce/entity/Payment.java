@@ -212,12 +212,30 @@ public class Payment {
     
     public PaymentStatus processPayment() {
         try {
-            System.out.println("Processing payment of $" + amount + " via " + paymentMethod);
-            this.status = PaymentStatus.PAID;
+            System.out.println("Processing payment of " + amount + " via " + paymentMethod);
+            
+            // Set payment status based on payment method
+            if (paymentMethod == PaymentMethod.E_WALLET || 
+                paymentMethod == PaymentMethod.GO_PAY || 
+                paymentMethod == PaymentMethod.OVO || 
+                paymentMethod == PaymentMethod.DANA || 
+                paymentMethod == PaymentMethod.SHOPEEPAY ||
+                paymentMethod == PaymentMethod.VIRTUAL_ACCOUNT ||
+                paymentMethod == PaymentMethod.BANK_TRANSFER) {
+                // E-wallet and virtual account payments are immediately PAID
+                this.status = PaymentStatus.PAID;
+                this.paymentDate = LocalDateTime.now();
+                System.out.println("Payment successful! Payment status: PAID");
+            } else if (paymentMethod == PaymentMethod.COD) {
+                // COD payments start as PENDING
+                this.status = PaymentStatus.PENDING;
+                System.out.println("COD order created! Payment status: PENDING (will be PAID when shipped)");
+            } else {
+                this.status = PaymentStatus.PENDING;
+            }
+            
             this.transactionId = generateTransactionId();
-            this.paymentDate = LocalDateTime.now();
-            System.out.println("Payment successful! Transaction ID: " + transactionId);
-            return PaymentStatus.PAID;
+            return this.status;
         } catch (Exception e) {
             this.status = PaymentStatus.FAILED;
             System.out.println("Payment failed: " + e.getMessage());

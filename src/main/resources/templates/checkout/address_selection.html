@@ -50,18 +50,19 @@
             width: 24px;
             height: 24px;
             border-radius: 50%;
-            border: 1px solid #ccc;
+            border: 2px solid #ccc;
             margin-right: 20px;
             display: flex;
             align-items: center;
             justify-content: center;
             color: transparent;
+            transition: all 0.2s;
         }
 
         .selection-card.selected .check-circle {
-            background-color: #ccc;
-            /* Greyish check background */
-            color: #333;
+            background-color: #333;
+            border-color: #333;
+            color: white;
         }
 
         .selection-details h5 {
@@ -110,21 +111,19 @@
 
         <!-- Address List -->
         <div th:each="addr : ${addresses}">
-            <a th:href="@{/checkout(addressId=${addr.id})}" class="text-decoration-none text-dark">
-                <div class="selection-card">
-                    <div class="check-circle">
-                        <i class="fas fa-check"></i>
-                    </div>
-                    <div class="selection-details">
-                        <h5 th:text="${addr.addressType}">House</h5>
-                        <p>
-                            <span th:text="${addr.recipientName}">Name</span> |
-                            <span th:text="${addr.phoneNumber}">0812...</span>
-                        </p>
-                        <p th:text="${addr.streetAddress + ', ' + addr.city}">Address Line</p>
-                    </div>
+            <div class="selection-card" th:data-address-id="${addr.id}">
+                <div class="check-circle">
+                    <i class="fas fa-check"></i>
                 </div>
-            </a>
+                <div class="selection-details">
+                    <h5 th:text="${addr.addressType}">House</h5>
+                    <p>
+                        <span th:text="${addr.recipientName}">Name</span> |
+                        <span th:text="${addr.phoneNumber}">0812...</span>
+                    </p>
+                    <p th:text="${addr.streetAddress + ', ' + addr.city}">Address Line</p>
+                </div>
+            </div>
         </div>
 
         <!-- Add New Address Button (Opens Modal) -->
@@ -183,6 +182,78 @@
         /*<![CDATA[*/
         window.APP_ROLE = /*[[${#authorization.expression('isAuthenticated()') ? 'user' : 'guest'}]]*/ 'guest';
         /*]]>*/
+    </script>
+    <script>
+        document.addEventListener('DOMContentLoaded', () => {
+            const urlParams = new URLSearchParams(window.location.search);
+            const selectedItems = urlParams.get('selectedItems') || '';
+
+            // Check localStorage for saved address
+            const savedAddress = localStorage.getItem('selectedAddressData');
+            if (savedAddress) {
+                try {
+                    const addr = JSON.parse(savedAddress);
+                    // Mark the saved address as selected
+                    document.querySelectorAll('.selection-card').forEach(card => {
+                        if (card.getAttribute('data-address-id') == addr.id) {
+                            card.classList.add('selected');
+                        }
+                    });
+                } catch (e) {
+                    console.log('Error parsing saved address');
+                }
+            }
+
+            // Handle address card click
+            document.querySelectorAll('.selection-card').forEach(card => {
+                card.addEventListener('click', function(e) {
+                    e.preventDefault();
+                    e.stopPropagation();
+                    
+                    // Remove selected class from all
+                    document.querySelectorAll('.selection-card').forEach(c => {
+                        c.classList.remove('selected');
+                    });
+                    // Add to clicked card
+                    this.classList.add('selected');
+                    
+                    // Get address data from card
+                    const addressId = this.getAttribute('data-address-id');
+                    const h5 = this.querySelector('h5');
+                    const pElements = this.querySelectorAll('p');
+                    
+                    const display_name = h5 ? h5.textContent.trim() : '';
+                    const details = pElements[0] ? pElements[0].textContent.trim() : '';
+                    const address_line1 = pElements[1] ? pElements[1].textContent.trim() : '';
+                    
+                    // Save to localStorage
+                    const addressData = {
+                        id: addressId,
+                        display_name: display_name,
+                        details: details,
+                        address_line1: address_line1,
+                        city: '',
+                        postal_code: ''
+                    };
+                    
+                    localStorage.setItem('selectedAddressData', JSON.stringify(addressData));
+                    localStorage.setItem('selectedAddressId', addressId);
+                });
+            });
+            
+            // Handle "Back to order" button
+            const backLink = document.querySelector('.back-link');
+            if (backLink) {
+                backLink.addEventListener('click', (e) => {
+                    e.preventDefault();
+                    if (selectedItems && selectedItems !== '') {
+                        window.location.href = '/checkout?selectedItems=' + selectedItems;
+                    } else {
+                        window.location.href = '/cart';
+                    }
+                });
+            }
+        });
     </script>
 </body>
 

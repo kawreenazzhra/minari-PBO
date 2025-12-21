@@ -151,6 +151,12 @@ public class Shipment {
     
     public void markAsPickedUp() {
         addShipmentLog("Warehouse", "Picked up by courier", ShipmentStatus.PICKED_UP);
+        // If payment was pending (COD), mark as shipped and payment will be updated in service
+    }
+    
+    public void markAsShipped() {
+        addShipmentLog("Warehouse", "Shipment has been shipped", ShipmentStatus.PICKED_UP);
+        // This will trigger payment status update for COD orders in the service layer
     }
     
     public void updateLocation(String location, String description) {

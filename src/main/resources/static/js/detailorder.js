@@ -51,15 +51,15 @@ document.addEventListener('DOMContentLoaded', function () {
         if (savedPayment && paymentDisplay && paymentInput) {
             const names = {
                 'cod': 'Cash on Delivery',
-                'virtual': 'Virtual Account Transfer',
-                'ewallet': 'E-wallet'
+                'bank_transfer': 'Virtual Account Transfer',
+                'e_wallet': 'E-wallet'
             };
 
             // Backend valid values mapping
             const backendValues = {
                 'cod': 'cash_on_delivery',
-                'virtual': 'bank_transfer',
-                'ewallet': 'e_wallet'
+                'bank_transfer': 'bank_transfer',
+                'e_wallet': 'e_wallet'
             };
 
             paymentDisplay.textContent = names[savedPayment] || savedPayment;
@@ -82,17 +82,20 @@ document.addEventListener('DOMContentLoaded', function () {
                 const data = JSON.parse(savedAddressData);
 
                 // Update Visuals
-                if (addressDisplay) addressDisplay.textContent = data.display_name;
-                if (addressDetails) addressDetails.textContent = data.details;
+                if (addressDisplay) addressDisplay.textContent = data.display_name || 'Address';
+                if (addressDetails) addressDetails.textContent = data.details || '';
 
                 // Update Hidden Inputs (CRITICAL for backend)
                 if (inputAddr && data.address_line1) inputAddr.value = data.address_line1;
                 if (inputCity && data.city) inputCity.value = data.city;
                 if (inputZip && data.postal_code) inputZip.value = data.postal_code;
 
+                console.log('Address loaded from localStorage:', data);
             } catch (e) {
                 console.error("Error parsing saved address", e);
             }
+        } else {
+            console.log('No address data in localStorage');
         }
     }
 });

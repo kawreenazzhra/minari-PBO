@@ -130,37 +130,62 @@
         <div th:unless="${orders == null or orders.isEmpty()}">
             <div th:each="order : ${orders}" class="order-card">
                 <div class="order-header">
-                    <div>
+                    <div style="flex: 1;">
                         <div class="fw-bold text-muted small">ORDER NUMBER</div>
                         <div th:text="${order.orderNumber}">#12345</div>
                     </div>
-                    <div>
+                    <div style="flex: 1;">
                         <div class="fw-bold text-muted small">DATE</div>
                         <div th:text="${#temporals.format(order.orderDate, 'dd MMM yyyy')}">01 Jan 2025</div>
                     </div>
-                    <div>
-                        <div class="fw-bold text-muted small">TOTAL</div>
-                        <div th:text="'Rp ' + ${#numbers.formatDecimal(order.totalAmount, 0, 'POINT', 0, 'COMMA')}">Rp
-                            100.000</div>
-                    </div>
-                    <div>
+                    <div style="flex-shrink: 0;">
                         <span th:class="'order-status status-' + ${#strings.toLowerCase(order.status)}"
                             th:text="${order.status}">PENDING</span>
                     </div>
                 </div>
                 <div class="order-body">
-                    <div th:each="item : ${order.items}" class="d-flex align-items-center mb-3">
-                        <img th:src="${item.product.imageUrl != null ? item.product.imageUrl : '/images/default.png'}"
-                            class="product-thumb me-3" alt="Product">
-                        <div>
-                            <div class="fw-bold" th:text="${item.product.name}">Product Name</div>
-                            <small class="text-muted">
-                                <span th:text="${item.quantity}">1</span> x
-                                <span
-                                    th:text="'Rp ' + ${#numbers.formatDecimal(item.unitPrice, 0, 'POINT', 0, 'COMMA')}">Rp
-                                    50.000</span>
-                            </small>
+                    <!-- First Product Display -->
+                    <div th:if="${order.items != null and !order.items.isEmpty()}" class="d-flex justify-content-between align-items-start mb-4">
+                        <div class="d-flex align-items-start" style="flex: 1;">
+                            <img th:src="${order.items[0].product.imageUrl != null ? order.items[0].product.imageUrl : '/images/default.png'}"
+                                class="product-thumb me-3" alt="Product" style="width: 120px; height: 120px;">
+                            <div>
+                                <div class="fw-bold" th:text="${order.items[0].product.name}">Product Name</div>
+                                <small class="text-muted d-block">
+                                    <span th:text="${order.items[0].quantity}">1</span> x
+                                    <span
+                                        th:text="'Rp ' + ${#numbers.formatDecimal(order.items[0].unitPrice, 0, 'POINT', 0, 'COMMA')}">Rp
+                                        50.000</span>
+                                </small>
+                            </div>
                         </div>
+                        
+                        <!-- Right Section -->
+                        <div style="flex: 1; text-align: right;">
+                            <div th:if="${order.shippingAddress != null}">
+                                <div class="fw-bold text-muted small mb-1">DELIVERED TO</div>
+                                <div style="font-size: 0.95rem;" th:text="${order.shippingAddress.address}">jalan melati</div>
+                            </div>
+                            
+                            <div class="mt-3" th:if="${order.payment != null}">
+                                <div class="fw-bold text-muted small mb-1">PAYMENT METHOD</div>
+                                <div style="font-size: 0.95rem;" th:text="${#strings.toLowerCase(order.payment.paymentMethod).replace('_', ' ')}">bank transfer</div>
+                            </div>
+                            
+                            <div class="mt-3">
+                                <div class="fw-bold text-muted small mb-1">TOTAL</div>
+                                <div style="font-size: 1.1rem; font-weight: 600; color: #d97706;" 
+                                    th:text="'Rp ' + ${#numbers.formatDecimal(order.totalAmount, 0, 'POINT', 0, 'COMMA')}">Rp 100.000</div>
+                            </div>
+                        </div>
+                    </div>
+                    
+                    <!-- View Details Button -->
+                    <div class="text-center mt-3">
+                        <a th:href="@{'/orders/' + ${order.id}}" class="btn btn-sm" 
+                            style="background-color: #f5e6db; color: #4A3B34; border: none; padding: 8px 20px;">
+                            View Details
+                        </a>
                     </div>
                 </div>
             </div>
