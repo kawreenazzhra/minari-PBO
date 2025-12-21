@@ -57,6 +57,9 @@ public class OrderService {
         }
         Order order = new Order();
         order.setUser(user);
+        // Explicitly generate order number so it's available for Shipment/Payment
+        order.setOrderNumber(order.generateOrderNumber());
+        
         if (user instanceof com.minari.ecommerce.entity.Customer) {
             order.setCustomer((com.minari.ecommerce.entity.Customer) user);
         } else {

@@ -207,8 +207,9 @@ document.addEventListener('DOMContentLoaded', () => {
                 return;
             }
 
-            // Redirect to payment with selected IDs
-            window.location.href = '/payment?items=' + selectedIds.join(',');
+            // Redirect to new checkout flow
+            // Note: Currently checking out sends all items. Partial checkout logic requires backend update.
+            window.location.href = '/checkout';
         });
     }
 

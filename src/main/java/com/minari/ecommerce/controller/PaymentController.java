@@ -29,31 +29,7 @@ public class PaymentController {
     public String paymentPage(@RequestParam(name = "items", required = false) String items,
                             Model model,
                             Principal principal) {
-        
-        if (principal == null) {
-            return "redirect:/login";
-        }
-
-        String email = principal.getName();
-        User user = userRepository.findByEmail(email).orElseThrow();
-        var cart = cartService.getCartForUser(email);
-        
-        if (cart.getItems().isEmpty()) {
-            return "redirect:/products";
-        }
-
-        // Add addresses
-        if (user instanceof Customer) {
-            model.addAttribute("addresses", ((Customer) user).getSavedAddresses());
-        } else {
-            model.addAttribute("addresses", List.of());
-        }
-
-        // Cart summary (Logic could be refined to only show selected items if 'items' param is used)
-        model.addAttribute("cartItems", cart.getItems());
-        model.addAttribute("subtotal", cart.getTotalAmount());
-        model.addAttribute("total", cart.getTotalAmount()); 
-
-        return "payment/view"; 
+        // Redirect to the new checkout flow
+        return "redirect:/checkout"; 
     }
 }

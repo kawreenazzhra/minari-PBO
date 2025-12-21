@@ -36,15 +36,58 @@ public class WebOrderController {
     }
 
     @GetMapping
-    public String checkout(Authentication authentication) {
+    public String checkout(Authentication authentication, 
+                         @RequestParam(value = "addressId", required = false) Long addressId,
+                         @RequestParam(value = "paymentMethod", required = false) String paymentMethodStr,
+                         Model model) {
         if (authentication == null) return "redirect:/login";
-        return "redirect:/checkout/address";
+        String email = authentication.getName();
+        
+        // 1. Get Cart
+        com.minari.ecommerce.entity.ShoppingCart cart = cartService.getCartForUser(email);
+        if (cart.getItems().isEmpty()) {
+            return "redirect:/cart";
+        }
+        model.addAttribute("cart", cart);
+        model.addAttribute("total", cart.getTotalAmount()); // shipping calc can be added later
+
+        // 2. Resolve Address
+        User user = userRepository.findByEmail(email).orElseThrow();
+        List<Address> addresses = List.of();
+        if (user instanceof com.minari.ecommerce.entity.Customer) {
+            addresses = addressRepository.findByCustomer((com.minari.ecommerce.entity.Customer) user);
+        }
+        
+        Address selectedAddress = null;
+        if (addressId != null) {
+            selectedAddress = addressRepository.findById(addressId).orElse(null);
+        } else if (!addresses.isEmpty()) {
+            selectedAddress = addresses.get(0); // Default to first
+        }
+        model.addAttribute("shippingAddress", selectedAddress);
+
+        // 3. Resolve Payment
+        PaymentMethod selectedPayment = PaymentMethod.COD; // Default
+        String paymentDisplay = "Cash on Delivery";
+        if (paymentMethodStr != null) {
+            if ("bank_transfer".equalsIgnoreCase(paymentMethodStr)) {
+                selectedPayment = PaymentMethod.BANK_TRANSFER;
+                paymentDisplay = "Virtual Account Transfer";
+            } else if ("e_wallet".equalsIgnoreCase(paymentMethodStr)) {
+                selectedPayment = PaymentMethod.E_WALLET;
+                 paymentDisplay = "E-Wallet";
+            }
+        }
+        model.addAttribute("paymentMethod", selectedPayment);
+        model.addAttribute("paymentMethodName", paymentDisplay);
+        model.addAttribute("paymentMethodValue", paymentMethodStr != null ? paymentMethodStr : "cod");
+
+        return "checkout/summary";
     }
 
     @GetMapping("/address")
     public String selectAddress(Authentication authentication, Model model) {
         if (authentication == null) return "redirect:/login";
-        
         String email = authentication.getName();
         User user = userRepository.findByEmail(email).orElse(null);
         
@@ -52,17 +95,11 @@ public class WebOrderController {
         if (user instanceof com.minari.ecommerce.entity.Customer) {
             addresses = addressRepository.findByCustomer((com.minari.ecommerce.entity.Customer) user);
         }
-        // For Admin or others, list is empty -> they will see "Add Address" form
-        
         model.addAttribute("addresses", addresses);
-        // Pre-select the last added address if available
-        if (!addresses.isEmpty()) {
-            model.addAttribute("selectedAddressId", addresses.get(0).getId());
-        }
-        
-        return "orders/shipping_address";
+        return "checkout/address_selection";
     }
-
+    
+    // Kept for backward compatibility if needed or removed if unused
     @PostMapping("/address/add")
     public String addAddress(Authentication authentication,
                              @RequestParam("recipientName") String recipientName,
@@ -71,7 +108,7 @@ public class WebOrderController {
                              @RequestParam("city") String city,
                              @RequestParam("zipcode") String zipcode,
                              @RequestParam("country") String country) {
-        if (authentication == null) return "redirect:/login";
+         if (authentication == null) return "redirect:/login";
         
         String email = authentication.getName();
         User user = userRepository.findByEmail(email).orElseThrow();
@@ -83,10 +120,8 @@ public class WebOrderController {
         address.setCity(city);
         address.setZipcode(zipcode);
         address.setCountry(country);
-        
-        // Default values for required fields not in simple form
-        address.setState(city); // Fallback
-        address.setProvince(city); // Fallback
+        address.setState(city); 
+        address.setProvince(city); 
         address.setAddressType("SHIPPING");
         
         if (user instanceof com.minari.ecommerce.entity.Customer) {
@@ -95,7 +130,7 @@ public class WebOrderController {
         
         Address savedAddress = addressRepository.save(address);
         
-        return "redirect:/checkout/payment?addressId=" + savedAddress.getId();
+        return "redirect:/checkout?addressId=" + savedAddress.getId();
     }
 
     @GetMapping("/payment")
@@ -103,10 +138,8 @@ public class WebOrderController {
                               @RequestParam(value = "addressId", required = false) Long addressId,
                               Model model) {
         if (authentication == null) return "redirect:/login";
-        if (addressId == null) return "redirect:/checkout/address";
-        
         model.addAttribute("addressId", addressId);
-        return "orders/payment-method";
+        return "checkout/payment_selection";
     }
 
     @PostMapping("/place")
@@ -116,23 +149,21 @@ public class WebOrderController {
         
         if (authentication == null) return "redirect:/login";
         
+        // ... (Error handling logic same as before)
         if (addressId == null) {
-            return "redirect:/checkout/payment?error=Missing address information";
+             // Fallback if null, try to find default? Or error.
+             return "redirect:/checkout?error=Missing address";
         }
 
         String email = authentication.getName();
-        
         Address address = addressRepository.findById(addressId)
                 .orElseThrow(() -> new RuntimeException("Address not found"));
 
-        // Map Payment Method
         PaymentMethod method = PaymentMethod.COD;
         if ("bank_transfer".equalsIgnoreCase(paymentMethodStr))
             method = PaymentMethod.BANK_TRANSFER;
         else if ("e_wallet".equalsIgnoreCase(paymentMethodStr))
             method = PaymentMethod.E_WALLET;
-        else if ("credit_card".equalsIgnoreCase(paymentMethodStr))
-            method = PaymentMethod.CREDIT_CARD;
 
         try {
             com.minari.ecommerce.entity.Order savedOrder = orderService.createOrderFromCart(email, address, method);
@@ -140,8 +171,7 @@ public class WebOrderController {
         } catch (Exception e) {
             e.printStackTrace();
             System.err.println("Order placement error: " + e.getMessage());
-            // Redirect back to payment with error
-            return "redirect:/checkout/payment?addressId=" + addressId + "&error=Payment Failed Check Server Console";
+            return "redirect:/checkout?addressId=" + addressId + "&error=Payment Failed Check Server Console";
         }
     }
 
