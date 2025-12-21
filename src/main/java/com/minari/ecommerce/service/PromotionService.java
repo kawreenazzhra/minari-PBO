@@ -47,20 +47,20 @@ public class PromotionService {
     public List<Promotion> getApplicablePromotionsForProduct(Long productId, Long categoryId) {
         List<Promotion> allActivePromotions = getActivePromotions();
         List<Promotion> applicablePromotions = new ArrayList<>();
-        
+
         LocalDateTime now = LocalDateTime.now();
-        
+
         for (Promotion promo : allActivePromotions) {
             // Check if promotion is within date range
             if (!now.isAfter(promo.getStartDate()) || !now.isBefore(promo.getEndDate())) {
                 continue;
             }
-            
+
             // Check if product is excluded
             if (isProductExcluded(promo, productId)) {
                 continue;
             }
-            
+
             // Check if applicable to categories
             if (promo.getApplicableCategories() != null && !promo.getApplicableCategories().isEmpty()) {
                 if (isProductInApplicableCategories(promo, categoryId)) {
@@ -71,7 +71,7 @@ public class PromotionService {
                 applicablePromotions.add(promo);
             }
         }
-        
+
         return applicablePromotions;
     }
 
@@ -81,12 +81,12 @@ public class PromotionService {
      */
     public double calculateDiscount(double price, List<Promotion> promotions) {
         double maxDiscount = 0;
-        
+
         for (Promotion promo : promotions) {
             if (!promo.isValid()) {
                 continue;
             }
-            
+
             if (promo.getDiscountType() == Promotion.DiscountType.PERCENTAGE) {
                 double discount = price * (promo.getDiscountValue() / 100);
                 if (promo.getMaxDiscountAmount() != null && discount > promo.getMaxDiscountAmount()) {
@@ -97,7 +97,7 @@ public class PromotionService {
                 maxDiscount = Math.max(maxDiscount, promo.getDiscountValue());
             }
         }
-        
+
         return maxDiscount;
     }
 
@@ -106,11 +106,11 @@ public class PromotionService {
      */
     public double applyBestPromotion(double price, Long productId, Long categoryId) {
         List<Promotion> applicablePromotions = getApplicablePromotionsForProduct(productId, categoryId);
-        
+
         if (applicablePromotions.isEmpty()) {
             return price;
         }
-        
+
         double discount = calculateDiscount(price, applicablePromotions);
         return Math.max(0, price - discount);
     }
@@ -119,12 +119,11 @@ public class PromotionService {
         if (promo.getExcludedProducts() == null || promo.getExcludedProducts().isEmpty()) {
             return false;
         }
-        
+
         try {
             List<Long> excludedIds = objectMapper.readValue(
-                promo.getExcludedProducts(), 
-                objectMapper.getTypeFactory().constructCollectionType(List.class, Long.class)
-            );
+                    promo.getExcludedProducts(),
+                    objectMapper.getTypeFactory().constructCollectionType(List.class, Long.class));
             return excludedIds.contains(productId);
         } catch (Exception e) {
             return false;
@@ -135,15 +134,48 @@ public class PromotionService {
         if (promo.getApplicableCategories() == null || promo.getApplicableCategories().isEmpty()) {
             return true;
         }
-        
+
         try {
             List<Long> categoryIds = objectMapper.readValue(
-                promo.getApplicableCategories(),
-                objectMapper.getTypeFactory().constructCollectionType(List.class, Long.class)
-            );
+                    promo.getApplicableCategories(),
+                    objectMapper.getTypeFactory().constructCollectionType(List.class, Long.class));
             return categoryIds.contains(categoryId);
         } catch (Exception e) {
             return false;
         }
+    }
+
+    /**
+     * Calculate total discount for entire cart
+     * 
+     * @param cart Shopping cart with items
+     * @return Total discount amount
+     */
+    public double calculateCartDiscount(com.minari.ecommerce.entity.ShoppingCart cart) {
+        if (cart == null || cart.getItems() == null || cart.getItems().isEmpty()) {
+            return 0.0;
+        }
+
+        double totalDiscount = 0.0;
+
+        for (com.minari.ecommerce.entity.CartItem item : cart.getItems()) {
+            if (item.getProduct() == null) {
+                continue;
+            }
+
+            double unitPrice = item.getUnitPrice();
+            Long productId = item.getProduct().getId();
+            Long categoryId = item.getProduct().getCategory() != null ? item.getProduct().getCategory().getId() : null;
+
+            // Get applicable promotions for this product
+            List<Promotion> applicablePromotions = getApplicablePromotionsForProduct(productId, categoryId);
+
+            if (!applicablePromotions.isEmpty()) {
+                double discount = calculateDiscount(unitPrice, applicablePromotions);
+                totalDiscount += discount * item.getQuantity();
+            }
+        }
+
+        return totalDiscount;
     }
 }

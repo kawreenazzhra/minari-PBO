@@ -33,18 +33,19 @@
     <!-- Navbar mount -->
     <header id="navMount"></header>
 
-    <!-- Hero - Adapted since generic product list doesn't always have category object -->
-    <!-- Hero - Adapted for Category Details -->
+    <!-- Hero - Adapted for Category Details and Search -->
     <section class="hero">
         <!-- Logic for Hero Image:
-             1. Shirt and Blouse -> /images/categories/shirtandblouse.png
-             2. T-Shirt and Polo -> /images/categories/tshirtandpolo.png
-             3. Fallback -> bannerUrl or default -->
-        <img id="heroImg" th:src="${(categoryObj != null and categoryObj.bannerUrl != null and !categoryObj.bannerUrl.isEmpty()) ? categoryObj.bannerUrl : 
+             1. Search Query -> /images/search/bg_search.jpeg
+             2. Shirt and Blouse -> /images/categories/shirtandblouse.png
+             3. T-Shirt and Polo -> /images/categories/tshirtandpolo.png
+             4. Fallback -> bannerUrl or default -->
+        <img id="heroImg" th:src="${searchQuery != null ? '/images/bg_search.jpeg' : 
+                      ((categoryObj != null and categoryObj.bannerUrl != null and !categoryObj.bannerUrl.isEmpty()) ? categoryObj.bannerUrl : 
                       ((categoryObj != null and categoryObj.imageUrl != null and !categoryObj.imageUrl.isEmpty()) ? categoryObj.imageUrl : 
                       ((categoryObj != null and #strings.containsIgnoreCase(categoryObj.name, 'Shirt and Blouse')) ? '/images/categories/shirtandblouse.png' : 
                       ((categoryObj != null and #strings.containsIgnoreCase(categoryObj.name, 'T-Shirt')) ? '/images/categories/tshirtandpolo.png' : 
-                      '/images/default-category.jpg')))}" alt="Category" class="hero__img">
+                      '/images/bg_search.jpeg'))))}" alt="Category" class="hero__img">
 
         <div id="heroTitle" class="hero__title"
             style="font-family: 'Playfair Display', serif; font-size: 4rem; color: #FBAF99; text-shadow: 2px 2px 4px rgba(0,0,0,0.3);"

@@ -14,6 +14,43 @@
 </head>
 
 <body>
+    <!-- Navbar -->
+    <nav class="navbar navbar-expand-lg fixed-top"
+        style="background-color: #FFF6F0; box-shadow: 0 4px 10px rgba(0, 0, 0, 0.15);">
+        <div class="container-fluid">
+            <a class="navbar-brand" th:href="@{/admin/dashboard}">
+                <img th:src="@{/images/logofix.png}" alt="MINARI Logo" height="40" width="auto">
+            </a>
+
+            <div class="ms-auto d-flex align-items-center gap-3">
+                <a th:href="@{/}" target="_blank" title="View Shop" class="btn p-0 border-0 bg-transparent">
+                    <i class="fas fa-external-link-alt" style="color: #333; font-size: 20px;"></i>
+                </a>
+
+                <div class="dropdown">
+                    <button class="btn p-0 border-0 bg-transparent" type="button" id="dropdownUser1"
+                        data-bs-toggle="dropdown" aria-expanded="false">
+                        <img th:src="@{/images/akun.png}" alt="User" width="30" height="30">
+                    </button>
+                    <ul class="dropdown-menu dropdown-menu-end shadow" aria-labelledby="dropdownUser1"
+                        style="border: 1px solid #ead9d2; border-radius: 12px; padding: 10px; background-color: #FFF6F0;">
+                        <li>
+                            <h6 class="dropdown-header" style="color: #1f2937;">Admin</h6>
+                        </li>
+                        <li>
+                            <hr class="dropdown-divider" style="border-color: #ead9d2;">
+                        </li>
+                        <li>
+                            <form th:action="@{/logout}" method="post" class="m-0">
+                                <button type="submit" class="dropdown-item text-danger" style="border-radius: 8px;">Log
+                                    out</button>
+                            </form>
+                        </li>
+                    </ul>
+                </div>
+            </div>
+        </div>
+    </nav>
 
     <div class="sidebar">
         <a th:href="@{/admin/dashboard}" class="sidebar-item">
@@ -80,11 +117,13 @@
                 <h5>Customer Information</h5>
                 <div class="detail-row">
                     <span class="detail-label">Customer</span>
-                    <span class="detail-value" th:text="${order.customer != null ? order.customer.fullName : 'Guest'}">Name</span>
+                    <span class="detail-value"
+                        th:text="${order.customer != null ? order.customer.fullName : 'Guest'}">Name</span>
                 </div>
                 <div class="detail-row">
                     <span class="detail-label">Email</span>
-                    <span class="detail-value" th:text="${order.customer != null ? order.customer.email : '-'}">Email</span>
+                    <span class="detail-value"
+                        th:text="${order.customer != null ? order.customer.email : '-'}">Email</span>
                 </div>
                 <div class="detail-row">
                     <span class="detail-label">Phone</span>
@@ -182,6 +221,11 @@
 
             <div class="order-detail-card">
                 <h5>Payment Summary</h5>
+                <div class="detail-row">
+                    <span class="detail-label">Payment Method</span>
+                    <span class="detail-value"
+                        th:text="${order.payment != null && order.payment.paymentMethod != null ? order.payment.paymentMethod : 'Not specified'}">-</span>
+                </div>
                 <div class="detail-row">
                     <span class="detail-label">Subtotal</span>
                     <span class="detail-value"

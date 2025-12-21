@@ -136,81 +136,87 @@
 
         <form th:action="@{/checkout/place}" method="POST" id="checkoutForm">
             <input type="hidden" name="addressId" th:value="${shippingAddress != null ? shippingAddress.id : ''}">
-            <input type="hidden" name="payment_method" th:value="${paymentMethodValue != null ? paymentMethodValue : 'cod'}">
+            <input type="hidden" name="payment_method"
+                th:value="${paymentMethodValue != null ? paymentMethodValue : 'cod'}">
             <input type="hidden" name="selectedItems" th:value="${#strings.arrayJoin(cart.items.![product.id], ',')}">
-                <div th:if="${cart.items == null or #lists.isEmpty(cart.items)}" class="alert alert-warning">
-                    Your cart is empty. <a th:href="@{/}">Continue Shopping</a>
+            <div th:if="${cart.items == null or #lists.isEmpty(cart.items)}" class="alert alert-warning">
+                Your cart is empty. <a th:href="@{/}">Continue Shopping</a>
+            </div>
+            <div th:each="item : ${cart.items}" class="d-flex align-items-center mb-4">
+                <img th:src="@{${item.product.imageUrl}}" alt="Product" class="checkout-item-img me-3"
+                    th:onerror="this.src='/images/placeholder.png'">
+                <div class="flex-grow-1">
+                    <h5 class="mb-1" style="font-family: 'Playfair Display', serif;" th:text="${item.product.name}">
+                        Product Name</h5>
+                    <p class="mb-2"
+                        th:text="${'Rp. ' + #numbers.formatDecimal(item.product.price, 0, 'POINT', 2, 'COMMA')}">Rp.
+                        250.000,00</p>
                 </div>
-                <div th:each="item : ${cart.items}" class="d-flex align-items-center mb-4">
-                    <img th:src="@{${item.product.imageUrl}}" alt="Product" class="checkout-item-img me-3" th:onerror="this.src='/images/placeholder.png'">
-                    <div class="flex-grow-1">
-                        <h5 class="mb-1" style="font-family: 'Playfair Display', serif;" th:text="${item.product.name}">
-                            Product Name</h5>
-                        <p class="mb-2"
-                            th:text="${'Rp. ' + #numbers.formatDecimal(item.product.price, 0, 'POINT', 2, 'COMMA')}">Rp.
-                            250.000,00</p>
-                    </div>
-                    <div class="quantity-control px-2">
-                        <!-- Static quantity for now or minimal control -->
-                        <span th:text="${item.quantity}">1</span>
-                    </div>
+                <div class="quantity-control px-2">
+                    <!-- Static quantity for now or minimal control -->
+                    <span th:text="${item.quantity}">1</span>
                 </div>
             </div>
+    </div>
 
-            <!-- Shipping To Section -->
-            <div class="mb-4">
-                <div class="d-flex justify-content-between align-items-center mb-2">
-                    <h4 class="section-header mb-0">Shipping to</h4>
-                    <a th:href="@{/checkout/address}" class="text-decoration-none text-dark d-flex align-items-center">
-                        <span class="me-2"
-                            th:text="${shippingAddress != null ? (shippingAddress.recipientName + ' (' + shippingAddress.addressType + ')') : 'Select Address'}">House</span>
-                        <i class="fas fa-chevron-right arrow-icon"></i>
-                    </a>
-                </div>
-                <!-- Address Details (Hidden input used above) -->
-            </div>
+    <!-- Shipping To Section -->
+    <div class="mb-4">
+        <div class="d-flex justify-content-between align-items-center mb-2">
+            <h4 class="section-header mb-0">Shipping to</h4>
+            <a th:href="@{/checkout/address(selectedItems=${#strings.arrayJoin(cart.items.![product.id], ',')})}"
+                class="text-decoration-none text-dark d-flex align-items-center">
+                <span class="me-2"
+                    th:text="${shippingAddress != null ? (shippingAddress.recipientName + ' (' + shippingAddress.addressType + ')') : 'Select Address'}">House</span>
+                <i class="fas fa-chevron-right arrow-icon"></i>
+            </a>
+        </div>
+        <!-- Address Details (Hidden input used above) -->
+    </div>
 
-            <!-- Summary Box -->
-            <div class="summary-box">
-                <h4 class="section-header">Subtotal product</h4>
-                <hr>
-                <div class="d-flex justify-content-between mb-2">
-                    <span><span th:text="${#lists.size(cart.items)}">1</span> Product</span>
-                    <span th:text="${'Rp. ' + #numbers.formatDecimal(total, 0, 'POINT', 2, 'COMMA')}">Rp.
-                        250.000,00</span>
-                </div>
-                <div class="d-flex justify-content-between mb-2">
-                    <span>Discount</span>
-                    <span>Rp. 0,00</span>
-                </div>
-                <div class="d-flex justify-content-between mb-2">
-                    <span>Shipping fee</span>
-                    <span>Rp. 0,00</span>
-                </div>
-                <hr>
-                <div class="d-flex justify-content-between font-weight-bold">
-                    <strong>Total</strong>
-                    <strong th:text="${'Rp. ' + #numbers.formatDecimal(total, 0, 'POINT', 2, 'COMMA')}">Rp.
-                        250.000,00</strong>
-                </div>
-            </div>
+    <!-- Summary Box -->
+    <div class="summary-box">
+        <h4 class="section-header">Subtotal product</h4>
+        <hr>
+        <div class="d-flex justify-content-between mb-2">
+            <span><span th:text="${#lists.size(cart.items)}">1</span> Product</span>
+            <span th:text="${'Rp. ' + #numbers.formatDecimal(total, 0, 'POINT', 2, 'COMMA')}">Rp.
+                250.000,00</span>
+        </div>
+        <div class="d-flex justify-content-between mb-2">
+            <span>Discount</span>
+            <span
+                th:text="${discountAmount != null ? ('Rp. ' + #numbers.formatDecimal(discountAmount, 0, 'POINT', 2, 'COMMA')) : 'Rp. 0,00'}">Rp.
+                0,00</span>
+        </div>
+        <div class="d-flex justify-content-between mb-2">
+            <span>Shipping fee</span>
+            <span>Rp. 0,00</span>
+        </div>
+        <hr>
+        <div class="d-flex justify-content-between font-weight-bold">
+            <strong>Total</strong>
+            <strong
+                th:text="${discountAmount != null ? ('Rp. ' + #numbers.formatDecimal(total - discountAmount, 0, 'POINT', 2, 'COMMA')) : ('Rp. ' + #numbers.formatDecimal(total, 0, 'POINT', 2, 'COMMA'))}">Rp.
+                250.000,00</strong>
+        </div>
+    </div>
 
-            <!-- Payment Method Section -->
-            <div class="mb-5">
-                <div class="d-flex justify-content-between align-items-center">
-                    <h4 class="section-header mb-0">Payment method</h4>
-                    <a th:href="@{/checkout/payment(addressId=${shippingAddress != null ? shippingAddress.id : ''})}"
-                        class="text-decoration-none text-dark d-flex align-items-center">
-                        <span class="me-2" th:text="${paymentMethodName}">Cash on Delivery</span>
-                        <i class="fas fa-chevron-right arrow-icon"></i>
-                    </a>
-                </div>
-            </div>
+    <!-- Payment Method Section -->
+    <div class="mb-5">
+        <div class="d-flex justify-content-between align-items-center">
+            <h4 class="section-header mb-0">Payment method</h4>
+            <a th:href="@{/checkout/payment(addressId=${shippingAddress != null ? shippingAddress.id : ''}, selectedItems=${#strings.arrayJoin(cart.items.![product.id], ',')})}"
+                class="text-decoration-none text-dark d-flex align-items-center">
+                <span class="me-2" th:text="${paymentMethodName}">Cash on Delivery</span>
+                <i class="fas fa-chevron-right arrow-icon"></i>
+            </a>
+        </div>
+    </div>
 
-            <!-- Checkout Button -->
-            <button type="submit" class="checkout-btn mb-5" th:disabled="${shippingAddress == null}">Check out</button>
+    <!-- Checkout Button -->
+    <button type="submit" class="checkout-btn mb-5" th:disabled="${shippingAddress == null}">Check out</button>
 
-        </form>
+    </form>
     </div>
 
     <!-- Simple Footer -->

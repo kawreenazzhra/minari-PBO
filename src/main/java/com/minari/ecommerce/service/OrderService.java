@@ -64,16 +64,17 @@ public class OrderService {
         order.setUser(user);
         // Explicitly generate order number so it's available for Shipment/Payment
         order.setOrderNumber(order.generateOrderNumber());
-        
+
         if (user instanceof com.minari.ecommerce.entity.Customer) {
             order.setCustomer((com.minari.ecommerce.entity.Customer) user);
         } else {
-             // User is not a customer (e.g. Admin). 
-             // Since we made customer_id nullable, we can proceed.
-             // We could log this event.
-             log.warn("Order created by non-customer user: {}", user.getEmail());
+            // User is not a customer (e.g. Admin).
+            // Since we made customer_id nullable, we can proceed.
+            // We could log this event.
+            log.warn("Order created by non-customer user: {}", user.getEmail());
         }
-        // Clone the address to avoid detached entity issues and snapshot it for the order history
+        // Clone the address to avoid detached entity issues and snapshot it for the
+        // order history
         Address orderAddress = new Address();
         orderAddress.setRecipientName(shippingAddress.getRecipientName());
         orderAddress.setPhoneNumber(shippingAddress.getPhoneNumber());
@@ -85,13 +86,15 @@ public class OrderService {
         orderAddress.setZipcode(shippingAddress.getZipcode());
         orderAddress.setCountry(shippingAddress.getCountry());
         orderAddress.setAddressType("SHIPPING_ORDER"); // Distinguish from user saved addresses
-        
-        // Do NOT set customer or ID, this is a standalone record for this order (snapshot)
-        // UPDATE: Set customer to satisfy potential DB NOT NULL constraint on addresses.customer_id
+
+        // Do NOT set customer or ID, this is a standalone record for this order
+        // (snapshot)
+        // UPDATE: Set customer to satisfy potential DB NOT NULL constraint on
+        // addresses.customer_id
         if (user instanceof com.minari.ecommerce.entity.Customer) {
             orderAddress.setCustomer((com.minari.ecommerce.entity.Customer) user);
         }
-        
+
         order.setShippingAddress(orderAddress);
 
         List<OrderItem> orderItems = cart.getItems().stream()
@@ -107,25 +110,27 @@ public class OrderService {
                     }
                     orderItem.setQuantity(cartItem.getQuantity());
                     orderItem.setUnitPrice(cartItem.getUnitPrice());
-                    
+
                     // ✅ Apply promotions to calculate discounted price
                     double unitPrice = cartItem.getUnitPrice();
                     double discountedPrice = unitPrice;
-                    
+
                     if (cartItem.getProduct() != null) {
                         Long productId = cartItem.getProduct().getId();
-                        Long categoryId = cartItem.getProduct().getCategory() != null ? cartItem.getProduct().getCategory().getId() : null;
+                        Long categoryId = cartItem.getProduct().getCategory() != null
+                                ? cartItem.getProduct().getCategory().getId()
+                                : null;
                         discountedPrice = promotionService.applyBestPromotion(unitPrice, productId, categoryId);
                     }
-                    
+
                     double discount = unitPrice - discountedPrice;
                     double discountedSubtotal = discountedPrice * cartItem.getQuantity();
-                    
+
                     // Store the discount for this item
                     if (discount > 0) {
                         orderItem.setDiscountPrice(discountedPrice);
                     }
-                    
+
                     orderItem.setTotalPrice(discountedSubtotal);
                     return orderItem;
                 })
@@ -134,9 +139,11 @@ public class OrderService {
         // Calculate total discount from all items
         double totalDiscount = 0;
         double discountedTotal = 0;
-        
+        double originalSubtotal = 0;
+
         for (OrderItem item : orderItems) {
             discountedTotal += item.getTotalPrice();
+            originalSubtotal += item.getUnitPrice() * item.getQuantity();
             if (item.getDiscountPrice() != null) {
                 totalDiscount += (item.getUnitPrice() - item.getDiscountPrice()) * item.getQuantity();
             }
@@ -144,11 +151,13 @@ public class OrderService {
 
         // Debug
         System.err.println("DEBUG: Created new Order Address clone for Order: " + order.getOrderNumber());
-        order.setTotalAmount(discountedTotal);
-        order.setSubtotalAmount(discountedTotal); // ✅ Added: Set subtotal_amount
-        order.setTaxAmount(0.0); // ✅ Set tax to 0 if not calculated
-        order.setShippingCost(0.0); // ✅ Set shipping to 0 if not calculated
-        order.setDiscountAmount(totalDiscount); // ✅ Set discount from promotions
+        // ✅ FIXED: Set subtotal as original price, discount as discount amount, total
+        // as final price
+        order.setSubtotalAmount(originalSubtotal); // Original total before discount
+        order.setTaxAmount(0.0);
+        order.setShippingCost(0.0);
+        order.setDiscountAmount(totalDiscount); // Total discount amount
+        order.setTotalAmount(discountedTotal); // Final price after discount
 
         order.setItems(orderItems);
         Payment payment = new Payment();
@@ -178,9 +187,11 @@ public class OrderService {
 
     /**
      * Create order from a specific cart (used when filtered items are selected)
-     * @param email User email
-     * @param cart The cart (filtered or full) to create order from
-     * @param selectedProductIds Product IDs that were selected for checkout - only these will be removed from cart
+     * 
+     * @param email              User email
+     * @param cart               The cart (filtered or full) to create order from
+     * @param selectedProductIds Product IDs that were selected for checkout - only
+     *                           these will be removed from cart
      */
     public Order createOrderFromCart(String email, ShoppingCart cart, List<Long> selectedProductIds) {
         User user = userRepository.findByEmail(email)
@@ -198,11 +209,11 @@ public class OrderService {
         order.setUser(user);
         // Explicitly generate order number so it's available for Shipment/Payment
         order.setOrderNumber(order.generateOrderNumber());
-        
+
         if (user instanceof com.minari.ecommerce.entity.Customer) {
             order.setCustomer((com.minari.ecommerce.entity.Customer) user);
         } else {
-             log.warn("Order created by non-customer user: {}", user.getEmail());
+            log.warn("Order created by non-customer user: {}", user.getEmail());
         }
 
         List<OrderItem> orderItems = cart.getItems().stream()
@@ -218,25 +229,27 @@ public class OrderService {
                     }
                     orderItem.setQuantity(cartItem.getQuantity());
                     orderItem.setUnitPrice(cartItem.getUnitPrice());
-                    
+
                     // ✅ Apply promotions to calculate discounted price
                     double unitPrice = cartItem.getUnitPrice();
                     double discountedPrice = unitPrice;
-                    
+
                     if (cartItem.getProduct() != null) {
                         Long productId = cartItem.getProduct().getId();
-                        Long categoryId = cartItem.getProduct().getCategory() != null ? cartItem.getProduct().getCategory().getId() : null;
+                        Long categoryId = cartItem.getProduct().getCategory() != null
+                                ? cartItem.getProduct().getCategory().getId()
+                                : null;
                         discountedPrice = promotionService.applyBestPromotion(unitPrice, productId, categoryId);
                     }
-                    
+
                     double discount = unitPrice - discountedPrice;
                     double discountedSubtotal = discountedPrice * cartItem.getQuantity();
-                    
+
                     // Store the discount for this item
                     if (discount > 0) {
                         orderItem.setDiscountPrice(discountedPrice);
                     }
-                    
+
                     orderItem.setTotalPrice(discountedSubtotal);
                     return orderItem;
                 })
@@ -245,22 +258,27 @@ public class OrderService {
         // Calculate total discount from all items
         double totalDiscount = 0;
         double discountedTotal = 0;
-        
+        double originalSubtotal = 0;
+
         for (OrderItem item : orderItems) {
             discountedTotal += item.getTotalPrice();
+            originalSubtotal += item.getUnitPrice() * item.getQuantity();
             if (item.getDiscountPrice() != null) {
                 totalDiscount += (item.getUnitPrice() - item.getDiscountPrice()) * item.getQuantity();
             }
         }
 
-        order.setTotalAmount(discountedTotal);
-        order.setSubtotalAmount(discountedTotal);
+        // ✅ FIXED: Set subtotal as original price, discount as discount amount, total
+        // as final price
+        order.setSubtotalAmount(originalSubtotal);
         order.setTaxAmount(0.0);
         order.setShippingCost(0.0);
         order.setDiscountAmount(totalDiscount);
+        order.setTotalAmount(discountedTotal);
         order.setItems(orderItems);
-        
-        // Save order (without payment/shipment for now, those come from main createOrderFromCart)
+
+        // Save order (without payment/shipment for now, those come from main
+        // createOrderFromCart)
         Order savedOrder = orderRepository.save(order);
 
         // Remove only selected items from cart (keep unselected items)
@@ -279,13 +297,16 @@ public class OrderService {
 
     /**
      * Create order from filtered cart with address and payment method
-     * @param email User email
-     * @param shippingAddress Shipping address for order
-     * @param paymentMethod Payment method (COD, BANK_TRANSFER, E_WALLET)
-     * @param cart The cart (filtered or full) to create order from
-     * @param selectedProductIds Product IDs that were selected for checkout - only these will be removed from cart
+     * 
+     * @param email              User email
+     * @param shippingAddress    Shipping address for order
+     * @param paymentMethod      Payment method (COD, BANK_TRANSFER, E_WALLET)
+     * @param cart               The cart (filtered or full) to create order from
+     * @param selectedProductIds Product IDs that were selected for checkout - only
+     *                           these will be removed from cart
      */
-    public Order createOrderFromCart(String email, Address shippingAddress, PaymentMethod paymentMethod, ShoppingCart cart, List<Long> selectedProductIds) {
+    public Order createOrderFromCart(String email, Address shippingAddress, PaymentMethod paymentMethod,
+            ShoppingCart cart, List<Long> selectedProductIds) {
         User user = userRepository.findByEmail(email)
                 .orElseThrow(() -> new RuntimeException("User not found"));
 
@@ -300,13 +321,13 @@ public class OrderService {
         Order order = new Order();
         order.setUser(user);
         order.setOrderNumber(order.generateOrderNumber());
-        
+
         if (user instanceof com.minari.ecommerce.entity.Customer) {
             order.setCustomer((com.minari.ecommerce.entity.Customer) user);
         } else {
-             log.warn("Order created by non-customer user: {}", user.getEmail());
+            log.warn("Order created by non-customer user: {}", user.getEmail());
         }
-        
+
         // Clone the address to avoid detached entity issues
         Address orderAddress = new Address();
         orderAddress.setRecipientName(shippingAddress.getRecipientName());
@@ -319,11 +340,11 @@ public class OrderService {
         orderAddress.setZipcode(shippingAddress.getZipcode());
         orderAddress.setCountry(shippingAddress.getCountry());
         orderAddress.setAddressType("SHIPPING_ORDER");
-        
+
         if (user instanceof com.minari.ecommerce.entity.Customer) {
             orderAddress.setCustomer((com.minari.ecommerce.entity.Customer) user);
         }
-        
+
         order.setShippingAddress(orderAddress);
 
         List<OrderItem> orderItems = cart.getItems().stream()
@@ -338,23 +359,25 @@ public class OrderService {
                     }
                     orderItem.setQuantity(cartItem.getQuantity());
                     orderItem.setUnitPrice(cartItem.getUnitPrice());
-                    
+
                     double unitPrice = cartItem.getUnitPrice();
                     double discountedPrice = unitPrice;
-                    
+
                     if (cartItem.getProduct() != null) {
                         Long productId = cartItem.getProduct().getId();
-                        Long categoryId = cartItem.getProduct().getCategory() != null ? cartItem.getProduct().getCategory().getId() : null;
+                        Long categoryId = cartItem.getProduct().getCategory() != null
+                                ? cartItem.getProduct().getCategory().getId()
+                                : null;
                         discountedPrice = promotionService.applyBestPromotion(unitPrice, productId, categoryId);
                     }
-                    
+
                     double discount = unitPrice - discountedPrice;
                     double discountedSubtotal = discountedPrice * cartItem.getQuantity();
-                    
+
                     if (discount > 0) {
                         orderItem.setDiscountPrice(discountedPrice);
                     }
-                    
+
                     orderItem.setTotalPrice(discountedSubtotal);
                     return orderItem;
                 })
@@ -362,21 +385,25 @@ public class OrderService {
 
         double totalDiscount = 0;
         double discountedTotal = 0;
-        
+        double originalSubtotal = 0;
+
         for (OrderItem item : orderItems) {
             discountedTotal += item.getTotalPrice();
+            originalSubtotal += item.getUnitPrice() * item.getQuantity();
             if (item.getDiscountPrice() != null) {
                 totalDiscount += (item.getUnitPrice() - item.getDiscountPrice()) * item.getQuantity();
             }
         }
 
-        order.setTotalAmount(discountedTotal);
-        order.setSubtotalAmount(discountedTotal);
+        // ✅ FIXED: Set subtotal as original price, discount as discount amount, total
+        // as final price
+        order.setSubtotalAmount(originalSubtotal);
         order.setTaxAmount(0.0);
         order.setShippingCost(0.0);
         order.setDiscountAmount(totalDiscount);
+        order.setTotalAmount(discountedTotal);
         order.setItems(orderItems);
-        
+
         Payment payment = new Payment();
         payment.setOrder(order);
         payment.setAmount(discountedTotal);
@@ -529,7 +556,7 @@ public class OrderService {
                 .sum());
         stats.put("average_order_value", allOrders.isEmpty() ? 0.0
                 : allOrders.stream().mapToDouble(Order::getTotalAmount).average().orElse(0.0));
-        
+
         // Get total customers from database
         try {
             long totalCustomers = customerRepository.count();
@@ -559,7 +586,7 @@ public class OrderService {
                 .sum());
         stats.put("averageOrderValue", allOrders.isEmpty() ? 0.0
                 : allOrders.stream().mapToDouble(Order::getTotalAmount).average().orElse(0.0));
-        
+
         // Get total customers from database
         try {
             long totalCustomers = customerRepository.count();
@@ -680,7 +707,8 @@ public class OrderService {
                 .orderNumber(order.getOrderNumber())
                 .status(order.getStatus().toString())
                 .customerId(order.getCustomer() != null ? order.getCustomer().getId() : null)
-                .customerName(order.getCustomer() != null ? order.getCustomer().getFullName() : (order.getUser() != null ? order.getUser().getFullName() : "Guest"))
+                .customerName(order.getCustomer() != null ? order.getCustomer().getFullName()
+                        : (order.getUser() != null ? order.getUser().getFullName() : "Guest"))
                 .totalAmount(order.getTotalAmount())
                 .subtotalAmount(order.getSubtotalAmount())
                 .taxAmount(order.getTaxAmount())

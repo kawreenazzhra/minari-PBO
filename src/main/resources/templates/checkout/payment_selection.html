@@ -41,6 +41,17 @@
             border-color: #333;
         }
 
+        .selection-card.selected {
+            border-color: #333;
+            background-color: #f8f9fa;
+        }
+
+        .selection-card.selected .check-circle {
+            background-color: #333;
+            border-color: #333;
+            color: white;
+        }
+
         .check-circle {
             width: 24px;
             height: 24px;
@@ -128,46 +139,71 @@
             const addressId = urlParams.get('addressId') || '[[${addressId}]]';
             const selectedItems = urlParams.get('selectedItems') || '[[${selectedItems}]]';
 
-            // Mark selected payment method if exists in URL
-            if (selectedPaymentMethod) {
+            // Mark selected payment method if exists in URL or localStorage
+            const savedPayment = localStorage.getItem('selectedPaymentMethod');
+            if (selectedPaymentMethod || savedPayment) {
+                const methodToSelect = selectedPaymentMethod || savedPayment;
                 document.querySelectorAll('.selection-card[data-payment-method]').forEach(card => {
-                    if (card.getAttribute('data-payment-method') === selectedPaymentMethod) {
+                    if (card.getAttribute('data-payment-method') === methodToSelect) {
                         card.classList.add('selected');
                     }
                 });
             }
 
-            // Handle payment method selection (stay on page, only update visual)
+            // Handle payment method selection - now redirects immediately
             const paymentCards = document.querySelectorAll('.selection-card[data-payment-method]');
-            
+
             paymentCards.forEach(card => {
                 card.addEventListener('click', (e) => {
                     e.preventDefault();
                     e.stopPropagation();
-                    
-                    // Remove selected class from all cards
-                    paymentCards.forEach(c => c.classList.remove('selected'));
-                    // Add selected class to clicked card
-                    card.classList.add('selected');
-                    
-                    // Save payment method to localStorage
+
+                    // Get payment method
                     const paymentMethod = card.getAttribute('data-payment-method');
+
+                    // Save payment method to localStorage for backup
                     localStorage.setItem('selectedPaymentMethod', paymentMethod);
+
+                    // Redirect back to checkout with all parameters
+                    let redirectUrl = '/checkout?paymentMethod=' + paymentMethod;
+                    if (addressId && addressId !== '' && addressId !== 'null') {
+                        redirectUrl += '&addressId=' + addressId;
+                    }
+                    if (selectedItems && selectedItems !== '' && selectedItems !== 'null') {
+                        redirectUrl += '&selectedItems=' + selectedItems;
+                    }
+
+                    window.location.href = redirectUrl;
                 });
             });
-            
-            // Handle "Back to order" button - goes to checkout with selectedItems
+
+            // Handle "Back to order" button - preserve all parameters
             const backLink = document.querySelector('.back-link');
             if (backLink) {
                 backLink.addEventListener('click', (e) => {
                     e.preventDefault();
-                    
-                    // Redirect to checkout with selectedItems only
-                    if (selectedItems && selectedItems !== '') {
-                        window.location.href = '/checkout?selectedItems=' + selectedItems;
-                    } else {
-                        window.location.href = '/cart';
+
+                    // Get currently selected payment method if any
+                    const selectedCard = document.querySelector('.selection-card.selected');
+                    let redirectUrl = '/checkout';
+                    let hasParams = false;
+
+                    if (addressId && addressId !== '' && addressId !== 'null') {
+                        redirectUrl += '?addressId=' + addressId;
+                        hasParams = true;
                     }
+
+                    if (selectedCard) {
+                        const paymentMethod = selectedCard.getAttribute('data-payment-method');
+                        redirectUrl += (hasParams ? '&' : '?') + 'paymentMethod=' + paymentMethod;
+                        hasParams = true;
+                    }
+
+                    if (selectedItems && selectedItems !== '' && selectedItems !== 'null') {
+                        redirectUrl += (hasParams ? '&' : '?') + 'selectedItems=' + selectedItems;
+                    }
+
+                    window.location.href = redirectUrl;
                 });
             }
         });

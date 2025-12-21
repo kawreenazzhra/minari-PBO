@@ -76,6 +76,7 @@ document.addEventListener('DOMContentLoaded', function () {
         const inputAddr = document.getElementById('inputShippingAddress');
         const inputCity = document.getElementById('inputShippingCity');
         const inputZip = document.getElementById('inputShippingPostalCode');
+        const inputAddressId = document.getElementById('inputAddressId');
 
         if (savedAddressData) {
             try {
@@ -89,6 +90,17 @@ document.addEventListener('DOMContentLoaded', function () {
                 if (inputAddr && data.address_line1) inputAddr.value = data.address_line1;
                 if (inputCity && data.city) inputCity.value = data.city;
                 if (inputZip && data.postal_code) inputZip.value = data.postal_code;
+                
+                // Set Address ID
+                if (inputAddressId) {
+                    // Try getting from separate key first, then data object
+                    const savedId = localStorage.getItem('selectedAddressId');
+                    if (savedId) {
+                         inputAddressId.value = savedId;
+                    } else if (data.id) {
+                         inputAddressId.value = data.id;
+                    }
+                }
 
                 console.log('Address loaded from localStorage:', data);
             } catch (e) {

@@ -44,6 +44,7 @@
     </div>
 
     <form th:action="@{/checkout/place}" method="POST" id="checkoutForm">
+        <input type="hidden" name="addressId" id="inputAddressId" value="">
         <input type="hidden" name="shipping_address" id="inputShippingAddress" value="">
         <input type="hidden" name="shipping_city" id="inputShippingCity" value="">
         <input type="hidden" name="shipping_postal_code" id="inputShippingPostalCode" value="">

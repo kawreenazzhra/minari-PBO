@@ -204,29 +204,22 @@
                 }
             }
 
-            // Handle address card click
+            // Handle address card click - now redirects immediately with addressId
             document.querySelectorAll('.selection-card').forEach(card => {
-                card.addEventListener('click', function(e) {
+                card.addEventListener('click', function (e) {
                     e.preventDefault();
                     e.stopPropagation();
-                    
-                    // Remove selected class from all
-                    document.querySelectorAll('.selection-card').forEach(c => {
-                        c.classList.remove('selected');
-                    });
-                    // Add to clicked card
-                    this.classList.add('selected');
-                    
+
                     // Get address data from card
                     const addressId = this.getAttribute('data-address-id');
                     const h5 = this.querySelector('h5');
                     const pElements = this.querySelectorAll('p');
-                    
+
                     const display_name = h5 ? h5.textContent.trim() : '';
                     const details = pElements[0] ? pElements[0].textContent.trim() : '';
                     const address_line1 = pElements[1] ? pElements[1].textContent.trim() : '';
-                    
-                    // Save to localStorage
+
+                    // Save to localStorage for backup
                     const addressData = {
                         id: addressId,
                         display_name: display_name,
@@ -235,22 +228,40 @@
                         city: '',
                         postal_code: ''
                     };
-                    
+
                     localStorage.setItem('selectedAddressData', JSON.stringify(addressData));
                     localStorage.setItem('selectedAddressId', addressId);
+
+                    // Redirect back to checkout with addressId parameter
+                    let redirectUrl = '/checkout?addressId=' + addressId;
+                    if (selectedItems && selectedItems !== '') {
+                        redirectUrl += '&selectedItems=' + selectedItems;
+                    }
+                    window.location.href = redirectUrl;
                 });
             });
-            
+
             // Handle "Back to order" button
             const backLink = document.querySelector('.back-link');
             if (backLink) {
                 backLink.addEventListener('click', (e) => {
                     e.preventDefault();
-                    if (selectedItems && selectedItems !== '') {
-                        window.location.href = '/checkout?selectedItems=' + selectedItems;
-                    } else {
-                        window.location.href = '/cart';
+
+                    // Get currently selected address if any
+                    const selectedCard = document.querySelector('.selection-card.selected');
+                    let redirectUrl = '/checkout';
+
+                    if (selectedCard) {
+                        const addressId = selectedCard.getAttribute('data-address-id');
+                        redirectUrl += '?addressId=' + addressId;
+                        if (selectedItems && selectedItems !== '') {
+                            redirectUrl += '&selectedItems=' + selectedItems;
+                        }
+                    } else if (selectedItems && selectedItems !== '') {
+                        redirectUrl += '?selectedItems=' + selectedItems;
                     }
+
+                    window.location.href = redirectUrl;
                 });
             }
         });

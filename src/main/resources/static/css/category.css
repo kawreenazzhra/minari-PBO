@@ -30,8 +30,8 @@ body {
   height: 711px;
   /* <- kunci: biar tidak terpotong */
   /* optional: batasi supaya tidak terlalu tinggi di layar besar */
-  object-fit: contain;
-  /* aman dipakai, walau height:auto sudah cukup */
+  object-fit: cover;
+  /* cover agar gambar mengisi penuh area hero */
   background: #fff;
 
 }
