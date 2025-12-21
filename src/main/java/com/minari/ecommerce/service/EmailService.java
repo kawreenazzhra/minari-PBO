@@ -22,8 +22,11 @@ public class EmailService {
             message.setText(buildOrderConfirmationEmail(order));
             message.setFrom("noreply@minari.com");
             
-            mailSender.send(message);
-            System.out.println("Order confirmation email sent to: " + toEmail);
+            // SIMULATION MODE: Do not actually send to prevent errors with invalid creds
+            // mailSender.send(message); 
+            System.out.println("📧 [SIMULATION] Email would be sent to: " + toEmail);
+            System.out.println("   Subject: " + message.getSubject());
+            System.out.println("   Content: \n" + message.getText());
             
         } catch (Exception e) {
             System.err.println("Failed to send email: " + e.getMessage());
@@ -64,7 +67,7 @@ public class EmailService {
             Best regards,
             Minari Team
             """, 
-            order.getCustomer().getFullName(),
+            order.getCustomer() != null ? order.getCustomer().getFullName() : (order.getUser() != null ? order.getUser().getFullName() : "Customer"),
             order.getOrderNumber(),
             order.getOrderNumber(),
             order.getTotalAmount(),

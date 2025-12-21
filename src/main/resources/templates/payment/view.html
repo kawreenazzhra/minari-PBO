@@ -108,7 +108,8 @@
                         <div class="card-body">
                             <!-- List Saved Addresses -->
                             <div th:if="${not #lists.isEmpty(addresses)}" class="mb-3">
-                                <div th:each="addr : ${addresses}" class="payment-option" onclick="selectAddress(this)">
+                                <div th:each="addr : ${addresses}" class="payment-option address-card-option"
+                                    onclick="selectAddress(this)">
                                     <div class="d-flex align-items-start gap-3">
                                         <input type="radio" name="selected_address_id" th:value="${addr.id}"
                                             class="mt-1 form-check-input" required>
@@ -139,7 +140,8 @@
                         <div class="card-body">
                             <input type="hidden" name="payment_method" id="selectedPaymentMethod" value="bank_transfer">
 
-                            <div class="payment-option selected" onclick="selectPayment('bank_transfer', this)">
+                            <div class="payment-option payment-method-option selected"
+                                onclick="selectPayment('bank_transfer', this)">
                                 <div class="d-flex align-items-center gap-3">
                                     <i class="fas fa-university fa-lg text-muted"></i>
                                     <div>
@@ -149,7 +151,7 @@
                                 </div>
                             </div>
 
-                            <div class="payment-option" onclick="selectPayment('e_wallet', this)">
+                            <div class="payment-option payment-method-option" onclick="selectPayment('e_wallet', this)">
                                 <div class="d-flex align-items-center gap-3">
                                     <i class="fas fa-wallet fa-lg text-muted"></i>
                                     <div>
@@ -159,7 +161,7 @@
                                 </div>
                             </div>
 
-                            <div class="payment-option" onclick="selectPayment('cod', this)">
+                            <div class="payment-option payment-method-option" onclick="selectPayment('cod', this)">
                                 <div class="d-flex align-items-center gap-3">
                                     <i class="fas fa-money-bill-wave fa-lg text-muted"></i>
                                     <div>
@@ -190,11 +192,11 @@
                             <div th:each="item : ${cartItems}"
                                 class="d-flex justify-content-between align-items-center mb-2">
                                 <div>
-                                    <span th:text="${item.productName}" class="fw-medium">Product Name</span>
+                                    <span th:text="${item.product.name}" class="fw-medium">Product Name</span>
                                     <small class="text-muted d-block" th:text="'x' + ${item.quantity}">x1</small>
                                 </div>
                                 <span
-                                    th:text="'Rp ' + ${#numbers.formatDecimal(item.price * item.quantity, 0, 'POINT', 0, 'COMMA')}">Rp
+                                    th:text="'Rp ' + ${#numbers.formatDecimal(item.unitPrice * item.quantity, 0, 'POINT', 0, 'COMMA')}">Rp
                                     0</span>
                             </div>
                         </div>
@@ -227,18 +229,14 @@
     <script>
         function selectPayment(method, element) {
             document.getElementById('selectedPaymentMethod').value = method;
-            document.querySelectorAll('.payment-option').forEach(el => {
-                if (!el.querySelector('input[name="selected_address_id"]')) { // Don't remove selected from address cards
-                    el.classList.remove('selected');
-                }
-            });
+            // Only toggle selection for payment methods
+            document.querySelectorAll('.payment-method-option').forEach(el => el.classList.remove('selected'));
             element.classList.add('selected');
         }
 
         function selectAddress(element) {
-            // Visually select the card
-            const container = element.closest('.card-body');
-            container.querySelectorAll('.payment-option').forEach(el => el.classList.remove('selected'));
+            // Only toggle selection for address cards
+            document.querySelectorAll('.address-card-option').forEach(el => el.classList.remove('selected'));
             element.classList.add('selected');
 
             // Check the radio button

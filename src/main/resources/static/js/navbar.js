@@ -9,6 +9,9 @@ const Role = {
 
 // 1. Template for the Hamburger Button (triggers full menu)
 function tplHamburgerBtn() {
+  if (window.location.pathname.includes('/payment') || window.location.pathname.includes('/checkout')) {
+    return '';
+  }
   return `
       <button id="hamburgerBtn" class="btn p-0 border-0 bg-transparent ms-2" style="cursor: pointer;">
           <img src="/images/menu.png" alt="Menu" width="24" height="24">
@@ -181,8 +184,10 @@ function renderNavbar() {
   }
 
   // 2. Append Full Menu Overlay to mount (or body, but mount is fine if outside container)
-  const overlayHTML = tplFullMenuOverlay();
-  mount.insertAdjacentHTML('beforeend', overlayHTML);
+  if (!window.location.pathname.includes('/payment') && !window.location.pathname.includes('/checkout')) {
+    const overlayHTML = tplFullMenuOverlay();
+    mount.insertAdjacentHTML('beforeend', overlayHTML);
+  }
 
   // Initialize scroll effect
   initializeScrollEffect();

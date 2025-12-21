@@ -1,0 +1,5 @@
+2025-12-21 07:10:49.099231+07:00 jdbc[3]: exception
+org.h2.jdbc.JdbcSQLSyntaxErrorException: Syntax error in SQL statement "\000d\000a    alter table if exists order_items \000d\000a       alter column return_status set data type VARCHAR(20) [*]DEFAULT 'NONE'"; SQL statement:
+
+    alter table if exists order_items 
+       alter column return_status set data type VARCHAR(20) DEFAULT 'NONE' [42000-224]

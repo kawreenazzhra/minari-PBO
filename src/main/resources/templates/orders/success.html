@@ -1,0 +1,66 @@
+<!DOCTYPE html>
+<html xmlns:th="http://www.thymeleaf.org">
+
+<head>
+    <meta charset="UTF-8">
+    <title>MINARI - Order Confirmation</title>
+    <link href="https://cdn.jsdelivr.net/npm/bootstrap@5.3.0/dist/css/bootstrap.min.css" rel="stylesheet">
+    <link href="https://fonts.googleapis.com/css2?family=Playfair+Display:wght@400;500;600;700&display=swap"
+        rel="stylesheet">
+    <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.4.0/css/all.min.css">
+
+    <link rel="stylesheet" th:href="@{/css/style5.css}">
+    <link rel="stylesheet" th:href="@{/css/navbar.css}">
+</head>
+
+<body>
+
+    <div th:replace="~{fragments/navbar :: navbar}"></div>
+
+    <div class="header-spacer" style="height: 60px;"></div>
+
+    <div class="main-content">
+        <div class="container">
+            <div class="confirmation-content">
+
+                <!-- Custom Success Icon -->
+                <div class="confirmation-icon-container mb-4">
+                    <svg width="80" height="80" viewBox="0 0 80 80" fill="none" xmlns="http://www.w3.org/2000/svg"
+                        class="confirmation-icon">
+                        <circle cx="40" cy="40" r="40" fill="#F3E5DC" />
+                        <path d="M24 40L34.6667 50.6667L56 29.3333" stroke="#8B7E74" stroke-width="4"
+                            stroke-linecap="round" stroke-linejoin="round" />
+                    </svg>
+                </div>
+
+                <h1 class="confirmation-title mb-3" style="font-size: 32px; color: #1D1B20;">Payment successful!</h1>
+                <p class="confirmation-message mb-5" style="color: #625B71;">Your order will be processed shortly</p>
+
+                <div class="order-number-badge mb-5"
+                    style="background: #FFF6F0; padding: 10px 20px; border-radius: 50px; display: inline-block;">
+                    <p class="m-0" style="font-family: 'Playfair Display'; font-size: 18px; color: #5a4b45;"
+                        th:text="|Order #${orderNumber}|">
+                        Order #12345
+                    </p>
+                </div>
+
+                <div class="d-flex gap-3 justify-content-center flex-wrap mb-4">
+                    <a th:href="@{/}" class="back-to-collection-btn text-decoration-none"
+                        style="background: #1D1B20; color: #fff; border: 1px solid #1D1B20;">
+                        Continue Shopping
+                    </a>
+                    <a th:href="@{/orders}" class="back-to-collection-btn text-decoration-none"
+                        style="background: transparent; border: 1px solid #1D1B20; color: #1D1B20;">
+                        View My Orders
+                    </a>
+                </div>
+
+            </div>
+        </div>
+    </div>
+
+    <script src="https://cdn.jsdelivr.net/npm/bootstrap@5.3.0/dist/js/bootstrap.bundle.min.js"></script>
+
+</body>
+
+</html>

@@ -30,7 +30,7 @@ public class ProfileController {
                 model.addAttribute("user", user);
                 // Fetch address for display
                 if (user instanceof com.minari.ecommerce.entity.Customer) {
-                    List<com.minari.ecommerce.entity.Address> addresses = addressRepository.findByCustomerId(user.getId());
+                    List<com.minari.ecommerce.entity.Address> addresses = addressRepository.findByCustomer((com.minari.ecommerce.entity.Customer) user);
                     if (!addresses.isEmpty()) {
                         // Find default or pick first
                         com.minari.ecommerce.entity.Address displayAddress = addresses.stream()
@@ -64,7 +64,7 @@ public class ProfileController {
         
         List<com.minari.ecommerce.entity.Address> addressList = new java.util.ArrayList<>();
         if (user instanceof com.minari.ecommerce.entity.Customer) {
-            addressList = addressRepository.findByCustomerId(user.getId());
+            addressList = addressRepository.findByCustomer((com.minari.ecommerce.entity.Customer) user);
         }
         
         model.addAttribute("addresses", addressList);

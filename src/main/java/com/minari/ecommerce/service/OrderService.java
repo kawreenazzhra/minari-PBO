@@ -57,6 +57,14 @@ public class OrderService {
         }
         Order order = new Order();
         order.setUser(user);
+        if (user instanceof com.minari.ecommerce.entity.Customer) {
+            order.setCustomer((com.minari.ecommerce.entity.Customer) user);
+        } else {
+             // User is not a customer (e.g. Admin). 
+             // Since we made customer_id nullable, we can proceed.
+             // We could log this event.
+             log.warn("Order created by non-customer user: {}", user.getEmail());
+        }
         order.setShippingAddress(shippingAddress);
         order.setTotalAmount(cart.getTotalAmount());
 
@@ -348,7 +356,8 @@ public class OrderService {
                 .id(order.getId())
                 .orderNumber(order.getOrderNumber())
                 .status(order.getStatus().toString())
-                .customerId(order.getCustomer().getId())
+                .customerId(order.getCustomer() != null ? order.getCustomer().getId() : null)
+                .customerName(order.getCustomer() != null ? order.getCustomer().getFullName() : (order.getUser() != null ? order.getUser().getFullName() : "Guest"))
                 .totalAmount(order.getTotalAmount())
                 .subtotalAmount(order.getSubtotalAmount())
                 .taxAmount(order.getTaxAmount())
