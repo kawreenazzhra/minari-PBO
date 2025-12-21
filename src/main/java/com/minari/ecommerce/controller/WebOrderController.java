@@ -139,8 +139,9 @@ public class WebOrderController {
             return "redirect:/checkout/success?orderNumber=" + savedOrder.getOrderNumber();
         } catch (Exception e) {
             e.printStackTrace();
-            // Redirect back to payment with error?
-            return "redirect:/checkout/payment?addressId=" + addressId + "&error=" + e.getMessage();
+            System.err.println("Order placement error: " + e.getMessage());
+            // Redirect back to payment with error
+            return "redirect:/checkout/payment?addressId=" + addressId + "&error=Payment Failed Check Server Console";
         }
     }
 

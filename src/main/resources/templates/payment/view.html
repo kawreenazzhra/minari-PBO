@@ -111,7 +111,7 @@
                                 <div th:each="addr : ${addresses}" class="payment-option address-card-option"
                                     onclick="selectAddress(this)">
                                     <div class="d-flex align-items-start gap-3">
-                                        <input type="radio" name="selected_address_id" th:value="${addr.id}"
+                                        <input type="radio" name="addressId" th:value="${addr.id}"
                                             class="mt-1 form-check-input" required>
                                         <div>
                                             <strong th:text="${addr.recipientName}">Recipient Name</strong>

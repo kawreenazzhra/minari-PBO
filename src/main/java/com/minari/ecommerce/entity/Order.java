@@ -331,7 +331,10 @@ public class Order {
     }
     
     public String generateOrderNumber() {
-        return "ORD" + LocalDateTime.now().format(java.time.format.DateTimeFormatter.ofPattern("yyyyMMddHHmmss")) + id;
+        if (id != null) {
+            return "ORD" + LocalDateTime.now().format(java.time.format.DateTimeFormatter.ofPattern("yyyyMMddHHmmss")) + id;
+        }
+        return "ORD" + LocalDateTime.now().format(java.time.format.DateTimeFormatter.ofPattern("yyyyMMddHHmmss")) + "-" + java.util.UUID.randomUUID().toString().substring(0, 8).toUpperCase();
     }
     
     public double calculateTotal() {
@@ -355,6 +358,7 @@ public class Order {
 
     public void createShipment(String trackingNumber, String shipmentMethod) {
         Shipment shipment = new Shipment(this.orderNumber, trackingNumber, shipmentMethod, this.shippingAddress);
+        shipment.setOrder(this);
         this.shipment = shipment;
     }
 }
