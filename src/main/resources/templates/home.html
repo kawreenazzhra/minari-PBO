@@ -43,11 +43,11 @@
                 </div>
                 <div class="col-md-6">
                     <div class="hero-images">
-                        <img th:src="@{/images/hero-obj-1.png}" class="hero-obj hero-obj-main" alt="Fashion Bag">
+                        <img th:src="@{'/images/tes.png'}" class="hero-obj hero-obj-main" alt="Fashion Bag">
 
-                        <img th:src="@{/images/hero-obj-2.png}" class="hero-obj hero-obj-1" alt="Fire Icon">
-                        <img th:src="@{/images/hero-obj-3.png}" class="hero-obj hero-obj-2" alt="Like Icon">
-                        <img th:src="@{/images/hero-obj-4.png}" class="hero-obj hero-obj-3" alt="Coin Icon">
+                        <img th:src="@{'/images/test1.png'}" class="hero-obj hero-obj-1" alt="Fire Icon">
+                        <img th:src="@{'/images/test2.png'}" class="hero-obj hero-obj-2" alt="Like Icon">
+                        <img th:src="@{'/images/test3.png'}" class="hero-obj hero-obj-3" alt="Coin Icon">
                     </div>
                 </div>
             </div>
@@ -103,9 +103,16 @@
     <section class="style-section">
         <div class="container-fluid">
             <h2 class="section-title">MINARI's Style</h2>
-            <div class="style-scroll px-5">
-                <div class="style-item" th:each="i : ${#numbers.sequence(1, 8)}">
-                    <img th:src="@{'/images/g' + ${i} + '.png'}" th:alt="'Style ' + ${i}">
+            <div class="style-scroll-container">
+                <div class="style-scroll-track">
+                    <!-- First set of items -->
+                    <div class="style-item" th:each="i : ${#numbers.sequence(1, 8)}">
+                        <img th:src="@{'/images/g' + ${i} + '.png'}" th:alt="'Style ' + ${i}">
+                    </div>
+                    <!-- Duplicate set for seamless loop -->
+                    <div class="style-item" th:each="i : ${#numbers.sequence(1, 8)}">
+                        <img th:src="@{'/images/g' + ${i} + '.png'}" th:alt="'Style ' + ${i}">
+                    </div>
                 </div>
             </div>
         </div>

@@ -55,9 +55,9 @@ body {
 
 .hero-obj-main {
     /* Main bag image */
-    width: 420px;
-    top: 50%;
-    left: 50%;
+    width: 400px;
+    top: 28%;
+    left: 18%;
     transform: translate(-50%, -50%);
     z-index: 5;
     animation-delay: 0s;
@@ -76,8 +76,8 @@ body {
 .hero-obj-2 {
     /* Like/thumbs up icon - top right */
     width: 110px;
-    top: 10%;
-    right: 15%;
+    top: 5%;
+    right: 175px;
     animation-delay: 2s;
     transform: rotate(10deg);
     z-index: 4;
@@ -86,7 +86,7 @@ body {
 .hero-obj-3 {
     /* Coin icon - bottom right */
     width: 120px;
-    bottom: 15%;
+    top: 15%;
     right: 10%;
     animation-delay: 3s;
     z-index: 6;
@@ -135,37 +135,31 @@ body {
     margin-bottom: 40px;
 }
 
-/* Enable scrolling */
-.category-scroll,
-.style-scroll {
+/* Category scroll - manual scrolling */
+.category-scroll {
     display: flex;
     gap: 30px;
     overflow-x: auto;
     scroll-behavior: smooth;
     padding-bottom: 20px;
-    /* Space for scrollbar */
     -webkit-overflow-scrolling: touch;
 }
 
-/* Hide scrollbar visually but allow scroll if desired, or keep default. 
-   Let's keep default for usability or thin it. */
-.category-scroll::-webkit-scrollbar,
-.style-scroll::-webkit-scrollbar {
+.category-scroll::-webkit-scrollbar {
     height: 8px;
 }
 
-.category-scroll::-webkit-scrollbar-track,
-.style-scroll::-webkit-scrollbar-track {
+.category-scroll::-webkit-scrollbar-track {
     background: #f1f1f1;
     border-radius: 4px;
 }
 
-.category-scroll::-webkit-scrollbar-thumb,
-.style-scroll::-webkit-scrollbar-thumb {
+.category-scroll::-webkit-scrollbar-thumb {
     background: #D9AF9C;
     border-radius: 4px;
 }
 
+/* Style scroll - infinite auto-scroll animation */
 .style-scroll-container {
     overflow: hidden;
     width: 100%;
@@ -173,22 +167,42 @@ body {
     padding: 20px 0;
 }
 
-/* Removed animation based scroll track in favor of native scroll for "old" layout compat */
+.style-scroll-track {
+    display: flex;
+    width: max-content;
+    animation: scroll 30s linear infinite;
+}
+
+.style-scroll-track:hover {
+    animation-play-state: paused;
+}
+
+@keyframes scroll {
+    0% {
+        transform: translateX(0);
+    }
+
+    100% {
+        transform: translateX(-50%);
+        /* Move half the width (one full set of items) */
+    }
+}
 
 .style-item {
-    min-width: 200px;
-    /* Ensure they don't squish */
-    margin-right: 0;
+    margin-right: 50px;
+    /* Use margin instead of gap for consistent spacing calculation */
     flex-shrink: 0;
 }
 
 .style-item img {
-    width: 100%;
-    height: 300px;
-    /* Fixed height for consistency */
-    object-fit: cover;
+    width: 200px;
+    height: auto;
     border-radius: 10px;
     transition: transform 0.3s ease;
+    user-select: none;
+    /* Prevent selection */
+    pointer-events: none;
+    /* Prevent interaction during animation */
 }
 
 .category-section {
