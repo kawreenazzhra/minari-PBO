@@ -11,5 +11,9 @@ public interface ProductReviewRepository extends JpaRepository<ProductReview, Lo
 
     List<ProductReview> findByCustomerId(Long customerId);
 
+    List<ProductReview> findByProductIdAndIsApprovedOrderByReviewDateDesc(Long productId, Boolean isApproved);
+
+    List<ProductReview> findByProductIdOrderByReviewDateDesc(Long productId);
+
     List<ProductReview> findByReviewTextContainingIgnoreCase(String query);
 }

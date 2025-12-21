@@ -2,7 +2,9 @@ package com.minari.ecommerce.controller;
 
 import com.minari.ecommerce.entity.Product;
 import com.minari.ecommerce.entity.ProductCategory;
+import com.minari.ecommerce.entity.ProductReview;
 import com.minari.ecommerce.service.ProductService;
+import com.minari.ecommerce.repository.ProductReviewRepository;
 
 import org.springframework.stereotype.Controller;
 import org.springframework.ui.Model;
@@ -15,9 +17,11 @@ import java.util.Optional;
 public class ProductController {
 
     private final ProductService productService;
+    private final ProductReviewRepository reviewRepository;
 
-    public ProductController(ProductService productService) {
+    public ProductController(ProductService productService, ProductReviewRepository reviewRepository) {
         this.productService = productService;
+        this.reviewRepository = reviewRepository;
     }
 
     @GetMapping
@@ -72,7 +76,19 @@ public class ProductController {
             return "redirect:/products";
         }
 
+        // Get ALL reviews for this product (no approval filter)
+        List<ProductReview> reviews = reviewRepository.findByProductIdOrderByReviewDateDesc(id);
+
+        // Calculate average rating
+        double averageRating = reviews.stream()
+                .mapToInt(ProductReview::getRating)
+                .average()
+                .orElse(0.0);
+
         model.addAttribute("product", product.get());
+        model.addAttribute("reviews", reviews);
+        model.addAttribute("reviewCount", reviews.size());
+        model.addAttribute("averageRating", averageRating);
         model.addAttribute("pageTitle", product.get().getName() + " - Minari");
 
         return "products/detail";

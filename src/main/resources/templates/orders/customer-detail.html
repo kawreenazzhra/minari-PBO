@@ -52,6 +52,13 @@
                 </span>
                 <span class="detail-value"
                     th:text="${#temporals.format(order.orderDate, 'dd.MM.yyyy HH:mm')}">Date</span>
+
+                <!-- Give Rating Button (only for DELIVERED orders) -->
+                <button th:if="${order.status.name() == 'DELIVERED'}" class="btn btn-sm"
+                    style="background-color: #d97706; color: white; border: none; padding: 8px 20px; margin-left: 15px;"
+                    data-bs-toggle="modal" data-bs-target="#ratingModal">
+                    <i class="fas fa-star"></i> Give Rating
+                </button>
             </div>
         </div>
 
@@ -166,6 +173,67 @@
                         th:text="'Rp ' + ${#numbers.formatDecimal(order.totalAmount, 0, 'POINT', 0, 'COMMA')}">Rp
                         0</span>
                 </div>
+            </div>
+        </div>
+    </div>
+
+    <!-- Rating Modal -->
+    <div class="modal fade" id="ratingModal" tabindex="-1" aria-labelledby="ratingModalLabel" aria-hidden="true">
+        <div class="modal-dialog modal-dialog-centered">
+            <div class="modal-content" style="border-radius: 15px; border: none;">
+                <div class="modal-header" style="background-color: #FFF6F0; border-bottom: 1px solid #ead9d2;">
+                    <h5 class="modal-title" id="ratingModalLabel"
+                        style="font-family: 'Playfair Display', serif; color: #4A3B34;">Rate Your Order</h5>
+                    <button type="button" class="btn-close" data-bs-dismiss="modal" aria-label="Close"></button>
+                </div>
+                <form th:action="@{/my-orders/{id}/review(id=${order.id})}" method="POST">
+                    <div class="modal-body" style="padding: 30px;">
+                        <div class="mb-4">
+                            <label class="form-label fw-bold" style="color: #4A3B34;">How was your experience?</label>
+                            <div class="d-flex justify-content-center gap-2 mb-3">
+                                <input type="radio" class="btn-check" name="rating" id="star1" value="1" required>
+                                <label class="btn btn-outline-warning" for="star1"
+                                    style="font-size: 2rem; border: none;">⭐</label>
+
+                                <input type="radio" class="btn-check" name="rating" id="star2" value="2">
+                                <label class="btn btn-outline-warning" for="star2"
+                                    style="font-size: 2rem; border: none;">⭐</label>
+
+                                <input type="radio" class="btn-check" name="rating" id="star3" value="3">
+                                <label class="btn btn-outline-warning" for="star3"
+                                    style="font-size: 2rem; border: none;">⭐</label>
+
+                                <input type="radio" class="btn-check" name="rating" id="star4" value="4">
+                                <label class="btn btn-outline-warning" for="star4"
+                                    style="font-size: 2rem; border: none;">⭐</label>
+
+                                <input type="radio" class="btn-check" name="rating" id="star5" value="5">
+                                <label class="btn btn-outline-warning" for="star5"
+                                    style="font-size: 2rem; border: none;">⭐</label>
+                            </div>
+                        </div>
+
+                        <div class="mb-3">
+                            <label for="reviewTitle" class="form-label fw-bold" style="color: #4A3B34;">Review Title
+                                (Optional)</label>
+                            <input type="text" class="form-control" id="reviewTitle" name="reviewTitle"
+                                placeholder="Summarize your experience" style="border-color: #ead9d2;">
+                        </div>
+
+                        <div class="mb-3">
+                            <label for="reviewText" class="form-label fw-bold" style="color: #4A3B34;">Your
+                                Feedback</label>
+                            <textarea class="form-control" id="reviewText" name="reviewText" rows="4"
+                                placeholder="Tell us about your experience with this order..."
+                                style="border-color: #ead9d2;" required></textarea>
+                        </div>
+                    </div>
+                    <div class="modal-footer" style="border-top: 1px solid #ead9d2; background-color: #FFF6F0;">
+                        <button type="button" class="btn btn-secondary" data-bs-dismiss="modal">Cancel</button>
+                        <button type="submit" class="btn"
+                            style="background-color: #d97706; color: white; border: none;">Submit Rating</button>
+                    </div>
+                </form>
             </div>
         </div>
     </div>
