@@ -1,0 +1,65 @@
+<!DOCTYPE html>
+<html xmlns:th="http://www.thymeleaf.org" xmlns:layout="http://www.ultraq.net.nz/thymeleaf/layout"
+    layout:decorate="~{layouts/admin}">
+
+<head>
+    <title>Orders management</title>
+</head>
+
+<body>
+    <div layout:fragment="content">
+        <div class="d-flex justify-content-between align-items-center mb-4">
+            <h2 class="page-title">Orders</h2>
+        </div>
+
+        <div class="table-custom">
+            <table class="table mb-0">
+                <thead>
+                    <tr>
+                        <th>Order ID</th>
+                        <th>Customer</th>
+                        <th>Items</th>
+                        <th>Total</th>
+                        <th>Payment Status</th>
+                        <th>Shipping Status</th>
+                        <th>Date</th>
+                    </tr>
+                </thead>
+                <tbody>
+                    <tr th:each="order : ${orders}"
+                        th:onclick="'window.location=\'' + @{/admin/orders/{id}(id=${order.id})} + '\''"
+                        style="cursor: pointer;">
+                        <td><strong th:text="'#' + ${order.orderNumber}">#123</strong></td>
+                        <td th:text="${order.customerName}">Customer</td>
+                        <td>
+                            <!-- Items not populated in DTO by default, showing placeholder logic -->
+                            <span th:if="${order.items != null and !order.items.empty}">
+                                <span th:text="${order.items[0].productName}">Item</span>
+                                <small th:if="${order.items.size() > 1}" class="text-muted"
+                                    th:text="'(+' + (${order.items.size() - 1}) + ' others)'">(+1 others)</small>
+                            </span>
+                            <span th:if="${order.items == null or order.items.empty}" class="text-muted">Click to view
+                                details</span>
+                        </td>
+                        <td th:text="'Rp ' + ${#numbers.formatDecimal(order.totalAmount, 0, 'COMMA', 0, 'POINT')}">Rp 0
+                        </td>
+                        <td>
+                            <span th:class="'badge-status badge-' + ${#strings.toLowerCase(order.paymentStatus)}"
+                                th:text="${#strings.capitalize(#strings.toLowerCase(order.paymentStatus))}">Paid</span>
+                        </td>
+                        <td>
+                            <span th:class="'badge-status badge-' + ${#strings.toLowerCase(order.status)}"
+                                th:text="${#strings.capitalize(#strings.toLowerCase(order.status))}">Pending</span>
+                        </td>
+                        <td th:text="${#temporals.format(order.orderDate, 'dd.MM.yyyy')}">01.01.2025</td>
+                    </tr>
+                    <tr th:if="${orders == null or orders.empty}">
+                        <td colspan="7" class="text-center py-4">No orders found.</td>
+                    </tr>
+                </tbody>
+            </table>
+        </div>
+    </div>
+</body>
+
+</html>

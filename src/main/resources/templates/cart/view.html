@@ -1,0 +1,138 @@
+<!DOCTYPE html>
+<html xmlns:th="http://www.thymeleaf.org" xmlns:layout="http://www.ultraq.net.nz/thymeleaf/layout"
+    layout:decorate="~{layouts/main}">
+
+<head>
+    <title>MINARI | Cart</title>
+    <!-- Add CSRF token for JS -->
+    <meta name="csrf-token" th:content="${_csrf.token}" />
+
+    <link href="https://cdn.jsdelivr.net/npm/bootstrap@5.3.3/dist/css/bootstrap.min.css" rel="stylesheet">
+    <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.4.0/css/all.min.css">
+
+    <!-- CSS -->
+    <link rel="stylesheet" th:href="@{/css/cart.css}">
+    <!-- Navbar CSS handled by layout -->
+</head>
+
+<body>
+    <div layout:fragment="content">
+        <div class="container mb-5">
+            <div class="cart-card p-3 p-md-4">
+
+                <!-- Empty Cart State -->
+                <div th:if="${cart.items == null or cart.items.empty}" class="text-center py-5">
+                    <h3 class="mb-3">Your cart is empty</h3>
+                    <p class="text-muted mb-4">Add some items to your cart</p>
+                    <a th:href="@{/products}" class="btn btn-primary">Continue Shopping</a>
+                </div>
+
+                <!-- Cart Content -->
+                <div th:if="${cart.items != null and !cart.items.empty}">
+                    <!-- Guest notification -->
+                    <div th:if="${isGuest}" class="alert alert-info d-flex align-items-center mb-3">
+                        <i class="bi bi-info-circle me-2"></i>
+                        <div>
+                            You're shopping as a guest.
+                            <a th:href="@{/login}" class="alert-link">Log in</a>
+                            to save your cart and checkout faster.
+                        </div>
+                    </div>
+
+                    <!-- Select All -->
+                    <div class="d-flex align-items-center gap-2 mb-2">
+                        <input type="checkbox" id="selectAll" class="form-check-input" />
+                        <label for="selectAll" class="form-check-label fw-semibold">Select All</label>
+                    </div>
+                    <hr>
+
+                    <!-- Cart List -->
+                    <div id="cartList" class="vstack gap-4">
+                        <div th:each="item : ${cart.items}" class="cart-item d-grid align-items-center"
+                            style="grid-template-columns: 24px 80px 1fr auto; gap:12px;" th:data-id="${item.productId}"
+                            th:data-product-id="${item.productId}" th:data-price="${item.price}"
+                            th:data-is-guest="${isGuest}">
+
+                            <input type="checkbox" class="form-check-input item-check" />
+                            <img th:src="@{${item.imageUrl != null ? item.imageUrl : '/images/default-product.jpg'}}"
+                                class="item-thumb" th:alt="${item.productName}"
+                                onerror="this.src='/images/default-product.jpg'">
+
+                            <div>
+                                <div class="fw-semibold" th:text="${item.productName}">Product Name</div>
+                                <div class="text-muted small"
+                                    th:text="'Rp ' + ${#numbers.formatDecimal(item.price, 0, 'POINT', 0, 'COMMA')}">Rp 0
+                                </div>
+                                <div class="text-muted small mt-1" th:if="${item.size != '' or item.color != ''}">
+                                    <span th:if="${item.size != ''}" th:text="'Size: ' + ${item.size}"></span>
+                                    <span th:if="${item.color != ''}" th:text="'| Color: ' + ${item.color}"></span>
+                                </div>
+                            </div>
+
+                            <div class="d-flex align-items-center gap-2">
+                                <div class="qty-wrap">
+                                    <button class="qty-btn btnMinus">−</button>
+                                    <input type="number" class="qty-input item-qty" min="1"
+                                        th:value="${item.quantity}" />
+                                    <button class="qty-btn btnPlus">+</button>
+                                </div>
+                                <!-- Remove form/button -->
+                                <!-- Current cart.js might handle removal via AJAX or form. 
+                                     Reference used a button with class 'remove-item' and no form, implying JS handler.
+                                     We will assume cart.js handles it using data attributes or classes. -->
+                                <button class="btn btn-link text-danger remove-item p-0 border-0"
+                                    style="text-decoration:none;" title="Remove Item">
+                                    <i class="fas fa-trash-alt fa-lg"></i>
+                                </button>
+                            </div>
+                        </div>
+                    </div>
+                </div>
+            </div>
+        </div>
+
+        <!-- STICKY TOTAL BAR -->
+        <div th:if="${cart.items != null and !cart.items.empty}" class="sticky-total">
+            <div class="container-fluid px-5 d-flex align-items-center justify-content-between">
+                <div>
+                    <span class="text-muted">Total:</span>
+                    <span class="ms-2 fw-bold price" id="totalPrice"
+                        th:text="'Rp ' + ${#numbers.formatDecimal(cart.total, 0, 'POINT', 0, 'COMMA')}">Rp 0</span>
+                </div>
+                <button id="checkoutBtn" class="btn btn-dark px-4">Check out</button>
+            </div>
+        </div>
+
+        <!-- LOGIN MODAL -->
+        <div class="modal fade" id="loginModal" tabindex="-1" aria-hidden="true">
+            <div class="modal-dialog modal-dialog-centered">
+                <div class="modal-content">
+                    <div class="modal-header justify-content-center">
+                        <h5 class="modal-title fw-bold">Please Log In</h5>
+                    </div>
+                    <div class="modal-body text-center">
+                        <p>Please log in to proceed with checkout.</p>
+                        <p class="small text-muted">Your cart items will be saved after login.</p>
+                    </div>
+                    <div class="modal-footer justify-content-center">
+                        <a th:href="@{/login}" class="btn btn-dark">Log In</a>
+                        <button type="button" class="btn btn-outline-secondary" data-bs-dismiss="modal">Continue as
+                            Guest</button>
+                    </div>
+                </div>
+            </div>
+        </div>
+
+        <!-- Scripts -->
+        <script th:src="@{/js/cart.js}"></script>
+
+        <script th:inline="javascript">
+            /*<![CDATA[*/
+            // Pass server-side variables to JS
+            window.IS_AUTHENTICATED = /*[[${!isGuest}]]*/ false;
+            /*]]>*/
+        </script>
+    </div>
+</body>
+
+</html>

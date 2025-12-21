@@ -1,0 +1,101 @@
+<!DOCTYPE html>
+<html xmlns:th="http://www.thymeleaf.org" xmlns:layout="http://www.ultraq.net.nz/thymeleaf/layout"
+    layout:decorate="~{layouts/admin}">
+
+<head>
+    <title>Product Management</title>
+</head>
+
+<body>
+    <div layout:fragment="content">
+        <div class="d-flex justify-content-between align-items-center mb-4">
+            <h2 class="page-title">Products</h2>
+            <a th:href="@{/admin/products/add}" class="btn-add" style="text-decoration: none;">
+                <i class="fas fa-plus"></i> Add New Product
+            </a>
+        </div>
+
+        <div class="table-custom">
+            <table class="table mb-0">
+                <thead>
+                    <tr>
+                        <th>Image</th>
+                        <th>Product Name</th>
+                        <th>Category</th>
+                        <th>Price</th>
+                        <th>Stock</th>
+                        <th>Status</th>
+                        <th>Actions</th>
+                    </tr>
+                </thead>
+                <tbody>
+                    <tr th:each="product : ${products}">
+                        <td>
+                            <div class="product-img">
+                                <img th:src="@{${product.imageUrl != null ? product.imageUrl : '/images/logofix.png'}}"
+                                    th:alt="${product.name}" style="object-fit:cover; width:50px; height:50px;"
+                                    onerror="this.src='/images/logofix.png'">
+                            </div>
+                        </td>
+                        <td th:text="${product.name}">Product Name</td>
+                        <td th:text="${product.category != null ? product.category.name : 'Uncategorized'}">Category
+                        </td>
+                        <td th:text="'Rp ' + ${#numbers.formatDecimal(product.price, 0, 'COMMA', 0, 'POINT')}">Rp 0</td>
+                        <td th:text="${product.stockQuantity}">0</td>
+                        <!-- Note: Backend uses stockQuantity, Blade used stock -->
+                        <td>
+                            <span th:if="${product.isActive != null and product.isActive and product.stockQuantity > 0}"
+                                class="badge-status badge-active">Active</span>
+                            <span
+                                th:unless="${product.isActive != null and product.isActive and product.stockQuantity > 0}"
+                                class="badge-status badge-inactive">Inactive</span>
+                        </td>
+                        <td>
+                            <div class="action-icons">
+                                <a th:href="@{/admin/products/{id}/edit(id=${product.id})}"
+                                    class="text-decoration-none">
+                                    <i class="fas fa-edit"></i>
+                                </a>
+                                <button type="button" class="btn p-0 border-0 bg-transparent"
+                                    th:onclick="'confirmDelete(' + ${product.id} + ', \'' + ${product.name} + '\')'">
+                                    <i class="fas fa-trash"></i>
+                                </button>
+                            </div>
+                        </td>
+                    </tr>
+                    <tr th:if="${products == null or products.empty}">
+                        <td colspan="7" class="text-center py-4">No products found.</td>
+                    </tr>
+                </tbody>
+            </table>
+        </div>
+
+        <!-- Single hidden delete form -->
+        <form id="deleteForm" method="POST" class="d-none">
+            <!-- Spring Security CSRF handled automatically if using th:action, but here we set action via JS. 
+                  So we need to include csrf manually if not using th:action with proper url.
+                  Wait, we set action url in JS. Spring still requires hidden inputs for CSRF. -->
+            <input type="hidden" th:name="${_csrf.parameterName}" th:value="${_csrf.token}" />
+            <!-- We assume the controller handles POST to /delete or we need MethodFilter -->
+            <!-- AdminController line 422: @PostMapping("/products/{id}/delete"). So method is POST! No need for DELETE spoofing if path is /delete.
+                 Wait, line 422: @PostMapping("/products/{id}/delete").
+                 The frontend code constructed: '/admin/products/' + id.
+                 This matched logic in Laravel (Route::delete).
+                 But in Java, we check the mapped url: /admin/products/{id}/delete.
+                 So we should construct: '/admin/products/' + id + '/delete'. 
+            -->
+        </form>
+
+        <script>
+            function confirmDelete(id, name) {
+                if (confirm('Delete ' + name + '?')) {
+                    let form = document.getElementById('deleteForm');
+                    form.action = '/admin/products/' + id + '/delete';
+                    form.submit();
+                }
+            }
+        </script>
+    </div>
+</body>
+
+</html>

@@ -1,0 +1,141 @@
+* {
+    margin: 0;
+    padding: 0;
+    box-sizing: border-box;
+}
+
+body {
+    font-family: 'Poppins', sans-serif;
+    background: linear-gradient(176.11deg, #FBAF99 66.17%, #FFF3CC 106.27%);
+    min-height: 100vh;
+    display: flex;
+    align-items: center;
+    justify-content: center;
+}
+
+.login-container {
+    background: #FFFFFF;
+    border-radius: 20px;
+    box-shadow: 0 10px 40px rgba(0,0,0,0.1);
+    overflow: hidden;
+    max-width: 900px;
+    width: 100%;
+    display: flex;
+}
+
+.login-left {
+    background: linear-gradient(135deg, #DBA494 0%, #FBAF99 100%);
+    padding: 60px 40px;
+    flex: 1;
+    color: white;
+    display: flex;
+    flex-direction: column;
+    justify-content: center;
+}
+
+.login-left h1 {
+    font-family: 'Playfair Display', serif;
+    font-size: 48px;
+    font-weight: 700;
+    margin-bottom: 20px;
+}
+
+.login-left p {
+    font-size: 18px;
+    opacity: 0.9;
+}
+
+.login-right {
+    padding: 60px 50px;
+    flex: 1;
+}
+
+.login-right h2 {
+    font-family: 'Playfair Display', serif;
+    font-size: 36px;
+    font-weight: 700;
+    color: #4A3B34;
+    margin-bottom: 10px;
+}
+
+.login-right p {
+    color: #666;
+    margin-bottom: 30px;
+}
+
+.form-group {
+    margin-bottom: 25px;
+}
+
+.form-group label {
+    font-weight: 500;
+    color: #4A3B34;
+    margin-bottom: 8px;
+    display: block;
+}
+
+.form-group input {
+    width: 100%;
+    padding: 12px 15px;
+    border: 2px solid #FFE5DD;
+    border-radius: 10px;
+    font-size: 14px;
+    transition: all 0.3s;
+}
+
+.form-group input:focus {
+    outline: none;
+    border-color: #FBAF99;
+}
+
+.btn-login {
+    background: #FBAF99;
+    color: #000;
+    border: none;
+    padding: 12px 30px;
+    border-radius: 10px;
+    font-size: 16px;
+    font-weight: 500;
+    width: 100%;
+    cursor: pointer;
+    transition: all 0.3s;
+}
+
+.btn-login:hover {
+    background: #F99D84;
+    transform: translateY(-2px);
+}
+
+.back-link {
+    text-align: center;
+    margin-top: 20px;
+}
+
+.back-link a {
+    color: #FBAF99;
+    text-decoration: none;
+    font-size: 14px;
+}
+
+.back-link a:hover {
+    color: #F99D84;
+    text-decoration: underline;
+}
+
+@media (max-width: 768px) {
+    .login-container {
+        flex-direction: column;
+    }
+
+    .login-left {
+        padding: 40px 30px;
+    }
+
+    .login-left h1 {
+        font-size: 36px;
+    }
+
+    .login-right {
+        padding: 40px 30px;
+    }
+}

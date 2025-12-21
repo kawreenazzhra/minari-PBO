@@ -1,0 +1,290 @@
+<!DOCTYPE html>
+<html lang="en" xmlns:th="http://www.thymeleaf.org" xmlns:sec="http://www.thymeleaf.org/extras/spring-security">
+
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>MINARI - Your Everyday Fashion Boutique</title>
+
+    <!-- CSRF Tokens -->
+    <meta name="_csrf" th:content="${_csrf.token}" />
+    <meta name="_csrf_header" th:content="${_csrf.headerName}" />
+
+    <!-- App Scripts Variables -->
+    <script th:inline="javascript">
+        /*<![CDATA[*/
+        window.APP_ROLE = 'guest';
+        window.APP_URL = /*[[@{/}]]*/ '/';
+        window.CSRF_TOKEN = /*[[${_csrf.token}]]*/ '';
+        /*]]>*/
+    </script>
+    <script sec:authorize="isAuthenticated()" th:inline="javascript">
+        /*<![CDATA[*/
+        window.APP_ROLE = 'user';
+        /*]]>*/
+    </script>
+    <script sec:authorize="hasRole('ADMIN')" th:inline="javascript">
+        /*<![CDATA[*/
+        window.APP_ROLE = 'admin';
+        /*]]>*/
+    </script>
+
+    <link href="https://cdn.jsdelivr.net/npm/bootstrap@5.3.0/dist/css/bootstrap.min.css" rel="stylesheet">
+    <link
+        href="https://fonts.googleapis.com/css2?family=Playfair+Display:wght@600;700&family=Poppins:wght@300;400;500;600&display=swap"
+        rel="stylesheet">
+    <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.4.0/css/all.min.css">
+    <link rel="stylesheet" th:href="@{/css/navbar.css}">
+    <link rel="stylesheet" th:href="@{/css/landing.css}">
+</head>
+
+<body class="landing-page">
+    <!-- Toast Notifications Fragment Inline -->
+    <div th:if="${success}" class="toast-notification success show">
+        <i class="fas fa-check-circle"></i>
+        <span th:text="${success}">Success message</span>
+    </div>
+    <div th:if="${error}" class="toast-notification error show">
+        <i class="fas fa-exclamation-circle"></i>
+        <span th:text="${error}">Error message</span>
+    </div>
+    <script>
+        document.addEventListener('DOMContentLoaded', function () {
+            const toasts = document.querySelectorAll('.toast-notification');
+            toasts.forEach(toast => {
+                setTimeout(() => { toast.classList.remove('show'); setTimeout(() => toast.remove(), 300); }, 3000);
+            });
+        });
+    </script>
+    <style>
+        .toast-notification {
+            position: fixed;
+            top: 20px;
+            right: 20px;
+            z-index: 99999;
+            background: white;
+            padding: 12px 20px;
+            border-radius: 10px;
+            box-shadow: 0 4px 12px rgba(0, 0, 0, 0.15);
+            display: flex;
+            align-items: center;
+            gap: 10px;
+            transform: translateX(150%);
+            transition: transform 0.4s;
+            font-size: 14px;
+            font-weight: 500;
+            max-width: 350px;
+        }
+
+        .toast-notification.show {
+            transform: translateX(0);
+        }
+
+        .toast-notification.success {
+            border-left: 4px solid #198754;
+            color: #0f5132;
+        }
+
+        .toast-notification.error {
+            border-left: 4px solid #dc3545;
+            color: #842029;
+        }
+    </style>
+
+    <header id="navMount"></header>
+
+    <section class="hero-section">
+        <div class="container">
+            <div class="row align-items-center">
+                <div class="col-md-5">
+                    <div class="hero-content">
+                        <h1>Discover Your Style with Us</h1>
+                        <p>Explore the latest fashion trends, styles, and our collections</p>
+                    </div>
+                </div>
+                <div class="col-md-7 position-relative">
+                    <div class="hero-images">
+                        <img th:src="@{/images/tes.png}" class="hero-obj hero-obj-main" alt="Fashion Bag">
+                        <img th:src="@{/images/test1.png}" class="hero-obj hero-obj-1" alt="Fire Icon">
+                        <img th:src="@{/images/test2.png}" class="hero-obj hero-obj-2" alt="Like Icon">
+                        <img th:src="@{/images/test3.png}" class="hero-obj hero-obj-3" alt="Coin Icon">
+                    </div>
+                </div>
+            </div>
+        </div>
+    </section>
+
+    <!-- Promotions -->
+    <section th:if="${promotions != null and !promotions.empty}" class="promotion-section py-5 bg-white">
+        <div class="container">
+            <h2 class="section-title text-center mb-5" style="font-family: 'Playfair Display', serif;">Special Offers
+            </h2>
+            <div class="row g-4 justify-content-center">
+                <div th:each="promo : ${promotions}" class="col-md-4">
+                    <div class="card border-0 shadow-sm h-100 promo-card"
+                        style="border-radius: 15px; overflow: hidden; transition: transform 0.3s;">
+                        <div class="card-body text-center p-4" style="background: #FFF6F0;">
+                            <div class="badge bg-dark mb-3 px-3 py-2" style="font-weight: 500; letter-spacing: 1px;">
+                                <span
+                                    th:if="${promo.discountType == T(com.minari.ecommerce.entity.Promotion.DiscountType).PERCENTAGE}"
+                                    th:text="${promo.discountValue + '% OFF'}"></span>
+                                <span
+                                    th:unless="${promo.discountType == T(com.minari.ecommerce.entity.Promotion.DiscountType).PERCENTAGE}"
+                                    th:text="${'Rp ' + #numbers.formatDecimal(promo.discountValue, 0, 'COMMA', 0, 'POINT') + ' OFF'}"></span>
+                            </div>
+                            <h4 class="fw-bold mb-2" style="color: #333;" th:text="${promo.promoCode}">Code</h4>
+                            <p class="text-muted mb-3 small" th:text="${promo.description}">Description</p>
+                            <div class="expiry-date text-danger small">
+                                <i class="far fa-clock me-1"></i> Valid until <span
+                                    th:text="${#temporals.format(promo.endDate, 'dd MMM yyyy')}">Date</span>
+                            </div>
+                            <button class="btn btn-sm btn-outline-dark mt-3"
+                                th:onclick="'navigator.clipboard.writeText(\'' + ${promo.promoCode} + '\'); alert(\'Code copied!\')'">Copy
+                                Code</button>
+                        </div>
+                    </div>
+                </div>
+            </div>
+        </div>
+    </section>
+
+    <section class="style-section">
+        <div class="container-fluid">
+            <h2 class="section-title">MINARI's Style</h2>
+            <div class="style-scroll-container">
+                <div class="style-scroll-track">
+                    <!-- First set of items -->
+                    <div class="style-item" th:each="i : ${#numbers.sequence(1, 8)}">
+                        <img th:src="@{'/images/g' + ${i} + '.png'}" th:alt="'Style ' + ${i}">
+                    </div>
+                    <!-- Duplicate set for looping -->
+                    <div class="style-item" th:each="i : ${#numbers.sequence(1, 8)}">
+                        <img th:src="@{'/images/g' + ${i} + '.png'}" th:alt="'Style ' + ${i}">
+                    </div>
+                </div>
+            </div>
+        </div>
+    </section>
+
+    <section class="category-section" id="categories">
+        <div class="container-fluid">
+            <h2 class="section-title">Product Category</h2>
+            <div class="category-scroll-wrapper position-relative">
+                <button class="scroll-btn scroll-left" id="scrollLeftBtn"><i class="fas fa-chevron-left"></i></button>
+                <div class="category-scroll px-5" id="categoryScroll">
+                    <a th:each="category : ${categories}" th:href="@{/category/{slug}(slug=${category.id})}"
+                        class="category-card text-decoration-none d-block">
+                        <div class="category-image">
+                            <img th:src="@{${category.imageUrl}}" th:alt="${category.name}">
+                        </div>
+                        <h3 th:text="${category.name}">Category Name</h3>
+                    </a>
+
+                    <div th:if="${categories.empty}" class="text-center w-100 p-5">
+                        <p class="text-muted">No categories available at the moment.</p>
+                    </div>
+                </div>
+                <button class="scroll-btn scroll-right" id="scrollRightBtn"><i
+                        class="fas fa-chevron-right"></i></button>
+            </div>
+        </div>
+    </section>
+
+    <section class="slogan-section">
+        <div class="container">
+            <h2>Effortless Chic,</h2>
+            <div class="subtitle">EVERYDAY</div>
+        </div>
+    </section>
+
+    <section class="testimonial-section">
+        <div class="container">
+            <h2>Our Customers Say</h2>
+            <div class="row g-4">
+                <!-- Hardcoded Testimonials as they were in Blade -->
+                <div class="col-md-4">
+                    <div class="testimonial-card">
+                        <p>"Kualitas bahan pakaian Minari sangat bagus dan nyaman dipakai seharian. Desainnya juga
+                            selalu up to date dengan tren terkini."</p>
+                        <div class="customer-info">
+                            <div class="customer-avatar"><i class="fas fa-user"></i></div>
+                            <div class="customer-details">
+                                <div class="customer-name">Dina Kartika</div>
+                                <div class="customer-title">Fashion Enthusiast</div>
+                            </div>
+                        </div>
+                    </div>
+                </div>
+                <div class="col-md-4">
+                    <div class="testimonial-card">
+                        <p>"Saya suka sekali dengan koleksi Minari. Harganya terjangkau tapi kualitasnya premium.
+                            Pengiriman juga cepat dan packingnya rapi."</p>
+                        <div class="customer-info">
+                            <div class="customer-avatar"><i class="fas fa-user"></i></div>
+                            <div class="customer-details">
+                                <div class="customer-name">Sarah Wijaya</div>
+                                <div class="customer-title">Content Creator</div>
+                            </div>
+                        </div>
+                    </div>
+                </div>
+                <div class="col-md-4">
+                    <div class="testimonial-card">
+                        <p>"Sebagai wanita bekerja, saya membutuhkan pakaian yang nyaman tapi tetap stylish. Minari
+                            menjawab kebutuhan saya dengan sempurna."</p>
+                        <div class="customer-info">
+                            <div class="customer-avatar"><i class="fas fa-user"></i></div>
+                            <div class="customer-details">
+                                <div class="customer-name">Irene Kusuma</div>
+                                <div class="customer-title">Marketing Manager</div>
+                            </div>
+                        </div>
+                    </div>
+                </div>
+            </div>
+        </div>
+    </section>
+
+    <footer>
+        <div class="container-fluid px-5">
+            <div class="row align-items-center">
+                <div class="col-md-6">
+                    <div class="logo">
+                        <img th:src="@{/images/logofix.png}" alt="Logo MINARI" style="height: 40px; width: auto;">
+                    </div>
+                    <p>Your everyday fashion boutique</p>
+                </div>
+                <div class="col-md-6 text-end input-end">
+                    <p>Give us suggestions for future progress</p>
+                    <div class="footer-form">
+                        <form th:action="@{/suggestion/store}" method="POST">
+                            <input type="text" name="message" placeholder="your message . . .">
+                            <button type="submit">Send</button>
+                        </form>
+                    </div>
+                </div>
+            </div>
+            <div class="footer-divider"></div>
+            <div class="copyright">
+                © 2025 MINARI. All Rights Reserved.
+            </div>
+        </div>
+    </footer>
+
+    <script src="https://cdn.jsdelivr.net/npm/bootstrap@5.3.0/dist/js/bootstrap.bundle.min.js"></script>
+
+    <script th:inline="javascript">
+        window.APP_ROLE = 'guest';
+    </script>
+    <script sec:authorize="isAuthenticated()" th:inline="javascript">
+        window.APP_ROLE = 'user';
+    </script>
+    <script sec:authorize="hasRole('ADMIN')" th:inline="javascript">
+        window.APP_ROLE = 'admin';
+    </script>
+
+    <script th:src="@{/js/navbar.js}"></script>
+    <script th:src="@{/js/landing.js}"></script>
+</body>
+
+</html>

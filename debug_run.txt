@@ -1,0 +1,2492 @@
+WARNING: A terminally deprecated method in sun.misc.Unsafe has been called
+WARNING: sun.misc.Unsafe::staticFieldBase has been called by com.google.inject.internal.aop.HiddenClassDefiner (file:/C:/Users/HP/.m2/wrapper/dists/apache-maven-3.9.11/03d7e36a140982eea48e22c1dcac01d8862b2550b2939e09a0809bbc5182a5bc/lib/guice-5.1.0-classes.jar)
+WARNING: Please consider reporting this to the maintainers of class com.google.inject.internal.aop.HiddenClassDefiner
+WARNING: sun.misc.Unsafe::staticFieldBase will be removed in a future release
+[INFO] Scanning for projects...
+[INFO] 
+[INFO] -------------------------< com.minari:MINARI >--------------------------
+[INFO] Building MINARI 0.0.1-SNAPSHOT
+[INFO]   from pom.xml
+[INFO] --------------------------------[ jar ]---------------------------------
+[INFO] 
+[INFO] >>> spring-boot:3.3.5:run (default-cli) > test-compile @ MINARI >>>
+[INFO] 
+[INFO] --- resources:3.3.1:resources (default-resources) @ MINARI ---
+[INFO] Copying 4 resources from src\main\resources to target\classes
+[INFO] Copying 104 resources from src\main\resources to target\classes
+[INFO] 
+[INFO] --- compiler:3.13.0:compile (default-compile) @ MINARI ---
+[INFO] Nothing to compile - all classes are up to date.
+[INFO] 
+[INFO] --- resources:3.3.1:testResources (default-testResources) @ MINARI ---
+[INFO] skip non existing resourceDirectory D:\pbo gua\src\test\resources
+[INFO] 
+[INFO] --- compiler:3.13.0:testCompile (default-testCompile) @ MINARI ---
+[INFO] Nothing to compile - all classes are up to date.
+[INFO] 
+[INFO] <<< spring-boot:3.3.5:run (default-cli) < test-compile @ MINARI <<<
+[INFO] 
+[INFO] 
+[INFO] --- spring-boot:3.3.5:run (default-cli) @ MINARI ---
+[INFO] Attaching agents: []
+
+  .   ____          _            __ _ _
+ /\\ / ___'_ __ _ _(_)_ __  __ _ \ \ \ \
+( ( )\___ | '_ | '_| | '_ \/ _` | \ \ \ \
+ \\/  ___)| |_)| | | | | || (_| |  ) ) ) )
+  '  |____| .__|_| |_|_| |_\__, | / / / /
+ =========|_|==============|___/=/_/_/_/
+
+ :: Spring Boot ::                (v3.3.5)
+
+2025-12-21T09:16:11.465+07:00  INFO 23532 --- [  restartedMain] com.minari.ecommerce.MinariApplication   : Starting MinariApplication using Java 25 with PID 23532 (D:\pbo gua\target\classes started by HP in D:\pbo gua)
+2025-12-21T09:16:11.466+07:00 DEBUG 23532 --- [  restartedMain] com.minari.ecommerce.MinariApplication   : Running with Spring Boot v3.3.5, Spring v6.1.14
+2025-12-21T09:16:11.468+07:00  INFO 23532 --- [  restartedMain] com.minari.ecommerce.MinariApplication   : No active profile set, falling back to 1 default profile: "default"
+2025-12-21T09:16:11.673+07:00  INFO 23532 --- [  restartedMain] .e.DevToolsPropertyDefaultsPostProcessor : Devtools property defaults active! Set 'spring.devtools.add-properties' to 'false' to disable
+2025-12-21T09:16:11.673+07:00  INFO 23532 --- [  restartedMain] .e.DevToolsPropertyDefaultsPostProcessor : For additional web related logging consider setting the 'logging.level.web' property to 'DEBUG'
+2025-12-21T09:16:12.125+07:00  INFO 23532 --- [  restartedMain] .s.d.r.c.RepositoryConfigurationDelegate : Bootstrapping Spring Data JPA repositories in DEFAULT mode.
+2025-12-21T09:16:12.193+07:00  INFO 23532 --- [  restartedMain] .s.d.r.c.RepositoryConfigurationDelegate : Finished Spring Data repository scanning in 62 ms. Found 13 JPA repository interfaces.
+WARNING: A restricted method in java.lang.System has been called
+WARNING: java.lang.System::load has been called by org.apache.tomcat.jni.Library in an unnamed module (file:/C:/Users/HP/.m2/repository/org/apache/tomcat/embed/tomcat-embed-core/10.1.31/tomcat-embed-core-10.1.31.jar)
+WARNING: Use --enable-native-access=ALL-UNNAMED to avoid a warning for callers in this module
+WARNING: Restricted methods will be blocked in a future release unless native access is enabled
+
+2025-12-21T09:16:12.963+07:00  INFO 23532 --- [  restartedMain] o.s.b.w.embedded.tomcat.TomcatWebServer  : Tomcat initialized with port 8081 (http)
+2025-12-21T09:16:12.983+07:00  INFO 23532 --- [  restartedMain] o.apache.catalina.core.StandardService   : Starting service [Tomcat]
+2025-12-21T09:16:12.985+07:00  INFO 23532 --- [  restartedMain] o.apache.catalina.core.StandardEngine    : Starting Servlet engine: [Apache Tomcat/10.1.31]
+2025-12-21T09:16:13.047+07:00  INFO 23532 --- [  restartedMain] o.a.c.c.C.[Tomcat].[localhost].[/]       : Initializing Spring embedded WebApplicationContext
+2025-12-21T09:16:13.048+07:00  INFO 23532 --- [  restartedMain] w.s.c.ServletWebServerApplicationContext : Root WebApplicationContext: initialization completed in 1375 ms
+2025-12-21T09:16:13.088+07:00  INFO 23532 --- [  restartedMain] com.zaxxer.hikari.HikariDataSource       : HikariPool-1 - Starting...
+2025-12-21T09:16:13.437+07:00  INFO 23532 --- [  restartedMain] com.zaxxer.hikari.pool.HikariPool        : HikariPool-1 - Added connection conn0: url=jdbc:h2:file:./data/minaridb user=SA
+2025-12-21T09:16:13.440+07:00  INFO 23532 --- [  restartedMain] com.zaxxer.hikari.HikariDataSource       : HikariPool-1 - Start completed.
+2025-12-21T09:16:13.463+07:00  INFO 23532 --- [  restartedMain] o.s.b.a.h2.H2ConsoleAutoConfiguration    : H2 console available at '/h2-console'. Database available at 'jdbc:h2:file:./data/minaridb'
+2025-12-21T09:16:13.786+07:00  INFO 23532 --- [  restartedMain] o.hibernate.jpa.internal.util.LogHelper  : HHH000204: Processing PersistenceUnitInfo [name: default]
+2025-12-21T09:16:13.883+07:00  INFO 23532 --- [  restartedMain] org.hibernate.Version                    : HHH000412: Hibernate ORM core version 6.5.3.Final
+2025-12-21T09:16:13.943+07:00  INFO 23532 --- [  restartedMain] o.h.c.internal.RegionFactoryInitiator    : HHH000026: Second-level cache disabled
+2025-12-21T09:16:14.479+07:00  INFO 23532 --- [  restartedMain] o.s.o.j.p.SpringPersistenceUnitInfo      : No LoadTimeWeaver setup: ignoring JPA class transformer
+2025-12-21T09:16:14.557+07:00  WARN 23532 --- [  restartedMain] org.hibernate.orm.deprecation            : HHH90000025: H2Dialect does not need to be specified explicitly using 'hibernate.dialect' (remove the property setting and it will be selected by default)
+2025-12-21T09:16:15.792+07:00  INFO 23532 --- [  restartedMain] o.h.e.t.j.p.i.JtaPlatformInitiator       : HHH000489: No JTA platform available (set 'hibernate.transaction.jta.platform' to enable JTA platform integration)
+Hibernate: 
+    alter table if exists admins 
+       alter column permissions set data type TEXT
+Hibernate: 
+    alter table if exists cart_items 
+       alter column notes set data type TEXT
+Hibernate: 
+    alter table if exists order_items 
+       alter column return_status set data type VARCHAR(20) DEFAULT 'NONE'
+2025-12-21T09:16:15.848+07:00  WARN 23532 --- [  restartedMain] o.h.t.s.i.ExceptionHandlerLoggedImpl     : GenerationTarget encountered exception accepting command : Error executing DDL "
+    alter table if exists order_items 
+       alter column return_status set data type VARCHAR(20) DEFAULT 'NONE'" via JDBC [Syntax error in SQL statement "\000d\000a    alter table if exists order_items \000d\000a       alter column return_status set data type VARCHAR(20) [*]DEFAULT 'NONE'";]
+
+org.hibernate.tool.schema.spi.CommandAcceptanceException: Error executing DDL "
+    alter table if exists order_items 
+       alter column return_status set data type VARCHAR(20) DEFAULT 'NONE'" via JDBC [Syntax error in SQL statement "\000d\000a    alter table if exists order_items \000d\000a       alter column return_status set data type VARCHAR(20) [*]DEFAULT 'NONE'";]
+	at org.hibernate.tool.schema.internal.exec.GenerationTargetToDatabase.accept(GenerationTargetToDatabase.java:94) ~[hibernate-core-6.5.3.Final.jar:6.5.3.Final]
+	at org.hibernate.tool.schema.internal.AbstractSchemaMigrator.applySqlString(AbstractSchemaMigrator.java:583) ~[hibernate-core-6.5.3.Final.jar:6.5.3.Final]
+	at org.hibernate.tool.schema.internal.AbstractSchemaMigrator.applySqlStrings(AbstractSchemaMigrator.java:523) ~[hibernate-core-6.5.3.Final.jar:6.5.3.Final]
+	at org.hibernate.tool.schema.internal.AbstractSchemaMigrator.migrateTable(AbstractSchemaMigrator.java:341) ~[hibernate-core-6.5.3.Final.jar:6.5.3.Final]
+	at org.hibernate.tool.schema.internal.GroupedSchemaMigratorImpl.performTablesMigration(GroupedSchemaMigratorImpl.java:84) ~[hibernate-core-6.5.3.Final.jar:6.5.3.Final]
+	at org.hibernate.tool.schema.internal.AbstractSchemaMigrator.performMigration(AbstractSchemaMigrator.java:240) ~[hibernate-core-6.5.3.Final.jar:6.5.3.Final]
+	at org.hibernate.tool.schema.internal.AbstractSchemaMigrator.doMigration(AbstractSchemaMigrator.java:119) ~[hibernate-core-6.5.3.Final.jar:6.5.3.Final]
+	at org.hibernate.tool.schema.spi.SchemaManagementToolCoordinator.performDatabaseAction(SchemaManagementToolCoordinator.java:280) ~[hibernate-core-6.5.3.Final.jar:6.5.3.Final]
+	at org.hibernate.tool.schema.spi.SchemaManagementToolCoordinator.lambda$process$5(SchemaManagementToolCoordinator.java:144) ~[hibernate-core-6.5.3.Final.jar:6.5.3.Final]
+	at java.base/java.util.HashMap.forEach(HashMap.java:1430) ~[na:na]
+	at org.hibernate.tool.schema.spi.SchemaManagementToolCoordinator.process(SchemaManagementToolCoordinator.java:141) ~[hibernate-core-6.5.3.Final.jar:6.5.3.Final]
+	at org.hibernate.boot.internal.SessionFactoryObserverForSchemaExport.sessionFactoryCreated(SessionFactoryObserverForSchemaExport.java:37) ~[hibernate-core-6.5.3.Final.jar:6.5.3.Final]
+	at org.hibernate.internal.SessionFactoryObserverChain.sessionFactoryCreated(SessionFactoryObserverChain.java:35) ~[hibernate-core-6.5.3.Final.jar:6.5.3.Final]
+	at org.hibernate.internal.SessionFactoryImpl.<init>(SessionFactoryImpl.java:322) ~[hibernate-core-6.5.3.Final.jar:6.5.3.Final]
+	at org.hibernate.boot.internal.SessionFactoryBuilderImpl.build(SessionFactoryBuilderImpl.java:457) ~[hibernate-core-6.5.3.Final.jar:6.5.3.Final]
+	at org.hibernate.jpa.boot.internal.EntityManagerFactoryBuilderImpl.build(EntityManagerFactoryBuilderImpl.java:1506) ~[hibernate-core-6.5.3.Final.jar:6.5.3.Final]
+	at org.springframework.orm.jpa.vendor.SpringHibernateJpaPersistenceProvider.createContainerEntityManagerFactory(SpringHibernateJpaPersistenceProvider.java:75) ~[spring-orm-6.1.14.jar:6.1.14]
+	at org.springframework.orm.jpa.LocalContainerEntityManagerFactoryBean.createNativeEntityManagerFactory(LocalContainerEntityManagerFactoryBean.java:390) ~[spring-orm-6.1.14.jar:6.1.14]
+	at org.springframework.orm.jpa.AbstractEntityManagerFactoryBean.buildNativeEntityManagerFactory(AbstractEntityManagerFactoryBean.java:409) ~[spring-orm-6.1.14.jar:6.1.14]
+	at org.springframework.orm.jpa.AbstractEntityManagerFactoryBean.afterPropertiesSet(AbstractEntityManagerFactoryBean.java:396) ~[spring-orm-6.1.14.jar:6.1.14]
+	at org.springframework.orm.jpa.LocalContainerEntityManagerFactoryBean.afterPropertiesSet(LocalContainerEntityManagerFactoryBean.java:366) ~[spring-orm-6.1.14.jar:6.1.14]
+	at org.springframework.beans.factory.support.AbstractAutowireCapableBeanFactory.invokeInitMethods(AbstractAutowireCapableBeanFactory.java:1853) ~[spring-beans-6.1.14.jar:6.1.14]
+	at org.springframework.beans.factory.support.AbstractAutowireCapableBeanFactory.initializeBean(AbstractAutowireCapableBeanFactory.java:1802) ~[spring-beans-6.1.14.jar:6.1.14]
+	at org.springframework.beans.factory.support.AbstractAutowireCapableBeanFactory.doCreateBean(AbstractAutowireCapableBeanFactory.java:600) ~[spring-beans-6.1.14.jar:6.1.14]
+	at org.springframework.beans.factory.support.AbstractAutowireCapableBeanFactory.createBean(AbstractAutowireCapableBeanFactory.java:522) ~[spring-beans-6.1.14.jar:6.1.14]
+	at org.springframework.beans.factory.support.AbstractBeanFactory.lambda$doGetBean$0(AbstractBeanFactory.java:337) ~[spring-beans-6.1.14.jar:6.1.14]
+	at org.springframework.beans.factory.support.DefaultSingletonBeanRegistry.getSingleton(DefaultSingletonBeanRegistry.java:234) ~[spring-beans-6.1.14.jar:6.1.14]
+	at org.springframework.beans.factory.support.AbstractBeanFactory.doGetBean(AbstractBeanFactory.java:335) ~[spring-beans-6.1.14.jar:6.1.14]
+	at org.springframework.beans.factory.support.AbstractBeanFactory.getBean(AbstractBeanFactory.java:205) ~[spring-beans-6.1.14.jar:6.1.14]
+	at org.springframework.context.support.AbstractApplicationContext.finishBeanFactoryInitialization(AbstractApplicationContext.java:954) ~[spring-context-6.1.14.jar:6.1.14]
+	at org.springframework.context.support.AbstractApplicationContext.refresh(AbstractApplicationContext.java:625) ~[spring-context-6.1.14.jar:6.1.14]
+	at org.springframework.boot.web.servlet.context.ServletWebServerApplicationContext.refresh(ServletWebServerApplicationContext.java:146) ~[spring-boot-3.3.5.jar:3.3.5]
+	at org.springframework.boot.SpringApplication.refresh(SpringApplication.java:754) ~[spring-boot-3.3.5.jar:3.3.5]
+	at org.springframework.boot.SpringApplication.refreshContext(SpringApplication.java:456) ~[spring-boot-3.3.5.jar:3.3.5]
+	at org.springframework.boot.SpringApplication.run(SpringApplication.java:335) ~[spring-boot-3.3.5.jar:3.3.5]
+	at org.springframework.boot.SpringApplication.run(SpringApplication.java:1363) ~[spring-boot-3.3.5.jar:3.3.5]
+	at org.springframework.boot.SpringApplication.run(SpringApplication.java:1352) ~[spring-boot-3.3.5.jar:3.3.5]
+	at com.minari.ecommerce.MinariApplication.main(MinariApplication.java:14) ~[classes/:na]
+	at java.base/jdk.internal.reflect.DirectMethodHandleAccessor.invoke(DirectMethodHandleAccessor.java:104) ~[na:na]
+	at java.base/java.lang.reflect.Method.invoke(Method.java:565) ~[na:na]
+	at org.springframework.boot.devtools.restart.RestartLauncher.run(RestartLauncher.java:50) ~[spring-boot-devtools-3.3.5.jar:3.3.5]
+Caused by: org.h2.jdbc.JdbcSQLSyntaxErrorException: Syntax error in SQL statement "\000d\000a    alter table if exists order_items \000d\000a       alter column return_status set data type VARCHAR(20) [*]DEFAULT 'NONE'"; SQL statement:
+
+    alter table if exists order_items 
+       alter column return_status set data type VARCHAR(20) DEFAULT 'NONE' [42000-224]
+	at org.h2.message.DbException.getJdbcSQLException(DbException.java:514) ~[h2-2.2.224.jar:2.2.224]
+	at org.h2.message.DbException.getJdbcSQLException(DbException.java:489) ~[h2-2.2.224.jar:2.2.224]
+	at org.h2.message.DbException.get(DbException.java:223) ~[h2-2.2.224.jar:2.2.224]
+	at org.h2.message.DbException.get(DbException.java:199) ~[h2-2.2.224.jar:2.2.224]
+	at org.h2.message.DbException.getSyntaxError(DbException.java:247) ~[h2-2.2.224.jar:2.2.224]
+	at org.h2.command.ParserBase.getSyntaxError(ParserBase.java:748) ~[h2-2.2.224.jar:2.2.224]
+	at org.h2.command.Parser.prepareCommand(Parser.java:486) ~[h2-2.2.224.jar:2.2.224]
+	at org.h2.engine.SessionLocal.prepareLocal(SessionLocal.java:639) ~[h2-2.2.224.jar:2.2.224]
+	at org.h2.engine.SessionLocal.prepareCommand(SessionLocal.java:559) ~[h2-2.2.224.jar:2.2.224]
+	at org.h2.jdbc.JdbcConnection.prepareCommand(JdbcConnection.java:1166) ~[h2-2.2.224.jar:2.2.224]
+	at org.h2.jdbc.JdbcStatement.executeInternal(JdbcStatement.java:245) ~[h2-2.2.224.jar:2.2.224]
+	at org.h2.jdbc.JdbcStatement.execute(JdbcStatement.java:231) ~[h2-2.2.224.jar:2.2.224]
+	at com.zaxxer.hikari.pool.ProxyStatement.execute(ProxyStatement.java:94) ~[HikariCP-5.1.0.jar:na]
+	at com.zaxxer.hikari.pool.HikariProxyStatement.execute(HikariProxyStatement.java) ~[HikariCP-5.1.0.jar:na]
+	at org.hibernate.tool.schema.internal.exec.GenerationTargetToDatabase.accept(GenerationTargetToDatabase.java:80) ~[hibernate-core-6.5.3.Final.jar:6.5.3.Final]
+	... 40 common frames omitted
+
+Hibernate: 
+    alter table if exists orders 
+       alter column gift_message set data type TEXT
+Hibernate: 
+    alter table if exists orders 
+       alter column internal_notes set data type TEXT
+Hibernate: 
+    alter table if exists orders 
+       alter column notes set data type TEXT
+Hibernate: 
+    alter table if exists product_reviews 
+       alter column review_text set data type TEXT
+Hibernate: 
+    alter table if exists products 
+       alter column description set data type TEXT
+Hibernate: 
+    alter table if exists promotions 
+       alter column description set data type TEXT
+2025-12-21T09:16:15.874+07:00  INFO 23532 --- [  restartedMain] j.LocalContainerEntityManagerFactoryBean : Initialized JPA EntityManagerFactory for persistence unit 'default'
+2025-12-21T09:16:16.175+07:00  INFO 23532 --- [  restartedMain] o.s.d.j.r.query.QueryEnhancerFactory     : Hibernate is in classpath; If applicable, HQL parser will be used.
+2025-12-21T09:16:17.068+07:00  WARN 23532 --- [  restartedMain] JpaBaseConfiguration$JpaWebConfiguration : spring.jpa.open-in-view is enabled by default. Therefore, database queries may be performed during view rendering. Explicitly configure spring.jpa.open-in-view to disable this warning
+2025-12-21T09:16:17.096+07:00  INFO 23532 --- [  restartedMain] eAuthenticationProviderManagerConfigurer : Global AuthenticationManager configured with AuthenticationProvider bean with name authenticationProvider
+2025-12-21T09:16:17.097+07:00  WARN 23532 --- [  restartedMain] r$InitializeUserDetailsManagerConfigurer : Global AuthenticationManager configured with an AuthenticationProvider bean. UserDetailsService beans will not be used for username/password login. Consider removing the AuthenticationProvider bean. Alternatively, consider using the UserDetailsService in a manually instantiated DaoAuthenticationProvider.
+2025-12-21T09:16:17.523+07:00  INFO 23532 --- [  restartedMain] o.s.b.d.a.OptionalLiveReloadServer       : LiveReload server is running on port 35729
+2025-12-21T09:16:17.605+07:00  INFO 23532 --- [  restartedMain] o.s.b.w.embedded.tomcat.TomcatWebServer  : Tomcat started on port 8081 (http) with context path '/'
+2025-12-21T09:16:17.616+07:00  INFO 23532 --- [  restartedMain] com.minari.ecommerce.MinariApplication   : Started MinariApplication in 6.46 seconds (process running for 6.85)
+? Starting data seeding...
+? Creating default users...
+Hibernate: 
+    select
+        u1_0.id,
+        case 
+            when u1_3.user_id is not null 
+                then 3 
+            when u1_1.user_id is not null 
+                then 1 
+        end,
+        u1_0.avatar_url,
+        u1_0.created_at,
+        u1_0.email,
+        u1_0.email_verified,
+        u1_0.full_name,
+        u1_0.is_active,
+        u1_0.last_login,
+        u1_0.password,
+        u1_0.phone,
+        u1_0.user_type,
+        u1_0.shipping_address_id,
+        u1_0.updated_at,
+        u1_1.admin_level,
+        u1_1.department,
+        u1_1.permissions,
+        u1_2.loyalty_points,
+        u1_2.member_since,
+        u1_2.newsletter_subscribed,
+        u1_2.id,
+        u1_3.is_logged_in,
+        u1_3.total_orders,
+        u1_3.total_spent,
+        u1_3.wishlist_count 
+    from
+        users u1_0 
+    left join
+        admins u1_1 
+            on u1_0.id=u1_1.user_id 
+    left join
+        customers u1_2 
+            on u1_0.id=u1_2.id 
+    left join
+        registered_customers u1_3 
+            on u1_0.id=u1_3.user_id 
+    where
+        u1_0.email=?
+   ?? Admin user already exists
+Hibernate: 
+    select
+        u1_0.id,
+        case 
+            when u1_3.user_id is not null 
+                then 3 
+            when u1_1.user_id is not null 
+                then 1 
+        end,
+        u1_0.avatar_url,
+        u1_0.created_at,
+        u1_0.email,
+        u1_0.email_verified,
+        u1_0.full_name,
+        u1_0.is_active,
+        u1_0.last_login,
+        u1_0.password,
+        u1_0.phone,
+        u1_0.user_type,
+        u1_0.shipping_address_id,
+        u1_0.updated_at,
+        u1_1.admin_level,
+        u1_1.department,
+        u1_1.permissions,
+        u1_2.loyalty_points,
+        u1_2.member_since,
+        u1_2.newsletter_subscribed,
+        u1_2.id,
+        u1_3.is_logged_in,
+        u1_3.total_orders,
+        u1_3.total_spent,
+        u1_3.wishlist_count 
+    from
+        users u1_0 
+    left join
+        admins u1_1 
+            on u1_0.id=u1_1.user_id 
+    left join
+        customers u1_2 
+            on u1_0.id=u1_2.id 
+    left join
+        registered_customers u1_3 
+            on u1_0.id=u1_3.user_id 
+    where
+        u1_0.email=?
+Hibernate: 
+    select
+        sc1_0.id,
+        sc1_0.abandoned_reminder_sent,
+        sc1_0.created_at,
+        c1_0.id,
+        case 
+            when c1_1.user_id is not null 
+                then 3 
+        end,
+        c1_2.avatar_url,
+        c1_2.created_at,
+        c1_2.email,
+        c1_2.email_verified,
+        c1_2.full_name,
+        c1_2.is_active,
+        c1_2.last_login,
+        c1_2.password,
+        c1_2.phone,
+        c1_2.user_type,
+        sa1_0.id,
+        sa1_0.address_type,
+        sa1_0.apartment_suite,
+        sa1_0.city,
+        sa1_0.country,
+        sa1_0.created_at,
+        sa1_0.customer_id,
+        sa1_0.is_default,
+        sa1_0.phone_number,
+        sa1_0.province,
+        sa1_0.recipient_name,
+        sa1_0.state,
+        sa1_0.street_address,
+        sa1_0.updated_at,
+        sa1_0.zipcode,
+        c1_2.updated_at,
+        c1_0.loyalty_points,
+        c1_0.member_since,
+        c1_0.newsletter_subscribed,
+        c1_1.is_logged_in,
+        c1_1.total_orders,
+        c1_1.total_spent,
+        c1_1.wishlist_count,
+        sc1_0.item_count,
+        sc1_0.session_id,
+        sc1_0.total_amount,
+        sc1_0.updated_at 
+    from
+        shopping_carts sc1_0 
+    left join
+        (customers c1_0 
+    left join
+        registered_customers c1_1 
+            on c1_0.id=c1_1.user_id 
+    join
+        users c1_2 
+            on c1_0.id=c1_2.id) 
+        on c1_0.id=sc1_0.customer_id 
+    left join
+        addresses sa1_0 
+            on sa1_0.id=c1_2.shipping_address_id 
+    where
+        sc1_0.customer_id=?
+   ?? Customer user already exists
+Hibernate: 
+    select
+        u1_0.id,
+        case 
+            when u1_3.user_id is not null 
+                then 3 
+            when u1_1.user_id is not null 
+                then 1 
+        end,
+        u1_0.avatar_url,
+        u1_0.created_at,
+        u1_0.email,
+        u1_0.email_verified,
+        u1_0.full_name,
+        u1_0.is_active,
+        u1_0.last_login,
+        u1_0.password,
+        u1_0.phone,
+        u1_0.user_type,
+        u1_0.shipping_address_id,
+        u1_0.updated_at,
+        u1_1.admin_level,
+        u1_1.department,
+        u1_1.permissions,
+        u1_2.loyalty_points,
+        u1_2.member_since,
+        u1_2.newsletter_subscribed,
+        u1_2.id,
+        u1_3.is_logged_in,
+        u1_3.total_orders,
+        u1_3.total_spent,
+        u1_3.wishlist_count 
+    from
+        users u1_0 
+    left join
+        admins u1_1 
+            on u1_0.id=u1_1.user_id 
+    left join
+        customers u1_2 
+            on u1_0.id=u1_2.id 
+    left join
+        registered_customers u1_3 
+            on u1_0.id=u1_3.user_id 
+    where
+        u1_0.email=?
+Hibernate: 
+    select
+        sc1_0.id,
+        sc1_0.abandoned_reminder_sent,
+        sc1_0.created_at,
+        c1_0.id,
+        case 
+            when c1_1.user_id is not null 
+                then 3 
+        end,
+        c1_2.avatar_url,
+        c1_2.created_at,
+        c1_2.email,
+        c1_2.email_verified,
+        c1_2.full_name,
+        c1_2.is_active,
+        c1_2.last_login,
+        c1_2.password,
+        c1_2.phone,
+        c1_2.user_type,
+        sa1_0.id,
+        sa1_0.address_type,
+        sa1_0.apartment_suite,
+        sa1_0.city,
+        sa1_0.country,
+        sa1_0.created_at,
+        sa1_0.customer_id,
+        sa1_0.is_default,
+        sa1_0.phone_number,
+        sa1_0.province,
+        sa1_0.recipient_name,
+        sa1_0.state,
+        sa1_0.street_address,
+        sa1_0.updated_at,
+        sa1_0.zipcode,
+        c1_2.updated_at,
+        c1_0.loyalty_points,
+        c1_0.member_since,
+        c1_0.newsletter_subscribed,
+        c1_1.is_logged_in,
+        c1_1.total_orders,
+        c1_1.total_spent,
+        c1_1.wishlist_count,
+        sc1_0.item_count,
+        sc1_0.session_id,
+        sc1_0.total_amount,
+        sc1_0.updated_at 
+    from
+        shopping_carts sc1_0 
+    left join
+        (customers c1_0 
+    left join
+        registered_customers c1_1 
+            on c1_0.id=c1_1.user_id 
+    join
+        users c1_2 
+            on c1_0.id=c1_2.id) 
+        on c1_0.id=sc1_0.customer_id 
+    left join
+        addresses sa1_0 
+            on sa1_0.id=c1_2.shipping_address_id 
+    where
+        sc1_0.customer_id=?
+Hibernate: 
+    select
+        u1_0.id,
+        case 
+            when u1_3.user_id is not null 
+                then 3 
+            when u1_1.user_id is not null 
+                then 1 
+        end,
+        u1_0.avatar_url,
+        u1_0.created_at,
+        u1_0.email,
+        u1_0.email_verified,
+        u1_0.full_name,
+        u1_0.is_active,
+        u1_0.last_login,
+        u1_0.password,
+        u1_0.phone,
+        u1_0.user_type,
+        u1_0.shipping_address_id,
+        u1_0.updated_at,
+        u1_1.admin_level,
+        u1_1.department,
+        u1_1.permissions,
+        u1_2.loyalty_points,
+        u1_2.member_since,
+        u1_2.newsletter_subscribed,
+        u1_2.id,
+        u1_3.is_logged_in,
+        u1_3.total_orders,
+        u1_3.total_spent,
+        u1_3.wishlist_count 
+    from
+        users u1_0 
+    left join
+        admins u1_1 
+            on u1_0.id=u1_1.user_id 
+    left join
+        customers u1_2 
+            on u1_0.id=u1_2.id 
+    left join
+        registered_customers u1_3 
+            on u1_0.id=u1_3.user_id 
+    where
+        u1_0.email=?
+Hibernate: 
+    select
+        sc1_0.id,
+        sc1_0.abandoned_reminder_sent,
+        sc1_0.created_at,
+        c1_0.id,
+        case 
+            when c1_1.user_id is not null 
+                then 3 
+        end,
+        c1_2.avatar_url,
+        c1_2.created_at,
+        c1_2.email,
+        c1_2.email_verified,
+        c1_2.full_name,
+        c1_2.is_active,
+        c1_2.last_login,
+        c1_2.password,
+        c1_2.phone,
+        c1_2.user_type,
+        sa1_0.id,
+        sa1_0.address_type,
+        sa1_0.apartment_suite,
+        sa1_0.city,
+        sa1_0.country,
+        sa1_0.created_at,
+        sa1_0.customer_id,
+        sa1_0.is_default,
+        sa1_0.phone_number,
+        sa1_0.province,
+        sa1_0.recipient_name,
+        sa1_0.state,
+        sa1_0.street_address,
+        sa1_0.updated_at,
+        sa1_0.zipcode,
+        c1_2.updated_at,
+        c1_0.loyalty_points,
+        c1_0.member_since,
+        c1_0.newsletter_subscribed,
+        c1_1.is_logged_in,
+        c1_1.total_orders,
+        c1_1.total_spent,
+        c1_1.wishlist_count,
+        sc1_0.item_count,
+        sc1_0.session_id,
+        sc1_0.total_amount,
+        sc1_0.updated_at 
+    from
+        shopping_carts sc1_0 
+    left join
+        (customers c1_0 
+    left join
+        registered_customers c1_1 
+            on c1_0.id=c1_1.user_id 
+    join
+        users c1_2 
+            on c1_0.id=c1_2.id) 
+        on c1_0.id=sc1_0.customer_id 
+    left join
+        addresses sa1_0 
+            on sa1_0.id=c1_2.shipping_address_id 
+    where
+        sc1_0.customer_id=?
+Hibernate: 
+    select
+        u1_0.id,
+        case 
+            when u1_3.user_id is not null 
+                then 3 
+            when u1_1.user_id is not null 
+                then 1 
+        end,
+        u1_0.avatar_url,
+        u1_0.created_at,
+        u1_0.email,
+        u1_0.email_verified,
+        u1_0.full_name,
+        u1_0.is_active,
+        u1_0.last_login,
+        u1_0.password,
+        u1_0.phone,
+        u1_0.user_type,
+        u1_0.shipping_address_id,
+        u1_0.updated_at,
+        u1_1.admin_level,
+        u1_1.department,
+        u1_1.permissions,
+        u1_2.loyalty_points,
+        u1_2.member_since,
+        u1_2.newsletter_subscribed,
+        u1_2.id,
+        u1_3.is_logged_in,
+        u1_3.total_orders,
+        u1_3.total_spent,
+        u1_3.wishlist_count 
+    from
+        users u1_0 
+    left join
+        admins u1_1 
+            on u1_0.id=u1_1.user_id 
+    left join
+        customers u1_2 
+            on u1_0.id=u1_2.id 
+    left join
+        registered_customers u1_3 
+            on u1_0.id=u1_3.user_id 
+    where
+        u1_0.email=?
+Hibernate: 
+    select
+        sc1_0.id,
+        sc1_0.abandoned_reminder_sent,
+        sc1_0.created_at,
+        c1_0.id,
+        case 
+            when c1_1.user_id is not null 
+                then 3 
+        end,
+        c1_2.avatar_url,
+        c1_2.created_at,
+        c1_2.email,
+        c1_2.email_verified,
+        c1_2.full_name,
+        c1_2.is_active,
+        c1_2.last_login,
+        c1_2.password,
+        c1_2.phone,
+        c1_2.user_type,
+        sa1_0.id,
+        sa1_0.address_type,
+        sa1_0.apartment_suite,
+        sa1_0.city,
+        sa1_0.country,
+        sa1_0.created_at,
+        sa1_0.customer_id,
+        sa1_0.is_default,
+        sa1_0.phone_number,
+        sa1_0.province,
+        sa1_0.recipient_name,
+        sa1_0.state,
+        sa1_0.street_address,
+        sa1_0.updated_at,
+        sa1_0.zipcode,
+        c1_2.updated_at,
+        c1_0.loyalty_points,
+        c1_0.member_since,
+        c1_0.newsletter_subscribed,
+        c1_1.is_logged_in,
+        c1_1.total_orders,
+        c1_1.total_spent,
+        c1_1.wishlist_count,
+        sc1_0.item_count,
+        sc1_0.session_id,
+        sc1_0.total_amount,
+        sc1_0.updated_at 
+    from
+        shopping_carts sc1_0 
+    left join
+        (customers c1_0 
+    left join
+        registered_customers c1_1 
+            on c1_0.id=c1_1.user_id 
+    join
+        users c1_2 
+            on c1_0.id=c1_2.id) 
+        on c1_0.id=sc1_0.customer_id 
+    left join
+        addresses sa1_0 
+            on sa1_0.id=c1_2.shipping_address_id 
+    where
+        sc1_0.customer_id=?
+? Data seeding completed successfully!
+==========================================
+DEMO ACCOUNTS:
+Admin: admin@minari.com / admin123
+Customer: customer@minari.com / customer123
+==========================================
+? Please create categories from admin panel:
+   1. Go to /admin/categories
+   2. Add categories (Shirts, Sweaters, etc.)
+   3. Then add products from /admin/products
+==========================================
+? Attempting to fix database schema...
+? SUCCESS: Altered orders.customer_id to be NULLABLE.
+2025-12-21T09:18:41.268+07:00  INFO 23532 --- [   File Watcher] rtingClassPathChangeChangedEventListener : Restarting due to 1 class path change (0 additions, 0 deletions, 1 modification)
+2025-12-21T09:18:41.318+07:00  INFO 23532 --- [       Thread-6] j.LocalContainerEntityManagerFactoryBean : Closing JPA EntityManagerFactory for persistence unit 'default'
+2025-12-21T09:18:41.323+07:00  INFO 23532 --- [       Thread-6] com.zaxxer.hikari.HikariDataSource       : HikariPool-1 - Shutdown initiated...
+2025-12-21T09:18:41.532+07:00  INFO 23532 --- [       Thread-6] com.zaxxer.hikari.HikariDataSource       : HikariPool-1 - Shutdown completed.
+
+  .   ____          _            __ _ _
+ /\\ / ___'_ __ _ _(_)_ __  __ _ \ \ \ \
+( ( )\___ | '_ | '_| | '_ \/ _` | \ \ \ \
+ \\/  ___)| |_)| | | | | || (_| |  ) ) ) )
+  '  |____| .__|_| |_|_| |_\__, | / / / /
+ =========|_|==============|___/=/_/_/_/
+
+ :: Spring Boot ::                (v3.3.5)
+
+2025-12-21T09:18:41.658+07:00  INFO 23532 --- [  restartedMain] com.minari.ecommerce.MinariApplication   : Starting MinariApplication using Java 25 with PID 23532 (D:\pbo gua\target\classes started by HP in D:\pbo gua)
+2025-12-21T09:18:41.658+07:00 DEBUG 23532 --- [  restartedMain] com.minari.ecommerce.MinariApplication   : Running with Spring Boot v3.3.5, Spring v6.1.14
+2025-12-21T09:18:41.658+07:00  INFO 23532 --- [  restartedMain] com.minari.ecommerce.MinariApplication   : No active profile set, falling back to 1 default profile: "default"
+2025-12-21T09:18:41.877+07:00  INFO 23532 --- [  restartedMain] .s.d.r.c.RepositoryConfigurationDelegate : Bootstrapping Spring Data JPA repositories in DEFAULT mode.
+2025-12-21T09:18:41.906+07:00  INFO 23532 --- [  restartedMain] .s.d.r.c.RepositoryConfigurationDelegate : Finished Spring Data repository scanning in 27 ms. Found 13 JPA repository interfaces.
+2025-12-21T09:18:42.097+07:00  INFO 23532 --- [  restartedMain] o.s.b.w.embedded.tomcat.TomcatWebServer  : Tomcat initialized with port 8081 (http)
+2025-12-21T09:18:42.100+07:00  INFO 23532 --- [  restartedMain] o.apache.catalina.core.StandardService   : Starting service [Tomcat]
+2025-12-21T09:18:42.100+07:00  INFO 23532 --- [  restartedMain] o.apache.catalina.core.StandardEngine    : Starting Servlet engine: [Apache Tomcat/10.1.31]
+2025-12-21T09:18:42.124+07:00  INFO 23532 --- [  restartedMain] o.a.c.c.C.[Tomcat].[localhost].[/]       : Initializing Spring embedded WebApplicationContext
+2025-12-21T09:18:42.124+07:00  INFO 23532 --- [  restartedMain] w.s.c.ServletWebServerApplicationContext : Root WebApplicationContext: initialization completed in 455 ms
+2025-12-21T09:18:42.142+07:00  INFO 23532 --- [  restartedMain] com.zaxxer.hikari.HikariDataSource       : HikariPool-2 - Starting...
+2025-12-21T09:18:42.188+07:00  INFO 23532 --- [  restartedMain] com.zaxxer.hikari.pool.HikariPool        : HikariPool-2 - Added connection conn10: url=jdbc:h2:file:./data/minaridb user=SA
+2025-12-21T09:18:42.189+07:00  INFO 23532 --- [  restartedMain] com.zaxxer.hikari.HikariDataSource       : HikariPool-2 - Start completed.
+2025-12-21T09:18:42.189+07:00  INFO 23532 --- [  restartedMain] o.s.b.a.h2.H2ConsoleAutoConfiguration    : H2 console available at '/h2-console'. Database available at 'jdbc:h2:file:./data/minaridb'
+2025-12-21T09:18:42.231+07:00  INFO 23532 --- [  restartedMain] o.hibernate.jpa.internal.util.LogHelper  : HHH000204: Processing PersistenceUnitInfo [name: default]
+2025-12-21T09:18:42.234+07:00  INFO 23532 --- [  restartedMain] o.h.c.internal.RegionFactoryInitiator    : HHH000026: Second-level cache disabled
+2025-12-21T09:18:42.242+07:00  INFO 23532 --- [  restartedMain] o.s.o.j.p.SpringPersistenceUnitInfo      : No LoadTimeWeaver setup: ignoring JPA class transformer
+2025-12-21T09:18:42.243+07:00  WARN 23532 --- [  restartedMain] org.hibernate.orm.deprecation            : HHH90000025: H2Dialect does not need to be specified explicitly using 'hibernate.dialect' (remove the property setting and it will be selected by default)
+2025-12-21T09:18:42.597+07:00  INFO 23532 --- [  restartedMain] o.h.e.t.j.p.i.JtaPlatformInitiator       : HHH000489: No JTA platform available (set 'hibernate.transaction.jta.platform' to enable JTA platform integration)
+Hibernate: 
+    alter table if exists admins 
+       alter column permissions set data type TEXT
+Hibernate: 
+    alter table if exists cart_items 
+       alter column notes set data type TEXT
+Hibernate: 
+    alter table if exists orders 
+       alter column gift_message set data type TEXT
+Hibernate: 
+    alter table if exists orders 
+       alter column internal_notes set data type TEXT
+Hibernate: 
+    alter table if exists orders 
+       alter column notes set data type TEXT
+Hibernate: 
+    alter table if exists product_reviews 
+       alter column review_text set data type TEXT
+Hibernate: 
+    alter table if exists products 
+       alter column description set data type TEXT
+Hibernate: 
+    alter table if exists promotions 
+       alter column description set data type TEXT
+2025-12-21T09:18:42.611+07:00  INFO 23532 --- [  restartedMain] j.LocalContainerEntityManagerFactoryBean : Initialized JPA EntityManagerFactory for persistence unit 'default'
+2025-12-21T09:18:43.037+07:00  WARN 23532 --- [  restartedMain] JpaBaseConfiguration$JpaWebConfiguration : spring.jpa.open-in-view is enabled by default. Therefore, database queries may be performed during view rendering. Explicitly configure spring.jpa.open-in-view to disable this warning
+2025-12-21T09:18:43.045+07:00  INFO 23532 --- [  restartedMain] eAuthenticationProviderManagerConfigurer : Global AuthenticationManager configured with AuthenticationProvider bean with name authenticationProvider
+2025-12-21T09:18:43.045+07:00  WARN 23532 --- [  restartedMain] r$InitializeUserDetailsManagerConfigurer : Global AuthenticationManager configured with an AuthenticationProvider bean. UserDetailsService beans will not be used for username/password login. Consider removing the AuthenticationProvider bean. Alternatively, consider using the UserDetailsService in a manually instantiated DaoAuthenticationProvider.
+2025-12-21T09:18:43.284+07:00  INFO 23532 --- [  restartedMain] o.s.b.d.a.OptionalLiveReloadServer       : LiveReload server is running on port 35729
+2025-12-21T09:18:43.303+07:00  INFO 23532 --- [  restartedMain] o.s.b.w.embedded.tomcat.TomcatWebServer  : Tomcat started on port 8081 (http) with context path '/'
+2025-12-21T09:18:43.305+07:00  INFO 23532 --- [  restartedMain] com.minari.ecommerce.MinariApplication   : Started MinariApplication in 1.705 seconds (process running for 152.54)
+? Attempting to fix database schema...
+? SUCCESS: Altered orders.customer_id to be NULLABLE.
+? Starting data seeding...
+? Creating default users...
+Hibernate: 
+    select
+        u1_0.id,
+        case 
+            when u1_3.user_id is not null 
+                then 3 
+            when u1_1.user_id is not null 
+                then 1 
+        end,
+        u1_0.avatar_url,
+        u1_0.created_at,
+        u1_0.email,
+        u1_0.email_verified,
+        u1_0.full_name,
+        u1_0.is_active,
+        u1_0.last_login,
+        u1_0.password,
+        u1_0.phone,
+        u1_0.user_type,
+        u1_0.shipping_address_id,
+        u1_0.updated_at,
+        u1_1.admin_level,
+        u1_1.department,
+        u1_1.permissions,
+        u1_2.loyalty_points,
+        u1_2.member_since,
+        u1_2.newsletter_subscribed,
+        u1_2.id,
+        u1_3.is_logged_in,
+        u1_3.total_orders,
+        u1_3.total_spent,
+        u1_3.wishlist_count 
+    from
+        users u1_0 
+    left join
+        admins u1_1 
+            on u1_0.id=u1_1.user_id 
+    left join
+        customers u1_2 
+            on u1_0.id=u1_2.id 
+    left join
+        registered_customers u1_3 
+            on u1_0.id=u1_3.user_id 
+    where
+        u1_0.email=?
+   ?? Admin user already exists
+Hibernate: 
+    select
+        u1_0.id,
+        case 
+            when u1_3.user_id is not null 
+                then 3 
+            when u1_1.user_id is not null 
+                then 1 
+        end,
+        u1_0.avatar_url,
+        u1_0.created_at,
+        u1_0.email,
+        u1_0.email_verified,
+        u1_0.full_name,
+        u1_0.is_active,
+        u1_0.last_login,
+        u1_0.password,
+        u1_0.phone,
+        u1_0.user_type,
+        u1_0.shipping_address_id,
+        u1_0.updated_at,
+        u1_1.admin_level,
+        u1_1.department,
+        u1_1.permissions,
+        u1_2.loyalty_points,
+        u1_2.member_since,
+        u1_2.newsletter_subscribed,
+        u1_2.id,
+        u1_3.is_logged_in,
+        u1_3.total_orders,
+        u1_3.total_spent,
+        u1_3.wishlist_count 
+    from
+        users u1_0 
+    left join
+        admins u1_1 
+            on u1_0.id=u1_1.user_id 
+    left join
+        customers u1_2 
+            on u1_0.id=u1_2.id 
+    left join
+        registered_customers u1_3 
+            on u1_0.id=u1_3.user_id 
+    where
+        u1_0.email=?
+Hibernate: 
+    select
+        sc1_0.id,
+        sc1_0.abandoned_reminder_sent,
+        sc1_0.created_at,
+        c1_0.id,
+        case 
+            when c1_1.user_id is not null 
+                then 3 
+        end,
+        c1_2.avatar_url,
+        c1_2.created_at,
+        c1_2.email,
+        c1_2.email_verified,
+        c1_2.full_name,
+        c1_2.is_active,
+        c1_2.last_login,
+        c1_2.password,
+        c1_2.phone,
+        c1_2.user_type,
+        sa1_0.id,
+        sa1_0.address_type,
+        sa1_0.apartment_suite,
+        sa1_0.city,
+        sa1_0.country,
+        sa1_0.created_at,
+        sa1_0.customer_id,
+        sa1_0.is_default,
+        sa1_0.phone_number,
+        sa1_0.province,
+        sa1_0.recipient_name,
+        sa1_0.state,
+        sa1_0.street_address,
+        sa1_0.updated_at,
+        sa1_0.zipcode,
+        c1_2.updated_at,
+        c1_0.loyalty_points,
+        c1_0.member_since,
+        c1_0.newsletter_subscribed,
+        c1_1.is_logged_in,
+        c1_1.total_orders,
+        c1_1.total_spent,
+        c1_1.wishlist_count,
+        sc1_0.item_count,
+        sc1_0.session_id,
+        sc1_0.total_amount,
+        sc1_0.updated_at 
+    from
+        shopping_carts sc1_0 
+    left join
+        (customers c1_0 
+    left join
+        registered_customers c1_1 
+            on c1_0.id=c1_1.user_id 
+    join
+        users c1_2 
+            on c1_0.id=c1_2.id) 
+        on c1_0.id=sc1_0.customer_id 
+    left join
+        addresses sa1_0 
+            on sa1_0.id=c1_2.shipping_address_id 
+    where
+        sc1_0.customer_id=?
+   ?? Customer user already exists
+Hibernate: 
+    select
+        u1_0.id,
+        case 
+            when u1_3.user_id is not null 
+                then 3 
+            when u1_1.user_id is not null 
+                then 1 
+        end,
+        u1_0.avatar_url,
+        u1_0.created_at,
+        u1_0.email,
+        u1_0.email_verified,
+        u1_0.full_name,
+        u1_0.is_active,
+        u1_0.last_login,
+        u1_0.password,
+        u1_0.phone,
+        u1_0.user_type,
+        u1_0.shipping_address_id,
+        u1_0.updated_at,
+        u1_1.admin_level,
+        u1_1.department,
+        u1_1.permissions,
+        u1_2.loyalty_points,
+        u1_2.member_since,
+        u1_2.newsletter_subscribed,
+        u1_2.id,
+        u1_3.is_logged_in,
+        u1_3.total_orders,
+        u1_3.total_spent,
+        u1_3.wishlist_count 
+    from
+        users u1_0 
+    left join
+        admins u1_1 
+            on u1_0.id=u1_1.user_id 
+    left join
+        customers u1_2 
+            on u1_0.id=u1_2.id 
+    left join
+        registered_customers u1_3 
+            on u1_0.id=u1_3.user_id 
+    where
+        u1_0.email=?
+Hibernate: 
+    select
+        sc1_0.id,
+        sc1_0.abandoned_reminder_sent,
+        sc1_0.created_at,
+        c1_0.id,
+        case 
+            when c1_1.user_id is not null 
+                then 3 
+        end,
+        c1_2.avatar_url,
+        c1_2.created_at,
+        c1_2.email,
+        c1_2.email_verified,
+        c1_2.full_name,
+        c1_2.is_active,
+        c1_2.last_login,
+        c1_2.password,
+        c1_2.phone,
+        c1_2.user_type,
+        sa1_0.id,
+        sa1_0.address_type,
+        sa1_0.apartment_suite,
+        sa1_0.city,
+        sa1_0.country,
+        sa1_0.created_at,
+        sa1_0.customer_id,
+        sa1_0.is_default,
+        sa1_0.phone_number,
+        sa1_0.province,
+        sa1_0.recipient_name,
+        sa1_0.state,
+        sa1_0.street_address,
+        sa1_0.updated_at,
+        sa1_0.zipcode,
+        c1_2.updated_at,
+        c1_0.loyalty_points,
+        c1_0.member_since,
+        c1_0.newsletter_subscribed,
+        c1_1.is_logged_in,
+        c1_1.total_orders,
+        c1_1.total_spent,
+        c1_1.wishlist_count,
+        sc1_0.item_count,
+        sc1_0.session_id,
+        sc1_0.total_amount,
+        sc1_0.updated_at 
+    from
+        shopping_carts sc1_0 
+    left join
+        (customers c1_0 
+    left join
+        registered_customers c1_1 
+            on c1_0.id=c1_1.user_id 
+    join
+        users c1_2 
+            on c1_0.id=c1_2.id) 
+        on c1_0.id=sc1_0.customer_id 
+    left join
+        addresses sa1_0 
+            on sa1_0.id=c1_2.shipping_address_id 
+    where
+        sc1_0.customer_id=?
+Hibernate: 
+    select
+        u1_0.id,
+        case 
+            when u1_3.user_id is not null 
+                then 3 
+            when u1_1.user_id is not null 
+                then 1 
+        end,
+        u1_0.avatar_url,
+        u1_0.created_at,
+        u1_0.email,
+        u1_0.email_verified,
+        u1_0.full_name,
+        u1_0.is_active,
+        u1_0.last_login,
+        u1_0.password,
+        u1_0.phone,
+        u1_0.user_type,
+        u1_0.shipping_address_id,
+        u1_0.updated_at,
+        u1_1.admin_level,
+        u1_1.department,
+        u1_1.permissions,
+        u1_2.loyalty_points,
+        u1_2.member_since,
+        u1_2.newsletter_subscribed,
+        u1_2.id,
+        u1_3.is_logged_in,
+        u1_3.total_orders,
+        u1_3.total_spent,
+        u1_3.wishlist_count 
+    from
+        users u1_0 
+    left join
+        admins u1_1 
+            on u1_0.id=u1_1.user_id 
+    left join
+        customers u1_2 
+            on u1_0.id=u1_2.id 
+    left join
+        registered_customers u1_3 
+            on u1_0.id=u1_3.user_id 
+    where
+        u1_0.email=?
+Hibernate: 
+    select
+        sc1_0.id,
+        sc1_0.abandoned_reminder_sent,
+        sc1_0.created_at,
+        c1_0.id,
+        case 
+            when c1_1.user_id is not null 
+                then 3 
+        end,
+        c1_2.avatar_url,
+        c1_2.created_at,
+        c1_2.email,
+        c1_2.email_verified,
+        c1_2.full_name,
+        c1_2.is_active,
+        c1_2.last_login,
+        c1_2.password,
+        c1_2.phone,
+        c1_2.user_type,
+        sa1_0.id,
+        sa1_0.address_type,
+        sa1_0.apartment_suite,
+        sa1_0.city,
+        sa1_0.country,
+        sa1_0.created_at,
+        sa1_0.customer_id,
+        sa1_0.is_default,
+        sa1_0.phone_number,
+        sa1_0.province,
+        sa1_0.recipient_name,
+        sa1_0.state,
+        sa1_0.street_address,
+        sa1_0.updated_at,
+        sa1_0.zipcode,
+        c1_2.updated_at,
+        c1_0.loyalty_points,
+        c1_0.member_since,
+        c1_0.newsletter_subscribed,
+        c1_1.is_logged_in,
+        c1_1.total_orders,
+        c1_1.total_spent,
+        c1_1.wishlist_count,
+        sc1_0.item_count,
+        sc1_0.session_id,
+        sc1_0.total_amount,
+        sc1_0.updated_at 
+    from
+        shopping_carts sc1_0 
+    left join
+        (customers c1_0 
+    left join
+        registered_customers c1_1 
+            on c1_0.id=c1_1.user_id 
+    join
+        users c1_2 
+            on c1_0.id=c1_2.id) 
+        on c1_0.id=sc1_0.customer_id 
+    left join
+        addresses sa1_0 
+            on sa1_0.id=c1_2.shipping_address_id 
+    where
+        sc1_0.customer_id=?
+Hibernate: 
+    select
+        u1_0.id,
+        case 
+            when u1_3.user_id is not null 
+                then 3 
+            when u1_1.user_id is not null 
+                then 1 
+        end,
+        u1_0.avatar_url,
+        u1_0.created_at,
+        u1_0.email,
+        u1_0.email_verified,
+        u1_0.full_name,
+        u1_0.is_active,
+        u1_0.last_login,
+        u1_0.password,
+        u1_0.phone,
+        u1_0.user_type,
+        u1_0.shipping_address_id,
+        u1_0.updated_at,
+        u1_1.admin_level,
+        u1_1.department,
+        u1_1.permissions,
+        u1_2.loyalty_points,
+        u1_2.member_since,
+        u1_2.newsletter_subscribed,
+        u1_2.id,
+        u1_3.is_logged_in,
+        u1_3.total_orders,
+        u1_3.total_spent,
+        u1_3.wishlist_count 
+    from
+        users u1_0 
+    left join
+        admins u1_1 
+            on u1_0.id=u1_1.user_id 
+    left join
+        customers u1_2 
+            on u1_0.id=u1_2.id 
+    left join
+        registered_customers u1_3 
+            on u1_0.id=u1_3.user_id 
+    where
+        u1_0.email=?
+Hibernate: 
+    select
+        sc1_0.id,
+        sc1_0.abandoned_reminder_sent,
+        sc1_0.created_at,
+        c1_0.id,
+        case 
+            when c1_1.user_id is not null 
+                then 3 
+        end,
+        c1_2.avatar_url,
+        c1_2.created_at,
+        c1_2.email,
+        c1_2.email_verified,
+        c1_2.full_name,
+        c1_2.is_active,
+        c1_2.last_login,
+        c1_2.password,
+        c1_2.phone,
+        c1_2.user_type,
+        sa1_0.id,
+        sa1_0.address_type,
+        sa1_0.apartment_suite,
+        sa1_0.city,
+        sa1_0.country,
+        sa1_0.created_at,
+        sa1_0.customer_id,
+        sa1_0.is_default,
+        sa1_0.phone_number,
+        sa1_0.province,
+        sa1_0.recipient_name,
+        sa1_0.state,
+        sa1_0.street_address,
+        sa1_0.updated_at,
+        sa1_0.zipcode,
+        c1_2.updated_at,
+        c1_0.loyalty_points,
+        c1_0.member_since,
+        c1_0.newsletter_subscribed,
+        c1_1.is_logged_in,
+        c1_1.total_orders,
+        c1_1.total_spent,
+        c1_1.wishlist_count,
+        sc1_0.item_count,
+        sc1_0.session_id,
+        sc1_0.total_amount,
+        sc1_0.updated_at 
+    from
+        shopping_carts sc1_0 
+    left join
+        (customers c1_0 
+    left join
+        registered_customers c1_1 
+            on c1_0.id=c1_1.user_id 
+    join
+        users c1_2 
+            on c1_0.id=c1_2.id) 
+        on c1_0.id=sc1_0.customer_id 
+    left join
+        addresses sa1_0 
+            on sa1_0.id=c1_2.shipping_address_id 
+    where
+        sc1_0.customer_id=?
+? Data seeding completed successfully!
+==========================================
+DEMO ACCOUNTS:
+Admin: admin@minari.com / admin123
+Customer: customer@minari.com / customer123
+==========================================
+? Please create categories from admin panel:
+   1. Go to /admin/categories
+   2. Add categories (Shirts, Sweaters, etc.)
+   3. Then add products from /admin/products
+==========================================
+2025-12-21T09:18:43.349+07:00  INFO 23532 --- [  restartedMain] .ConditionEvaluationDeltaLoggingListener : Condition evaluation unchanged
+2025-12-21T09:18:44.718+07:00  INFO 23532 --- [   File Watcher] rtingClassPathChangeChangedEventListener : Restarting due to 1 class path change (0 additions, 0 deletions, 1 modification)
+2025-12-21T09:18:44.732+07:00  INFO 23532 --- [       Thread-8] j.LocalContainerEntityManagerFactoryBean : Closing JPA EntityManagerFactory for persistence unit 'default'
+2025-12-21T09:18:44.734+07:00  INFO 23532 --- [       Thread-8] com.zaxxer.hikari.HikariDataSource       : HikariPool-2 - Shutdown initiated...
+2025-12-21T09:18:44.936+07:00  INFO 23532 --- [       Thread-8] com.zaxxer.hikari.HikariDataSource       : HikariPool-2 - Shutdown completed.
+
+  .   ____          _            __ _ _
+ /\\ / ___'_ __ _ _(_)_ __  __ _ \ \ \ \
+( ( )\___ | '_ | '_| | '_ \/ _` | \ \ \ \
+ \\/  ___)| |_)| | | | | || (_| |  ) ) ) )
+  '  |____| .__|_| |_|_| |_\__, | / / / /
+ =========|_|==============|___/=/_/_/_/
+
+ :: Spring Boot ::                (v3.3.5)
+
+2025-12-21T09:18:45.032+07:00  INFO 23532 --- [  restartedMain] com.minari.ecommerce.MinariApplication   : Starting MinariApplication using Java 25 with PID 23532 (D:\pbo gua\target\classes started by HP in D:\pbo gua)
+2025-12-21T09:18:45.032+07:00 DEBUG 23532 --- [  restartedMain] com.minari.ecommerce.MinariApplication   : Running with Spring Boot v3.3.5, Spring v6.1.14
+2025-12-21T09:18:45.032+07:00  INFO 23532 --- [  restartedMain] com.minari.ecommerce.MinariApplication   : No active profile set, falling back to 1 default profile: "default"
+2025-12-21T09:18:45.202+07:00  INFO 23532 --- [  restartedMain] .s.d.r.c.RepositoryConfigurationDelegate : Bootstrapping Spring Data JPA repositories in DEFAULT mode.
+2025-12-21T09:18:45.228+07:00  INFO 23532 --- [  restartedMain] .s.d.r.c.RepositoryConfigurationDelegate : Finished Spring Data repository scanning in 25 ms. Found 13 JPA repository interfaces.
+2025-12-21T09:18:45.379+07:00  INFO 23532 --- [  restartedMain] o.s.b.w.embedded.tomcat.TomcatWebServer  : Tomcat initialized with port 8081 (http)
+2025-12-21T09:18:45.381+07:00  INFO 23532 --- [  restartedMain] o.apache.catalina.core.StandardService   : Starting service [Tomcat]
+2025-12-21T09:18:45.381+07:00  INFO 23532 --- [  restartedMain] o.apache.catalina.core.StandardEngine    : Starting Servlet engine: [Apache Tomcat/10.1.31]
+2025-12-21T09:18:45.403+07:00  INFO 23532 --- [  restartedMain] o.a.c.c.C.[Tomcat].[localhost].[/]       : Initializing Spring embedded WebApplicationContext
+2025-12-21T09:18:45.403+07:00  INFO 23532 --- [  restartedMain] w.s.c.ServletWebServerApplicationContext : Root WebApplicationContext: initialization completed in 369 ms
+2025-12-21T09:18:45.418+07:00  INFO 23532 --- [  restartedMain] com.zaxxer.hikari.HikariDataSource       : HikariPool-3 - Starting...
+2025-12-21T09:18:45.453+07:00  INFO 23532 --- [  restartedMain] com.zaxxer.hikari.pool.HikariPool        : HikariPool-3 - Added connection conn20: url=jdbc:h2:file:./data/minaridb user=SA
+2025-12-21T09:18:45.454+07:00  INFO 23532 --- [  restartedMain] com.zaxxer.hikari.HikariDataSource       : HikariPool-3 - Start completed.
+2025-12-21T09:18:45.454+07:00  INFO 23532 --- [  restartedMain] o.s.b.a.h2.H2ConsoleAutoConfiguration    : H2 console available at '/h2-console'. Database available at 'jdbc:h2:file:./data/minaridb'
+2025-12-21T09:18:45.483+07:00  INFO 23532 --- [  restartedMain] o.hibernate.jpa.internal.util.LogHelper  : HHH000204: Processing PersistenceUnitInfo [name: default]
+2025-12-21T09:18:45.486+07:00  INFO 23532 --- [  restartedMain] o.h.c.internal.RegionFactoryInitiator    : HHH000026: Second-level cache disabled
+2025-12-21T09:18:45.494+07:00  INFO 23532 --- [  restartedMain] o.s.o.j.p.SpringPersistenceUnitInfo      : No LoadTimeWeaver setup: ignoring JPA class transformer
+2025-12-21T09:18:45.495+07:00  WARN 23532 --- [  restartedMain] org.hibernate.orm.deprecation            : HHH90000025: H2Dialect does not need to be specified explicitly using 'hibernate.dialect' (remove the property setting and it will be selected by default)
+2025-12-21T09:18:45.812+07:00  INFO 23532 --- [  restartedMain] o.h.e.t.j.p.i.JtaPlatformInitiator       : HHH000489: No JTA platform available (set 'hibernate.transaction.jta.platform' to enable JTA platform integration)
+Hibernate: 
+    alter table if exists admins 
+       alter column permissions set data type TEXT
+Hibernate: 
+    alter table if exists cart_items 
+       alter column notes set data type TEXT
+Hibernate: 
+    alter table if exists orders 
+       alter column gift_message set data type TEXT
+Hibernate: 
+    alter table if exists orders 
+       alter column internal_notes set data type TEXT
+Hibernate: 
+    alter table if exists orders 
+       alter column notes set data type TEXT
+Hibernate: 
+    alter table if exists product_reviews 
+       alter column review_text set data type TEXT
+Hibernate: 
+    alter table if exists products 
+       alter column description set data type TEXT
+Hibernate: 
+    alter table if exists promotions 
+       alter column description set data type TEXT
+2025-12-21T09:18:45.825+07:00  INFO 23532 --- [  restartedMain] j.LocalContainerEntityManagerFactoryBean : Initialized JPA EntityManagerFactory for persistence unit 'default'
+2025-12-21T09:18:46.215+07:00  WARN 23532 --- [  restartedMain] JpaBaseConfiguration$JpaWebConfiguration : spring.jpa.open-in-view is enabled by default. Therefore, database queries may be performed during view rendering. Explicitly configure spring.jpa.open-in-view to disable this warning
+2025-12-21T09:18:46.223+07:00  INFO 23532 --- [  restartedMain] eAuthenticationProviderManagerConfigurer : Global AuthenticationManager configured with AuthenticationProvider bean with name authenticationProvider
+2025-12-21T09:18:46.224+07:00  WARN 23532 --- [  restartedMain] r$InitializeUserDetailsManagerConfigurer : Global AuthenticationManager configured with an AuthenticationProvider bean. UserDetailsService beans will not be used for username/password login. Consider removing the AuthenticationProvider bean. Alternatively, consider using the UserDetailsService in a manually instantiated DaoAuthenticationProvider.
+2025-12-21T09:18:46.381+07:00  INFO 23532 --- [  restartedMain] o.s.b.d.a.OptionalLiveReloadServer       : LiveReload server is running on port 35729
+2025-12-21T09:18:46.396+07:00  INFO 23532 --- [  restartedMain] o.s.b.w.embedded.tomcat.TomcatWebServer  : Tomcat started on port 8081 (http) with context path '/'
+2025-12-21T09:18:46.400+07:00  INFO 23532 --- [  restartedMain] com.minari.ecommerce.MinariApplication   : Started MinariApplication in 1.393 seconds (process running for 155.633)
+? Starting data seeding...
+? Creating default users...
+Hibernate: 
+    select
+        u1_0.id,
+        case 
+            when u1_3.user_id is not null 
+                then 3 
+            when u1_1.user_id is not null 
+                then 1 
+        end,
+        u1_0.avatar_url,
+        u1_0.created_at,
+        u1_0.email,
+        u1_0.email_verified,
+        u1_0.full_name,
+        u1_0.is_active,
+        u1_0.last_login,
+        u1_0.password,
+        u1_0.phone,
+        u1_0.user_type,
+        u1_0.shipping_address_id,
+        u1_0.updated_at,
+        u1_1.admin_level,
+        u1_1.department,
+        u1_1.permissions,
+        u1_2.loyalty_points,
+        u1_2.member_since,
+        u1_2.newsletter_subscribed,
+        u1_2.id,
+        u1_3.is_logged_in,
+        u1_3.total_orders,
+        u1_3.total_spent,
+        u1_3.wishlist_count 
+    from
+        users u1_0 
+    left join
+        admins u1_1 
+            on u1_0.id=u1_1.user_id 
+    left join
+        customers u1_2 
+            on u1_0.id=u1_2.id 
+    left join
+        registered_customers u1_3 
+            on u1_0.id=u1_3.user_id 
+    where
+        u1_0.email=?
+   ?? Admin user already exists
+Hibernate: 
+    select
+        u1_0.id,
+        case 
+            when u1_3.user_id is not null 
+                then 3 
+            when u1_1.user_id is not null 
+                then 1 
+        end,
+        u1_0.avatar_url,
+        u1_0.created_at,
+        u1_0.email,
+        u1_0.email_verified,
+        u1_0.full_name,
+        u1_0.is_active,
+        u1_0.last_login,
+        u1_0.password,
+        u1_0.phone,
+        u1_0.user_type,
+        u1_0.shipping_address_id,
+        u1_0.updated_at,
+        u1_1.admin_level,
+        u1_1.department,
+        u1_1.permissions,
+        u1_2.loyalty_points,
+        u1_2.member_since,
+        u1_2.newsletter_subscribed,
+        u1_2.id,
+        u1_3.is_logged_in,
+        u1_3.total_orders,
+        u1_3.total_spent,
+        u1_3.wishlist_count 
+    from
+        users u1_0 
+    left join
+        admins u1_1 
+            on u1_0.id=u1_1.user_id 
+    left join
+        customers u1_2 
+            on u1_0.id=u1_2.id 
+    left join
+        registered_customers u1_3 
+            on u1_0.id=u1_3.user_id 
+    where
+        u1_0.email=?
+Hibernate: 
+    select
+        sc1_0.id,
+        sc1_0.abandoned_reminder_sent,
+        sc1_0.created_at,
+        c1_0.id,
+        case 
+            when c1_1.user_id is not null 
+                then 3 
+        end,
+        c1_2.avatar_url,
+        c1_2.created_at,
+        c1_2.email,
+        c1_2.email_verified,
+        c1_2.full_name,
+        c1_2.is_active,
+        c1_2.last_login,
+        c1_2.password,
+        c1_2.phone,
+        c1_2.user_type,
+        sa1_0.id,
+        sa1_0.address_type,
+        sa1_0.apartment_suite,
+        sa1_0.city,
+        sa1_0.country,
+        sa1_0.created_at,
+        sa1_0.customer_id,
+        sa1_0.is_default,
+        sa1_0.phone_number,
+        sa1_0.province,
+        sa1_0.recipient_name,
+        sa1_0.state,
+        sa1_0.street_address,
+        sa1_0.updated_at,
+        sa1_0.zipcode,
+        c1_2.updated_at,
+        c1_0.loyalty_points,
+        c1_0.member_since,
+        c1_0.newsletter_subscribed,
+        c1_1.is_logged_in,
+        c1_1.total_orders,
+        c1_1.total_spent,
+        c1_1.wishlist_count,
+        sc1_0.item_count,
+        sc1_0.session_id,
+        sc1_0.total_amount,
+        sc1_0.updated_at 
+    from
+        shopping_carts sc1_0 
+    left join
+        (customers c1_0 
+    left join
+        registered_customers c1_1 
+            on c1_0.id=c1_1.user_id 
+    join
+        users c1_2 
+            on c1_0.id=c1_2.id) 
+        on c1_0.id=sc1_0.customer_id 
+    left join
+        addresses sa1_0 
+            on sa1_0.id=c1_2.shipping_address_id 
+    where
+        sc1_0.customer_id=?
+   ?? Customer user already exists
+Hibernate: 
+    select
+        u1_0.id,
+        case 
+            when u1_3.user_id is not null 
+                then 3 
+            when u1_1.user_id is not null 
+                then 1 
+        end,
+        u1_0.avatar_url,
+        u1_0.created_at,
+        u1_0.email,
+        u1_0.email_verified,
+        u1_0.full_name,
+        u1_0.is_active,
+        u1_0.last_login,
+        u1_0.password,
+        u1_0.phone,
+        u1_0.user_type,
+        u1_0.shipping_address_id,
+        u1_0.updated_at,
+        u1_1.admin_level,
+        u1_1.department,
+        u1_1.permissions,
+        u1_2.loyalty_points,
+        u1_2.member_since,
+        u1_2.newsletter_subscribed,
+        u1_2.id,
+        u1_3.is_logged_in,
+        u1_3.total_orders,
+        u1_3.total_spent,
+        u1_3.wishlist_count 
+    from
+        users u1_0 
+    left join
+        admins u1_1 
+            on u1_0.id=u1_1.user_id 
+    left join
+        customers u1_2 
+            on u1_0.id=u1_2.id 
+    left join
+        registered_customers u1_3 
+            on u1_0.id=u1_3.user_id 
+    where
+        u1_0.email=?
+Hibernate: 
+    select
+        sc1_0.id,
+        sc1_0.abandoned_reminder_sent,
+        sc1_0.created_at,
+        c1_0.id,
+        case 
+            when c1_1.user_id is not null 
+                then 3 
+        end,
+        c1_2.avatar_url,
+        c1_2.created_at,
+        c1_2.email,
+        c1_2.email_verified,
+        c1_2.full_name,
+        c1_2.is_active,
+        c1_2.last_login,
+        c1_2.password,
+        c1_2.phone,
+        c1_2.user_type,
+        sa1_0.id,
+        sa1_0.address_type,
+        sa1_0.apartment_suite,
+        sa1_0.city,
+        sa1_0.country,
+        sa1_0.created_at,
+        sa1_0.customer_id,
+        sa1_0.is_default,
+        sa1_0.phone_number,
+        sa1_0.province,
+        sa1_0.recipient_name,
+        sa1_0.state,
+        sa1_0.street_address,
+        sa1_0.updated_at,
+        sa1_0.zipcode,
+        c1_2.updated_at,
+        c1_0.loyalty_points,
+        c1_0.member_since,
+        c1_0.newsletter_subscribed,
+        c1_1.is_logged_in,
+        c1_1.total_orders,
+        c1_1.total_spent,
+        c1_1.wishlist_count,
+        sc1_0.item_count,
+        sc1_0.session_id,
+        sc1_0.total_amount,
+        sc1_0.updated_at 
+    from
+        shopping_carts sc1_0 
+    left join
+        (customers c1_0 
+    left join
+        registered_customers c1_1 
+            on c1_0.id=c1_1.user_id 
+    join
+        users c1_2 
+            on c1_0.id=c1_2.id) 
+        on c1_0.id=sc1_0.customer_id 
+    left join
+        addresses sa1_0 
+            on sa1_0.id=c1_2.shipping_address_id 
+    where
+        sc1_0.customer_id=?
+Hibernate: 
+    select
+        u1_0.id,
+        case 
+            when u1_3.user_id is not null 
+                then 3 
+            when u1_1.user_id is not null 
+                then 1 
+        end,
+        u1_0.avatar_url,
+        u1_0.created_at,
+        u1_0.email,
+        u1_0.email_verified,
+        u1_0.full_name,
+        u1_0.is_active,
+        u1_0.last_login,
+        u1_0.password,
+        u1_0.phone,
+        u1_0.user_type,
+        u1_0.shipping_address_id,
+        u1_0.updated_at,
+        u1_1.admin_level,
+        u1_1.department,
+        u1_1.permissions,
+        u1_2.loyalty_points,
+        u1_2.member_since,
+        u1_2.newsletter_subscribed,
+        u1_2.id,
+        u1_3.is_logged_in,
+        u1_3.total_orders,
+        u1_3.total_spent,
+        u1_3.wishlist_count 
+    from
+        users u1_0 
+    left join
+        admins u1_1 
+            on u1_0.id=u1_1.user_id 
+    left join
+        customers u1_2 
+            on u1_0.id=u1_2.id 
+    left join
+        registered_customers u1_3 
+            on u1_0.id=u1_3.user_id 
+    where
+        u1_0.email=?
+Hibernate: 
+    select
+        sc1_0.id,
+        sc1_0.abandoned_reminder_sent,
+        sc1_0.created_at,
+        c1_0.id,
+        case 
+            when c1_1.user_id is not null 
+                then 3 
+        end,
+        c1_2.avatar_url,
+        c1_2.created_at,
+        c1_2.email,
+        c1_2.email_verified,
+        c1_2.full_name,
+        c1_2.is_active,
+        c1_2.last_login,
+        c1_2.password,
+        c1_2.phone,
+        c1_2.user_type,
+        sa1_0.id,
+        sa1_0.address_type,
+        sa1_0.apartment_suite,
+        sa1_0.city,
+        sa1_0.country,
+        sa1_0.created_at,
+        sa1_0.customer_id,
+        sa1_0.is_default,
+        sa1_0.phone_number,
+        sa1_0.province,
+        sa1_0.recipient_name,
+        sa1_0.state,
+        sa1_0.street_address,
+        sa1_0.updated_at,
+        sa1_0.zipcode,
+        c1_2.updated_at,
+        c1_0.loyalty_points,
+        c1_0.member_since,
+        c1_0.newsletter_subscribed,
+        c1_1.is_logged_in,
+        c1_1.total_orders,
+        c1_1.total_spent,
+        c1_1.wishlist_count,
+        sc1_0.item_count,
+        sc1_0.session_id,
+        sc1_0.total_amount,
+        sc1_0.updated_at 
+    from
+        shopping_carts sc1_0 
+    left join
+        (customers c1_0 
+    left join
+        registered_customers c1_1 
+            on c1_0.id=c1_1.user_id 
+    join
+        users c1_2 
+            on c1_0.id=c1_2.id) 
+        on c1_0.id=sc1_0.customer_id 
+    left join
+        addresses sa1_0 
+            on sa1_0.id=c1_2.shipping_address_id 
+    where
+        sc1_0.customer_id=?
+Hibernate: 
+    select
+        u1_0.id,
+        case 
+            when u1_3.user_id is not null 
+                then 3 
+            when u1_1.user_id is not null 
+                then 1 
+        end,
+        u1_0.avatar_url,
+        u1_0.created_at,
+        u1_0.email,
+        u1_0.email_verified,
+        u1_0.full_name,
+        u1_0.is_active,
+        u1_0.last_login,
+        u1_0.password,
+        u1_0.phone,
+        u1_0.user_type,
+        u1_0.shipping_address_id,
+        u1_0.updated_at,
+        u1_1.admin_level,
+        u1_1.department,
+        u1_1.permissions,
+        u1_2.loyalty_points,
+        u1_2.member_since,
+        u1_2.newsletter_subscribed,
+        u1_2.id,
+        u1_3.is_logged_in,
+        u1_3.total_orders,
+        u1_3.total_spent,
+        u1_3.wishlist_count 
+    from
+        users u1_0 
+    left join
+        admins u1_1 
+            on u1_0.id=u1_1.user_id 
+    left join
+        customers u1_2 
+            on u1_0.id=u1_2.id 
+    left join
+        registered_customers u1_3 
+            on u1_0.id=u1_3.user_id 
+    where
+        u1_0.email=?
+Hibernate: 
+    select
+        sc1_0.id,
+        sc1_0.abandoned_reminder_sent,
+        sc1_0.created_at,
+        c1_0.id,
+        case 
+            when c1_1.user_id is not null 
+                then 3 
+        end,
+        c1_2.avatar_url,
+        c1_2.created_at,
+        c1_2.email,
+        c1_2.email_verified,
+        c1_2.full_name,
+        c1_2.is_active,
+        c1_2.last_login,
+        c1_2.password,
+        c1_2.phone,
+        c1_2.user_type,
+        sa1_0.id,
+        sa1_0.address_type,
+        sa1_0.apartment_suite,
+        sa1_0.city,
+        sa1_0.country,
+        sa1_0.created_at,
+        sa1_0.customer_id,
+        sa1_0.is_default,
+        sa1_0.phone_number,
+        sa1_0.province,
+        sa1_0.recipient_name,
+        sa1_0.state,
+        sa1_0.street_address,
+        sa1_0.updated_at,
+        sa1_0.zipcode,
+        c1_2.updated_at,
+        c1_0.loyalty_points,
+        c1_0.member_since,
+        c1_0.newsletter_subscribed,
+        c1_1.is_logged_in,
+        c1_1.total_orders,
+        c1_1.total_spent,
+        c1_1.wishlist_count,
+        sc1_0.item_count,
+        sc1_0.session_id,
+        sc1_0.total_amount,
+        sc1_0.updated_at 
+    from
+        shopping_carts sc1_0 
+    left join
+        (customers c1_0 
+    left join
+        registered_customers c1_1 
+            on c1_0.id=c1_1.user_id 
+    join
+        users c1_2 
+            on c1_0.id=c1_2.id) 
+        on c1_0.id=sc1_0.customer_id 
+    left join
+        addresses sa1_0 
+            on sa1_0.id=c1_2.shipping_address_id 
+    where
+        sc1_0.customer_id=?
+? Data seeding completed successfully!
+==========================================
+DEMO ACCOUNTS:
+Admin: admin@minari.com / admin123
+Customer: customer@minari.com / customer123
+==========================================
+? Please create categories from admin panel:
+   1. Go to /admin/categories
+   2. Add categories (Shirts, Sweaters, etc.)
+   3. Then add products from /admin/products
+==========================================
+? Attempting to fix database schema...
+? SUCCESS: Altered orders.customer_id to be NULLABLE.
+2025-12-21T09:18:46.434+07:00  INFO 23532 --- [  restartedMain] .ConditionEvaluationDeltaLoggingListener : Condition evaluation unchanged
+2025-12-21T09:18:54.925+07:00  INFO 23532 --- [   File Watcher] rtingClassPathChangeChangedEventListener : Restarting due to 94 class path changes (0 additions, 90 deletions, 4 modifications)
+2025-12-21T09:18:54.938+07:00  INFO 23532 --- [      Thread-12] j.LocalContainerEntityManagerFactoryBean : Closing JPA EntityManagerFactory for persistence unit 'default'
+2025-12-21T09:18:54.938+07:00  INFO 23532 --- [      Thread-12] com.zaxxer.hikari.HikariDataSource       : HikariPool-3 - Shutdown initiated...
+2025-12-21T09:18:55.146+07:00  INFO 23532 --- [      Thread-12] com.zaxxer.hikari.HikariDataSource       : HikariPool-3 - Shutdown completed.
+
+  .   ____          _            __ _ _
+ /\\ / ___'_ __ _ _(_)_ __  __ _ \ \ \ \
+( ( )\___ | '_ | '_| | '_ \/ _` | \ \ \ \
+ \\/  ___)| |_)| | | | | || (_| |  ) ) ) )
+  '  |____| .__|_| |_|_| |_\__, | / / / /
+ =========|_|==============|___/=/_/_/_/
+
+ :: Spring Boot ::                (v3.3.5)
+
+2025-12-21T09:18:55.251+07:00  INFO 23532 --- [  restartedMain] com.minari.ecommerce.MinariApplication   : Starting MinariApplication using Java 25 with PID 23532 (D:\pbo gua\target\classes started by HP in D:\pbo gua)
+2025-12-21T09:18:55.251+07:00 DEBUG 23532 --- [  restartedMain] com.minari.ecommerce.MinariApplication   : Running with Spring Boot v3.3.5, Spring v6.1.14
+2025-12-21T09:18:55.251+07:00  INFO 23532 --- [  restartedMain] com.minari.ecommerce.MinariApplication   : No active profile set, falling back to 1 default profile: "default"
+2025-12-21T09:18:55.366+07:00  INFO 23532 --- [  restartedMain] .s.d.r.c.RepositoryConfigurationDelegate : Bootstrapping Spring Data JPA repositories in DEFAULT mode.
+2025-12-21T09:18:55.367+07:00  INFO 23532 --- [  restartedMain] .s.d.r.c.RepositoryConfigurationDelegate : Finished Spring Data repository scanning in 0 ms. Found 0 JPA repository interfaces.
+2025-12-21T09:18:55.498+07:00  INFO 23532 --- [  restartedMain] o.s.b.w.embedded.tomcat.TomcatWebServer  : Tomcat initialized with port 8081 (http)
+2025-12-21T09:18:55.500+07:00  INFO 23532 --- [  restartedMain] o.apache.catalina.core.StandardService   : Starting service [Tomcat]
+2025-12-21T09:18:55.500+07:00  INFO 23532 --- [  restartedMain] o.apache.catalina.core.StandardEngine    : Starting Servlet engine: [Apache Tomcat/10.1.31]
+2025-12-21T09:18:55.528+07:00  INFO 23532 --- [  restartedMain] o.a.c.c.C.[Tomcat].[localhost].[/]       : Initializing Spring embedded WebApplicationContext
+2025-12-21T09:18:55.528+07:00  INFO 23532 --- [  restartedMain] w.s.c.ServletWebServerApplicationContext : Root WebApplicationContext: initialization completed in 275 ms
+2025-12-21T09:18:55.544+07:00  INFO 23532 --- [  restartedMain] com.zaxxer.hikari.HikariDataSource       : HikariPool-4 - Starting...
+2025-12-21T09:18:55.605+07:00  INFO 23532 --- [  restartedMain] com.zaxxer.hikari.pool.HikariPool        : HikariPool-4 - Added connection conn30: url=jdbc:h2:file:./data/minaridb user=SA
+2025-12-21T09:18:55.606+07:00  INFO 23532 --- [  restartedMain] com.zaxxer.hikari.HikariDataSource       : HikariPool-4 - Start completed.
+2025-12-21T09:18:55.606+07:00  INFO 23532 --- [  restartedMain] o.s.b.a.h2.H2ConsoleAutoConfiguration    : H2 console available at '/h2-console'. Database available at 'jdbc:h2:file:./data/minaridb'
+2025-12-21T09:18:55.643+07:00  INFO 23532 --- [  restartedMain] o.hibernate.jpa.internal.util.LogHelper  : HHH000204: Processing PersistenceUnitInfo [name: default]
+2025-12-21T09:18:55.647+07:00  INFO 23532 --- [  restartedMain] o.h.c.internal.RegionFactoryInitiator    : HHH000026: Second-level cache disabled
+2025-12-21T09:18:55.658+07:00  INFO 23532 --- [  restartedMain] o.s.o.j.p.SpringPersistenceUnitInfo      : No LoadTimeWeaver setup: ignoring JPA class transformer
+2025-12-21T09:18:55.661+07:00  WARN 23532 --- [  restartedMain] org.hibernate.orm.deprecation            : HHH90000025: H2Dialect does not need to be specified explicitly using 'hibernate.dialect' (remove the property setting and it will be selected by default)
+2025-12-21T09:18:55.691+07:00  INFO 23532 --- [  restartedMain] o.h.e.t.j.p.i.JtaPlatformInitiator       : HHH000489: No JTA platform available (set 'hibernate.transaction.jta.platform' to enable JTA platform integration)
+2025-12-21T09:18:55.692+07:00  INFO 23532 --- [  restartedMain] j.LocalContainerEntityManagerFactoryBean : Initialized JPA EntityManagerFactory for persistence unit 'default'
+2025-12-21T09:18:55.744+07:00  WARN 23532 --- [  restartedMain] JpaBaseConfiguration$JpaWebConfiguration : spring.jpa.open-in-view is enabled by default. Therefore, database queries may be performed during view rendering. Explicitly configure spring.jpa.open-in-view to disable this warning
+2025-12-21T09:18:55.908+07:00  WARN 23532 --- [  restartedMain] .s.s.UserDetailsServiceAutoConfiguration : 
+
+Using generated security password: 75b5039d-e919-427a-a391-04247c474fe1
+
+This generated password is for development use only. Your security configuration must be updated before running your application in production.
+
+2025-12-21T09:18:55.912+07:00  INFO 23532 --- [  restartedMain] r$InitializeUserDetailsManagerConfigurer : Global AuthenticationManager configured with UserDetailsService bean with name inMemoryUserDetailsManager
+2025-12-21T09:18:55.961+07:00  INFO 23532 --- [  restartedMain] o.s.b.d.a.OptionalLiveReloadServer       : LiveReload server is running on port 35729
+2025-12-21T09:18:55.978+07:00  INFO 23532 --- [  restartedMain] o.s.b.w.embedded.tomcat.TomcatWebServer  : Tomcat started on port 8081 (http) with context path '/'
+2025-12-21T09:18:55.984+07:00  INFO 23532 --- [  restartedMain] com.minari.ecommerce.MinariApplication   : Started MinariApplication in 0.762 seconds (process running for 165.218)
+2025-12-21T09:18:55.991+07:00  INFO 23532 --- [  restartedMain] .ConditionEvaluationDeltaLoggingListener : Condition evaluation delta:
+
+
+==========================
+CONDITION EVALUATION DELTA
+==========================
+
+
+Positive matches:
+-----------------
+
+   SpringBootWebSecurityConfiguration.SecurityFilterChainConfiguration matched:
+      - AllNestedConditions 2 matched 0 did not; NestedCondition on DefaultWebSecurityCondition.Beans @ConditionalOnMissingBean (types: org.springframework.security.web.SecurityFilterChain; SearchStrategy: all) did not find any beans; NestedCondition on DefaultWebSecurityCondition.Classes @ConditionalOnClass found required classes 'org.springframework.security.web.SecurityFilterChain', 'org.springframework.security.config.annotation.web.builders.HttpSecurity' (DefaultWebSecurityCondition)
+
+   SpringBootWebSecurityConfiguration.WebSecurityEnablerConfiguration matched:
+      - @ConditionalOnClass found required class 'org.springframework.security.config.annotation.web.configuration.EnableWebSecurity' (OnClassCondition)
+      - @ConditionalOnMissingBean (names: springSecurityFilterChain; SearchStrategy: all) did not find any beans (OnBeanCondition)
+
+   UserDetailsServiceAutoConfiguration matched:
+      - @ConditionalOnClass found required class 'org.springframework.security.authentication.AuthenticationManager' (OnClassCondition)
+      - AnyNestedCondition 1 matched 2 did not; NestedCondition on UserDetailsServiceAutoConfiguration.MissingAlternativeOrUserPropertiesConfigured.PasswordConfigured @ConditionalOnProperty (spring.security.user.password) did not find property 'password'; NestedCondition on UserDetailsServiceAutoConfiguration.MissingAlternativeOrUserPropertiesConfigured.NameConfigured @ConditionalOnProperty (spring.security.user.name) did not find property 'name'; NestedCondition on UserDetailsServiceAutoConfiguration.MissingAlternativeOrUserPropertiesConfigured.MissingAlternative @ConditionalOnMissingClass did not find unwanted classes 'org.springframework.security.oauth2.client.registration.ClientRegistrationRepository', 'org.springframework.security.oauth2.server.resource.introspection.OpaqueTokenIntrospector', 'org.springframework.security.saml2.provider.service.registration.RelyingPartyRegistrationRepository' (UserDetailsServiceAutoConfiguration.MissingAlternativeOrUserPropertiesConfigured)
+      - @ConditionalOnBean (types: org.springframework.security.config.annotation.ObjectPostProcessor; SearchStrategy: all) found bean 'objectPostProcessor'; @ConditionalOnMissingBean (types: org.springframework.security.authentication.AuthenticationManager,org.springframework.security.authentication.AuthenticationProvider,org.springframework.security.core.userdetails.UserDetailsService,org.springframework.security.authentication.AuthenticationManagerResolver,org.springframework.security.oauth2.jwt.JwtDecoder; SearchStrategy: all) did not find any beans (OnBeanCondition)
+
+
+Negative matches:
+-----------------
+
+    None
+
+
+Exclusions:
+-----------
+
+    None
+
+
+Unconditional classes:
+----------------------
+
+    None
+
+
+
+2025-12-21T09:18:58.225+07:00  INFO 23532 --- [   File Watcher] rtingClassPathChangeChangedEventListener : Restarting due to 91 class path changes (91 additions, 0 deletions, 0 modifications)
+2025-12-21T09:18:58.235+07:00  INFO 23532 --- [      Thread-16] j.LocalContainerEntityManagerFactoryBean : Closing JPA EntityManagerFactory for persistence unit 'default'
+2025-12-21T09:18:58.235+07:00  INFO 23532 --- [      Thread-16] com.zaxxer.hikari.HikariDataSource       : HikariPool-4 - Shutdown initiated...
+2025-12-21T09:18:58.439+07:00  INFO 23532 --- [      Thread-16] com.zaxxer.hikari.HikariDataSource       : HikariPool-4 - Shutdown completed.
+
+  .   ____          _            __ _ _
+ /\\ / ___'_ __ _ _(_)_ __  __ _ \ \ \ \
+( ( )\___ | '_ | '_| | '_ \/ _` | \ \ \ \
+ \\/  ___)| |_)| | | | | || (_| |  ) ) ) )
+  '  |____| .__|_| |_|_| |_\__, | / / / /
+ =========|_|==============|___/=/_/_/_/
+
+ :: Spring Boot ::                (v3.3.5)
+
+2025-12-21T09:18:58.526+07:00  INFO 23532 --- [  restartedMain] com.minari.ecommerce.MinariApplication   : Starting MinariApplication using Java 25 with PID 23532 (D:\pbo gua\target\classes started by HP in D:\pbo gua)
+2025-12-21T09:18:58.528+07:00 DEBUG 23532 --- [  restartedMain] com.minari.ecommerce.MinariApplication   : Running with Spring Boot v3.3.5, Spring v6.1.14
+2025-12-21T09:18:58.528+07:00  INFO 23532 --- [  restartedMain] com.minari.ecommerce.MinariApplication   : No active profile set, falling back to 1 default profile: "default"
+2025-12-21T09:18:58.943+07:00  INFO 23532 --- [  restartedMain] .s.d.r.c.RepositoryConfigurationDelegate : Bootstrapping Spring Data JPA repositories in DEFAULT mode.
+2025-12-21T09:18:58.965+07:00  INFO 23532 --- [  restartedMain] .s.d.r.c.RepositoryConfigurationDelegate : Finished Spring Data repository scanning in 21 ms. Found 13 JPA repository interfaces.
+2025-12-21T09:18:59.111+07:00  INFO 23532 --- [  restartedMain] o.s.b.w.embedded.tomcat.TomcatWebServer  : Tomcat initialized with port 8081 (http)
+2025-12-21T09:18:59.111+07:00  INFO 23532 --- [  restartedMain] o.apache.catalina.core.StandardService   : Starting service [Tomcat]
+2025-12-21T09:18:59.112+07:00  INFO 23532 --- [  restartedMain] o.apache.catalina.core.StandardEngine    : Starting Servlet engine: [Apache Tomcat/10.1.31]
+2025-12-21T09:18:59.132+07:00  INFO 23532 --- [  restartedMain] o.a.c.c.C.[Tomcat].[localhost].[/]       : Initializing Spring embedded WebApplicationContext
+2025-12-21T09:18:59.132+07:00  INFO 23532 --- [  restartedMain] w.s.c.ServletWebServerApplicationContext : Root WebApplicationContext: initialization completed in 603 ms
+2025-12-21T09:18:59.145+07:00  INFO 23532 --- [  restartedMain] com.zaxxer.hikari.HikariDataSource       : HikariPool-5 - Starting...
+2025-12-21T09:18:59.182+07:00  INFO 23532 --- [  restartedMain] com.zaxxer.hikari.pool.HikariPool        : HikariPool-5 - Added connection conn40: url=jdbc:h2:file:./data/minaridb user=SA
+2025-12-21T09:18:59.182+07:00  INFO 23532 --- [  restartedMain] com.zaxxer.hikari.HikariDataSource       : HikariPool-5 - Start completed.
+2025-12-21T09:18:59.183+07:00  INFO 23532 --- [  restartedMain] o.s.b.a.h2.H2ConsoleAutoConfiguration    : H2 console available at '/h2-console'. Database available at 'jdbc:h2:file:./data/minaridb'
+2025-12-21T09:18:59.223+07:00  INFO 23532 --- [  restartedMain] o.hibernate.jpa.internal.util.LogHelper  : HHH000204: Processing PersistenceUnitInfo [name: default]
+2025-12-21T09:18:59.226+07:00  INFO 23532 --- [  restartedMain] o.h.c.internal.RegionFactoryInitiator    : HHH000026: Second-level cache disabled
+2025-12-21T09:18:59.235+07:00  INFO 23532 --- [  restartedMain] o.s.o.j.p.SpringPersistenceUnitInfo      : No LoadTimeWeaver setup: ignoring JPA class transformer
+2025-12-21T09:18:59.236+07:00  WARN 23532 --- [  restartedMain] org.hibernate.orm.deprecation            : HHH90000025: H2Dialect does not need to be specified explicitly using 'hibernate.dialect' (remove the property setting and it will be selected by default)
+2025-12-21T09:18:59.547+07:00  INFO 23532 --- [  restartedMain] o.h.e.t.j.p.i.JtaPlatformInitiator       : HHH000489: No JTA platform available (set 'hibernate.transaction.jta.platform' to enable JTA platform integration)
+Hibernate: 
+    alter table if exists admins 
+       alter column permissions set data type TEXT
+Hibernate: 
+    alter table if exists cart_items 
+       alter column notes set data type TEXT
+Hibernate: 
+    alter table if exists orders 
+       alter column gift_message set data type TEXT
+Hibernate: 
+    alter table if exists orders 
+       alter column internal_notes set data type TEXT
+Hibernate: 
+    alter table if exists orders 
+       alter column notes set data type TEXT
+Hibernate: 
+    alter table if exists product_reviews 
+       alter column review_text set data type TEXT
+Hibernate: 
+    alter table if exists products 
+       alter column description set data type TEXT
+Hibernate: 
+    alter table if exists promotions 
+       alter column description set data type TEXT
+2025-12-21T09:18:59.558+07:00  INFO 23532 --- [  restartedMain] j.LocalContainerEntityManagerFactoryBean : Initialized JPA EntityManagerFactory for persistence unit 'default'
+2025-12-21T09:18:59.823+07:00  WARN 23532 --- [  restartedMain] JpaBaseConfiguration$JpaWebConfiguration : spring.jpa.open-in-view is enabled by default. Therefore, database queries may be performed during view rendering. Explicitly configure spring.jpa.open-in-view to disable this warning
+2025-12-21T09:18:59.828+07:00  INFO 23532 --- [  restartedMain] eAuthenticationProviderManagerConfigurer : Global AuthenticationManager configured with AuthenticationProvider bean with name authenticationProvider
+2025-12-21T09:18:59.828+07:00  WARN 23532 --- [  restartedMain] r$InitializeUserDetailsManagerConfigurer : Global AuthenticationManager configured with an AuthenticationProvider bean. UserDetailsService beans will not be used for username/password login. Consider removing the AuthenticationProvider bean. Alternatively, consider using the UserDetailsService in a manually instantiated DaoAuthenticationProvider.
+2025-12-21T09:18:59.931+07:00  INFO 23532 --- [  restartedMain] o.s.b.d.a.OptionalLiveReloadServer       : LiveReload server is running on port 35729
+2025-12-21T09:18:59.941+07:00  INFO 23532 --- [  restartedMain] o.s.b.w.embedded.tomcat.TomcatWebServer  : Tomcat started on port 8081 (http) with context path '/'
+2025-12-21T09:18:59.943+07:00  INFO 23532 --- [  restartedMain] com.minari.ecommerce.MinariApplication   : Started MinariApplication in 1.441 seconds (process running for 169.177)
+? Attempting to fix database schema...
+? SUCCESS: Altered orders.customer_id to be NULLABLE.
+? Starting data seeding...
+? Creating default users...
+Hibernate: 
+    select
+        u1_0.id,
+        case 
+            when u1_3.user_id is not null 
+                then 3 
+            when u1_1.user_id is not null 
+                then 1 
+        end,
+        u1_0.avatar_url,
+        u1_0.created_at,
+        u1_0.email,
+        u1_0.email_verified,
+        u1_0.full_name,
+        u1_0.is_active,
+        u1_0.last_login,
+        u1_0.password,
+        u1_0.phone,
+        u1_0.user_type,
+        u1_0.shipping_address_id,
+        u1_0.updated_at,
+        u1_1.admin_level,
+        u1_1.department,
+        u1_1.permissions,
+        u1_2.loyalty_points,
+        u1_2.member_since,
+        u1_2.newsletter_subscribed,
+        u1_2.id,
+        u1_3.is_logged_in,
+        u1_3.total_orders,
+        u1_3.total_spent,
+        u1_3.wishlist_count 
+    from
+        users u1_0 
+    left join
+        admins u1_1 
+            on u1_0.id=u1_1.user_id 
+    left join
+        customers u1_2 
+            on u1_0.id=u1_2.id 
+    left join
+        registered_customers u1_3 
+            on u1_0.id=u1_3.user_id 
+    where
+        u1_0.email=?
+   ?? Admin user already exists
+Hibernate: 
+    select
+        u1_0.id,
+        case 
+            when u1_3.user_id is not null 
+                then 3 
+            when u1_1.user_id is not null 
+                then 1 
+        end,
+        u1_0.avatar_url,
+        u1_0.created_at,
+        u1_0.email,
+        u1_0.email_verified,
+        u1_0.full_name,
+        u1_0.is_active,
+        u1_0.last_login,
+        u1_0.password,
+        u1_0.phone,
+        u1_0.user_type,
+        u1_0.shipping_address_id,
+        u1_0.updated_at,
+        u1_1.admin_level,
+        u1_1.department,
+        u1_1.permissions,
+        u1_2.loyalty_points,
+        u1_2.member_since,
+        u1_2.newsletter_subscribed,
+        u1_2.id,
+        u1_3.is_logged_in,
+        u1_3.total_orders,
+        u1_3.total_spent,
+        u1_3.wishlist_count 
+    from
+        users u1_0 
+    left join
+        admins u1_1 
+            on u1_0.id=u1_1.user_id 
+    left join
+        customers u1_2 
+            on u1_0.id=u1_2.id 
+    left join
+        registered_customers u1_3 
+            on u1_0.id=u1_3.user_id 
+    where
+        u1_0.email=?
+Hibernate: 
+    select
+        sc1_0.id,
+        sc1_0.abandoned_reminder_sent,
+        sc1_0.created_at,
+        c1_0.id,
+        case 
+            when c1_1.user_id is not null 
+                then 3 
+        end,
+        c1_2.avatar_url,
+        c1_2.created_at,
+        c1_2.email,
+        c1_2.email_verified,
+        c1_2.full_name,
+        c1_2.is_active,
+        c1_2.last_login,
+        c1_2.password,
+        c1_2.phone,
+        c1_2.user_type,
+        sa1_0.id,
+        sa1_0.address_type,
+        sa1_0.apartment_suite,
+        sa1_0.city,
+        sa1_0.country,
+        sa1_0.created_at,
+        sa1_0.customer_id,
+        sa1_0.is_default,
+        sa1_0.phone_number,
+        sa1_0.province,
+        sa1_0.recipient_name,
+        sa1_0.state,
+        sa1_0.street_address,
+        sa1_0.updated_at,
+        sa1_0.zipcode,
+        c1_2.updated_at,
+        c1_0.loyalty_points,
+        c1_0.member_since,
+        c1_0.newsletter_subscribed,
+        c1_1.is_logged_in,
+        c1_1.total_orders,
+        c1_1.total_spent,
+        c1_1.wishlist_count,
+        sc1_0.item_count,
+        sc1_0.session_id,
+        sc1_0.total_amount,
+        sc1_0.updated_at 
+    from
+        shopping_carts sc1_0 
+    left join
+        (customers c1_0 
+    left join
+        registered_customers c1_1 
+            on c1_0.id=c1_1.user_id 
+    join
+        users c1_2 
+            on c1_0.id=c1_2.id) 
+        on c1_0.id=sc1_0.customer_id 
+    left join
+        addresses sa1_0 
+            on sa1_0.id=c1_2.shipping_address_id 
+    where
+        sc1_0.customer_id=?
+   ?? Customer user already exists
+Hibernate: 
+    select
+        u1_0.id,
+        case 
+            when u1_3.user_id is not null 
+                then 3 
+            when u1_1.user_id is not null 
+                then 1 
+        end,
+        u1_0.avatar_url,
+        u1_0.created_at,
+        u1_0.email,
+        u1_0.email_verified,
+        u1_0.full_name,
+        u1_0.is_active,
+        u1_0.last_login,
+        u1_0.password,
+        u1_0.phone,
+        u1_0.user_type,
+        u1_0.shipping_address_id,
+        u1_0.updated_at,
+        u1_1.admin_level,
+        u1_1.department,
+        u1_1.permissions,
+        u1_2.loyalty_points,
+        u1_2.member_since,
+        u1_2.newsletter_subscribed,
+        u1_2.id,
+        u1_3.is_logged_in,
+        u1_3.total_orders,
+        u1_3.total_spent,
+        u1_3.wishlist_count 
+    from
+        users u1_0 
+    left join
+        admins u1_1 
+            on u1_0.id=u1_1.user_id 
+    left join
+        customers u1_2 
+            on u1_0.id=u1_2.id 
+    left join
+        registered_customers u1_3 
+            on u1_0.id=u1_3.user_id 
+    where
+        u1_0.email=?
+Hibernate: 
+    select
+        sc1_0.id,
+        sc1_0.abandoned_reminder_sent,
+        sc1_0.created_at,
+        c1_0.id,
+        case 
+            when c1_1.user_id is not null 
+                then 3 
+        end,
+        c1_2.avatar_url,
+        c1_2.created_at,
+        c1_2.email,
+        c1_2.email_verified,
+        c1_2.full_name,
+        c1_2.is_active,
+        c1_2.last_login,
+        c1_2.password,
+        c1_2.phone,
+        c1_2.user_type,
+        sa1_0.id,
+        sa1_0.address_type,
+        sa1_0.apartment_suite,
+        sa1_0.city,
+        sa1_0.country,
+        sa1_0.created_at,
+        sa1_0.customer_id,
+        sa1_0.is_default,
+        sa1_0.phone_number,
+        sa1_0.province,
+        sa1_0.recipient_name,
+        sa1_0.state,
+        sa1_0.street_address,
+        sa1_0.updated_at,
+        sa1_0.zipcode,
+        c1_2.updated_at,
+        c1_0.loyalty_points,
+        c1_0.member_since,
+        c1_0.newsletter_subscribed,
+        c1_1.is_logged_in,
+        c1_1.total_orders,
+        c1_1.total_spent,
+        c1_1.wishlist_count,
+        sc1_0.item_count,
+        sc1_0.session_id,
+        sc1_0.total_amount,
+        sc1_0.updated_at 
+    from
+        shopping_carts sc1_0 
+    left join
+        (customers c1_0 
+    left join
+        registered_customers c1_1 
+            on c1_0.id=c1_1.user_id 
+    join
+        users c1_2 
+            on c1_0.id=c1_2.id) 
+        on c1_0.id=sc1_0.customer_id 
+    left join
+        addresses sa1_0 
+            on sa1_0.id=c1_2.shipping_address_id 
+    where
+        sc1_0.customer_id=?
+Hibernate: 
+    select
+        u1_0.id,
+        case 
+            when u1_3.user_id is not null 
+                then 3 
+            when u1_1.user_id is not null 
+                then 1 
+        end,
+        u1_0.avatar_url,
+        u1_0.created_at,
+        u1_0.email,
+        u1_0.email_verified,
+        u1_0.full_name,
+        u1_0.is_active,
+        u1_0.last_login,
+        u1_0.password,
+        u1_0.phone,
+        u1_0.user_type,
+        u1_0.shipping_address_id,
+        u1_0.updated_at,
+        u1_1.admin_level,
+        u1_1.department,
+        u1_1.permissions,
+        u1_2.loyalty_points,
+        u1_2.member_since,
+        u1_2.newsletter_subscribed,
+        u1_2.id,
+        u1_3.is_logged_in,
+        u1_3.total_orders,
+        u1_3.total_spent,
+        u1_3.wishlist_count 
+    from
+        users u1_0 
+    left join
+        admins u1_1 
+            on u1_0.id=u1_1.user_id 
+    left join
+        customers u1_2 
+            on u1_0.id=u1_2.id 
+    left join
+        registered_customers u1_3 
+            on u1_0.id=u1_3.user_id 
+    where
+        u1_0.email=?
+Hibernate: 
+    select
+        sc1_0.id,
+        sc1_0.abandoned_reminder_sent,
+        sc1_0.created_at,
+        c1_0.id,
+        case 
+            when c1_1.user_id is not null 
+                then 3 
+        end,
+        c1_2.avatar_url,
+        c1_2.created_at,
+        c1_2.email,
+        c1_2.email_verified,
+        c1_2.full_name,
+        c1_2.is_active,
+        c1_2.last_login,
+        c1_2.password,
+        c1_2.phone,
+        c1_2.user_type,
+        sa1_0.id,
+        sa1_0.address_type,
+        sa1_0.apartment_suite,
+        sa1_0.city,
+        sa1_0.country,
+        sa1_0.created_at,
+        sa1_0.customer_id,
+        sa1_0.is_default,
+        sa1_0.phone_number,
+        sa1_0.province,
+        sa1_0.recipient_name,
+        sa1_0.state,
+        sa1_0.street_address,
+        sa1_0.updated_at,
+        sa1_0.zipcode,
+        c1_2.updated_at,
+        c1_0.loyalty_points,
+        c1_0.member_since,
+        c1_0.newsletter_subscribed,
+        c1_1.is_logged_in,
+        c1_1.total_orders,
+        c1_1.total_spent,
+        c1_1.wishlist_count,
+        sc1_0.item_count,
+        sc1_0.session_id,
+        sc1_0.total_amount,
+        sc1_0.updated_at 
+    from
+        shopping_carts sc1_0 
+    left join
+        (customers c1_0 
+    left join
+        registered_customers c1_1 
+            on c1_0.id=c1_1.user_id 
+    join
+        users c1_2 
+            on c1_0.id=c1_2.id) 
+        on c1_0.id=sc1_0.customer_id 
+    left join
+        addresses sa1_0 
+            on sa1_0.id=c1_2.shipping_address_id 
+    where
+        sc1_0.customer_id=?
+Hibernate: 
+    select
+        u1_0.id,
+        case 
+            when u1_3.user_id is not null 
+                then 3 
+            when u1_1.user_id is not null 
+                then 1 
+        end,
+        u1_0.avatar_url,
+        u1_0.created_at,
+        u1_0.email,
+        u1_0.email_verified,
+        u1_0.full_name,
+        u1_0.is_active,
+        u1_0.last_login,
+        u1_0.password,
+        u1_0.phone,
+        u1_0.user_type,
+        u1_0.shipping_address_id,
+        u1_0.updated_at,
+        u1_1.admin_level,
+        u1_1.department,
+        u1_1.permissions,
+        u1_2.loyalty_points,
+        u1_2.member_since,
+        u1_2.newsletter_subscribed,
+        u1_2.id,
+        u1_3.is_logged_in,
+        u1_3.total_orders,
+        u1_3.total_spent,
+        u1_3.wishlist_count 
+    from
+        users u1_0 
+    left join
+        admins u1_1 
+            on u1_0.id=u1_1.user_id 
+    left join
+        customers u1_2 
+            on u1_0.id=u1_2.id 
+    left join
+        registered_customers u1_3 
+            on u1_0.id=u1_3.user_id 
+    where
+        u1_0.email=?
+Hibernate: 
+    select
+        sc1_0.id,
+        sc1_0.abandoned_reminder_sent,
+        sc1_0.created_at,
+        c1_0.id,
+        case 
+            when c1_1.user_id is not null 
+                then 3 
+        end,
+        c1_2.avatar_url,
+        c1_2.created_at,
+        c1_2.email,
+        c1_2.email_verified,
+        c1_2.full_name,
+        c1_2.is_active,
+        c1_2.last_login,
+        c1_2.password,
+        c1_2.phone,
+        c1_2.user_type,
+        sa1_0.id,
+        sa1_0.address_type,
+        sa1_0.apartment_suite,
+        sa1_0.city,
+        sa1_0.country,
+        sa1_0.created_at,
+        sa1_0.customer_id,
+        sa1_0.is_default,
+        sa1_0.phone_number,
+        sa1_0.province,
+        sa1_0.recipient_name,
+        sa1_0.state,
+        sa1_0.street_address,
+        sa1_0.updated_at,
+        sa1_0.zipcode,
+        c1_2.updated_at,
+        c1_0.loyalty_points,
+        c1_0.member_since,
+        c1_0.newsletter_subscribed,
+        c1_1.is_logged_in,
+        c1_1.total_orders,
+        c1_1.total_spent,
+        c1_1.wishlist_count,
+        sc1_0.item_count,
+        sc1_0.session_id,
+        sc1_0.total_amount,
+        sc1_0.updated_at 
+    from
+        shopping_carts sc1_0 
+    left join
+        (customers c1_0 
+    left join
+        registered_customers c1_1 
+            on c1_0.id=c1_1.user_id 
+    join
+        users c1_2 
+            on c1_0.id=c1_2.id) 
+        on c1_0.id=sc1_0.customer_id 
+    left join
+        addresses sa1_0 
+            on sa1_0.id=c1_2.shipping_address_id 
+    where
+        sc1_0.customer_id=?
+? Data seeding completed successfully!
+==========================================
+DEMO ACCOUNTS:
+Admin: admin@minari.com / admin123
+Customer: customer@minari.com / customer123
+==========================================
+? Please create categories from admin panel:
+   1. Go to /admin/categories
+   2. Add categories (Shirts, Sweaters, etc.)
+   3. Then add products from /admin/products
+==========================================
+2025-12-21T09:18:59.964+07:00  INFO 23532 --- [  restartedMain] .ConditionEvaluationDeltaLoggingListener : Condition evaluation delta:
+
+
+==========================
+CONDITION EVALUATION DELTA
+==========================
+
+
+Positive matches:
+-----------------
+
+    None
+
+
+Negative matches:
+-----------------
+
+   SpringBootWebSecurityConfiguration.SecurityFilterChainConfiguration:
+      Did not match:
+         - AllNestedConditions 1 matched 1 did not; NestedCondition on DefaultWebSecurityCondition.Beans @ConditionalOnMissingBean (types: org.springframework.security.web.SecurityFilterChain; SearchStrategy: all) found beans of type 'org.springframework.security.web.SecurityFilterChain' securityFilterChain; NestedCondition on DefaultWebSecurityCondition.Classes @ConditionalOnClass found required classes 'org.springframework.security.web.SecurityFilterChain', 'org.springframework.security.config.annotation.web.builders.HttpSecurity' (DefaultWebSecurityCondition)
+
+   SpringBootWebSecurityConfiguration.WebSecurityEnablerConfiguration:
+      Did not match:
+         - @ConditionalOnMissingBean (names: springSecurityFilterChain; SearchStrategy: all) found beans named springSecurityFilterChain (OnBeanCondition)
+      Matched:
+         - @ConditionalOnClass found required class 'org.springframework.security.config.annotation.web.configuration.EnableWebSecurity' (OnClassCondition)
+
+   UserDetailsServiceAutoConfiguration:
+      Did not match:
+         - @ConditionalOnMissingBean (types: org.springframework.security.authentication.AuthenticationManager,org.springframework.security.authentication.AuthenticationProvider,org.springframework.security.core.userdetails.UserDetailsService,org.springframework.security.authentication.AuthenticationManagerResolver,org.springframework.security.oauth2.jwt.JwtDecoder; SearchStrategy: all) found beans of type 'org.springframework.security.authentication.AuthenticationManager' authenticationManager and found beans of type 'org.springframework.security.core.userdetails.UserDetailsService' customUserDetailsService and found beans of type 'org.springframework.security.authentication.AuthenticationProvider' authenticationProvider (OnBeanCondition)
+      Matched:
+         - @ConditionalOnClass found required class 'org.springframework.security.authentication.AuthenticationManager' (OnClassCondition)
+         - AnyNestedCondition 1 matched 2 did not; NestedCondition on UserDetailsServiceAutoConfiguration.MissingAlternativeOrUserPropertiesConfigured.PasswordConfigured @ConditionalOnProperty (spring.security.user.password) did not find property 'password'; NestedCondition on UserDetailsServiceAutoConfiguration.MissingAlternativeOrUserPropertiesConfigured.NameConfigured @ConditionalOnProperty (spring.security.user.name) did not find property 'name'; NestedCondition on UserDetailsServiceAutoConfiguration.MissingAlternativeOrUserPropertiesConfigured.MissingAlternative @ConditionalOnMissingClass did not find unwanted classes 'org.springframework.security.oauth2.client.registration.ClientRegistrationRepository', 'org.springframework.security.oauth2.server.resource.introspection.OpaqueTokenIntrospector', 'org.springframework.security.saml2.provider.service.registration.RelyingPartyRegistrationRepository' (UserDetailsServiceAutoConfiguration.MissingAlternativeOrUserPropertiesConfigured)
+
+
+Exclusions:
+-----------
+
+    None
+
+
+Unconditional classes:
+----------------------
+
+    None
+
+
+
+2025-12-21T09:35:20.747+07:00  WARN 23532 --- [l-5 housekeeper] com.zaxxer.hikari.pool.HikariPool        : HikariPool-5 - Thread starvation or clock leap detected (housekeeper delta=2m21s421ms657µs).
+[INFO] ------------------------------------------------------------------------
+[INFO] BUILD FAILURE
+[INFO] ------------------------------------------------------------------------
+[INFO] Total time:  19:29 min
+[INFO] Finished at: 2025-12-21T09:35:36+07:00
+[INFO] ------------------------------------------------------------------------
+[ERROR] Failed to execute goal org.springframework.boot:spring-boot-maven-plugin:3.3.5:run (default-cli) on project MINARI: Process terminated with exit code: 1 -> [Help 1]
+[ERROR] 
+[ERROR] To see the full stack trace of the errors, re-run Maven with the -e switch.
+[ERROR] Re-run Maven using the -X switch to enable full debug logging.
+[ERROR] 
+[ERROR] For more information about the errors and possible solutions, please read the following articles:
+[ERROR] [Help 1] http://cwiki.apache.org/confluence/display/MAVEN/MojoExecutionException

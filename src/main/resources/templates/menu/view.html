@@ -1,0 +1,129 @@
+<!DOCTYPE html>
+<html xmlns:th="http://www.thymeleaf.org" xmlns:layout="http://www.ultraq.net.nz/thymeleaf/layout"
+    layout:decorate="~{layouts/main}">
+
+<head>
+    <title>MINARI | Menu</title>
+    <meta name="csrf-token" th:content="${_csrf.token}" />
+
+    <link href="https://cdn.jsdelivr.net/npm/bootstrap@5.3.3/dist/css/bootstrap.min.css" rel="stylesheet">
+    <link href="https://cdn.jsdelivr.net/npm/bootstrap-icons@1.11.1/font/bootstrap-icons.css" rel="stylesheet">
+
+    <!-- CSS -->
+    <link rel="stylesheet" th:href="@{/css/menu.css}">
+    <!-- Navbar CSS handled by layout -->
+</head>
+
+<body>
+    <div layout:fragment="content">
+        <!-- menu wrapper div from reference -->
+        <!-- Note: reference has <div class="menu"></div>. -->
+        <div class="menu"></div>
+
+        <div class="container pb-5" style="padding-top: 20px;">
+            <div class="search-container mb-4 d-flex justify-content-between align-items-center">
+
+                <!-- LOGO (Optional to match reference, but layout has header) -->
+                <!-- Reference shows logo on this page, implying it overlays or replaces header content area. -->
+                <a th:href="@{/home}">
+                    <img th:src="@{/images/logofix.png}" alt="MINARI Logo" class="logo-img">
+                </a>
+
+                <!-- CLOSE BUTTON -->
+                <a class="close-btn" href="#" onclick="history.back(); return false;"
+                    style="text-decoration: none;">&times;</a>
+            </div>
+
+            <!-- SEARCH BAR -->
+            <div class="mb-5">
+                <div class="search-wrapper d-flex align-items-center">
+                    <i class="bi bi-arrow-left me-2" id="searchBackBtn"
+                        style="display: none; cursor: pointer; font-size: 1.5rem;"></i>
+                    <i class="bi bi-search search-icon" id="searchIcon" style="margin-right: 10px;"></i>
+                    <form th:action="@{/search}" method="GET" style="width: 100%;">
+                        <input type="text" name="q" class="search-bar" placeholder="keywords" th:value="${param.q}">
+                    </form>
+                </div>
+            </div>
+
+            <!-- SEARCH RECOMMENDATIONS (Hidden by default, can be toggled by JS if needed, reference logic) -->
+            <div id="searchRecommendations" style="display: none;">
+                <div class="mb-4">
+                    <h6 class="fw-bold mb-3">Trending</h6>
+                    <div class="d-flex flex-wrap gap-2">
+                        <a th:href="@{/search(q='Celana Barrel')}" class="search-tag">Celana Barrel</a>
+                        <a th:href="@{/search(q='Koleksi Jeans')}" class="search-tag">Koleksi Jeans</a>
+                        <a th:href="@{/search(q='Koleksi Flannel')}" class="search-tag">Koleksi Flannel</a>
+                        <a th:href="@{/search(q='Winter Travel')}" class="search-tag">Winter Travel</a>
+                        <a th:href="@{/search(q='Kaos Kaki HEATTECH')}" class="search-tag">Kaos Kaki HEATTECH</a>
+                        <a th:href="@{/search(q='Limited Offer')}" class="search-tag">Limited Offer</a>
+                        <a th:href="@{/search(q='Sale')}" class="search-tag">Sale</a>
+                    </div>
+                </div>
+
+                <div class="mb-4">
+                    <h6 class="fw-bold mb-3">Riwayat pencarian</h6>
+                    <p class="text-muted small">Anda dapat melihat riwayat pencarian Anda di sini.</p>
+                </div>
+            </div>
+
+            <!-- CATEGORY SECTION -->
+            <div id="categorySection" class="section row row-cols-1 row-cols-md-3 g-5 pb-5">
+                <div class="col" th:each="category : ${categories}">
+                    <!-- Assuming Category entity has name and slug/id and imageUrl -->
+                    <!-- Check entity structure if possible, usually it's getId() etc. -->
+                    <!-- Reference used 'user.category', 'cat' => slug. We likely have /products?category=... or /category/{slug} -->
+                    <!-- Let's point to /products/category/{slug} or /products?category={id} depending on standard.
+                          For now, let's use /products?category={name} or similar if we don't know the exact route.
+                          Actually, we probably don't have a /category/{slug} route set up yet.
+                          Let's default to /products?category={id} or /products/category/{id}
+                          Checking ProductCategoryService/Entity would be good, but let's guess standard usage.
+                          SearchController uses searchByName... 
+                          Let's assume generic product listing for now.
+                      -->
+                    <a th:href="@{/products(category=${category.name})}" class="card-item text-decoration-none">
+                        <img th:src="@{${category.imageUrl}}" th:alt="${category.name}"
+                            onerror="this.src='/images/default-category.jpg'">
+                        <h6 th:text="${category.name}">Category Name</h6>
+                    </a>
+                </div>
+
+                <div class="col-12 text-center" th:if="${categories.empty}">
+                    <p class="text-muted">No categories found.</p>
+                </div>
+            </div>
+        </div>
+
+        <!-- Scripts -->
+        <script th:src="@{/js/navbar.js}"></script>
+        <script>
+            // Simple logic to mimic reference search behavior if needed
+            const searchInput = document.querySelector('.search-bar');
+            const searchRecommendations = document.querySelector('#searchRecommendations');
+            const categorySection = document.querySelector('#categorySection');
+            const searchBackBtn = document.querySelector('#searchBackBtn');
+            const searchIcon = document.querySelector('#searchIcon');
+
+            if (searchInput) {
+                searchInput.addEventListener('focus', () => {
+                    if (searchRecommendations) searchRecommendations.style.display = 'block';
+                    if (categorySection) categorySection.style.display = 'none';
+                    if (searchBackBtn) searchBackBtn.style.display = 'block';
+                    if (searchIcon) searchIcon.style.display = 'none';
+                });
+
+                if (searchBackBtn) {
+                    searchBackBtn.addEventListener('click', () => {
+                        if (searchRecommendations) searchRecommendations.style.display = 'none';
+                        if (categorySection) categorySection.style.display = 'flex'; // row class uses flex
+                        if (searchBackBtn) searchBackBtn.style.display = 'none';
+                        if (searchIcon) searchIcon.style.display = 'block';
+                        searchInput.blur();
+                    });
+                }
+            }
+        </script>
+    </div>
+</body>
+
+</html>

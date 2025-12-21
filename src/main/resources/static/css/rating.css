@@ -1,0 +1,263 @@
+* {
+  box-sizing: border-box;
+  margin: 0;
+  padding: 0;
+}
+
+body {
+  font-family: 'Poppins', sans-serif;
+  background-color: #fff;
+  /* Soft pastel background */
+  color: #333;
+  overflow-x: hidden;
+}
+
+/* MAIN */
+main {
+  width: 100%;
+  max-width: 1100px;
+  margin: 40px auto;
+  padding: 0 20px;
+  display: flex;
+  flex-wrap: wrap;
+  gap: 40px;
+  justify-content: center;
+}
+
+.page-title {
+  width: 100%;
+  text-align: center;
+  font-family: 'Playfair Display', serif;
+  font-size: 36px;
+  font-weight: 600;
+  color: #000;
+  margin-bottom: 20px;
+}
+
+.product-box {
+  border: 1px solid #999;
+  text-align: center;
+  width: 100%;
+  /* Changed from 260px to responsive */
+  max-width: 500px;
+  /* Increased width as requested */
+  padding: 20px;
+  border-radius: 10px;
+  background-color: #fff;
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+  /* Center content */
+}
+
+.product-box img {
+  width: 100px;
+  /* Adjusted image size */
+  height: 100px;
+  object-fit: cover;
+  border-radius: 8px;
+  margin-bottom: 10px;
+}
+
+.product-name {
+  font-weight: 500;
+  margin-top: 10px;
+  font-size: 18px;
+}
+
+.product-price {
+  color: #555;
+  margin-bottom: 15px;
+}
+
+/* RATING */
+.rating-section {
+  width: 100%;
+  display: flex;
+  flex-direction: column;
+}
+
+.rating-label {
+  font-weight: 500;
+  font-size: 18px;
+  text-align: left;
+}
+
+.stars {
+  display: flex;
+  gap: 5px;
+  margin: 10px 0 25px;
+  justify-content: center;
+}
+
+.star {
+  font-size: 30px;
+  color: #dbdbdb;
+  /* Default empty color */
+  cursor: pointer;
+  transition: transform 0.2s;
+}
+
+.star.active,
+.star:hover {
+  transform: scale(1.2);
+  color: #e5a391;
+}
+
+textarea {
+  width: 100%;
+  height: 120px;
+  padding: 10px;
+  border-radius: 6px;
+  border: 1px solid #ccc;
+  resize: none;
+  font-size: 14px;
+}
+
+.checkbox {
+  margin-top: 10px;
+  display: flex;
+  align-items: center;
+  gap: 8px;
+  font-size: 14px;
+  justify-content: center;
+}
+
+.btn-container {
+  display: flex;
+  justify-content: flex-end;
+  margin-top: 15px;
+}
+
+.btn-submit {
+  background-color: #d6a48b;
+  border: none;
+  color: white;
+  font-size: 16px;
+  padding: 10px 35px;
+  border-radius: 8px;
+  cursor: pointer;
+  margin-top: 15px;
+  width: 100%;
+  /* Full width button for vertical layout */
+}
+
+.btn-submit:hover {
+  background-color: #c38b74;
+}
+
+/* FOOTER */
+footer {
+  background: #D9AF9C;
+  margin-top: 10px;
+  padding: 10px 0;
+  /* Reduced from 15px */
+  color: #FFF6F0;
+}
+
+footer .container-fluid {
+  padding: 0 8% !important;
+}
+
+footer .logo {
+  font-size: 18px;
+  /* Reduced from 20px */
+  color: #FFF3CC;
+  display: flex;
+  align-items: center;
+  gap: 8px;
+  margin-top: 0;
+}
+
+footer .logo-img {
+  height: 30px;
+  /* Reduced from 35px */
+  width: auto;
+  filter: brightness(0) invert(1);
+}
+
+footer p {
+  color: #FFF3CC;
+  margin-top: 3px;
+  font-size: 12px;
+}
+
+footer .text-end.input-end {
+  text-align: right;
+  display: flex;
+  flex-direction: column;
+  align-items: flex-end;
+}
+
+footer .text-end.input-end p {
+  text-align: right;
+  margin-bottom: 5px;
+  /* Reduced from 10px */
+  width: 100%;
+}
+
+footer .text-end .footer-form {
+  display: flex;
+  justify-content: flex-end;
+  gap: 8px;
+  align-items: center;
+  width: 100%;
+}
+
+footer .text-end .footer-form input {
+  background: #FFFFFF;
+  border: 2px solid #FFF3CC;
+  border-radius: 6px;
+  padding: 4px 10px;
+  /* Reduced from 6px 12px */
+  width: 180px;
+  /* Reduced from 200px */
+  font-size: 11px;
+  /* Reduced from 12px */
+  text-align: left;
+  transition: all 0.3s;
+}
+
+footer .text-end .footer-form input:focus {
+  outline: none;
+  border-color: #FBAF99;
+}
+
+footer .text-end .footer-form button {
+  background: #FBAF99;
+  border: 2px solid #FFFFFF;
+  border-radius: 6px;
+  padding: 4px 12px;
+  /* Reduced from 6px 15px */
+  color: #1E1E1E;
+  font-size: 11px;
+  /* Reduced from 12px */
+  cursor: pointer;
+  transition: all 0.3s;
+  font-weight: 500;
+  white-space: nowrap;
+}
+
+footer .text-end .footer-form button:hover {
+  background: #F99D84;
+  transform: translateY(-2px);
+}
+
+.footer-divider {
+  border-top: 1px solid #FFF3CC;
+  margin: 8px 0;
+  opacity: 0.6;
+}
+
+.copyright {
+  text-align: center;
+  color: #FFF3CC;
+  font-size: 12px;
+  opacity: 0.8;
+}
+
+@media (max-width: 768px) {
+  .product-box {
+    width: 90%;
+  }
+}

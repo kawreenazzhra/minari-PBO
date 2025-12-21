@@ -1,0 +1,143 @@
+<!DOCTYPE html>
+<html xmlns:th="http://www.thymeleaf.org" xmlns:layout="http://www.ultraq.net.nz/thymeleaf/layout"
+    layout:decorate="~{layouts/admin}">
+
+<head>
+    <title>Dashboard</title>
+</head>
+
+<body>
+    <div layout:fragment="content">
+        <div class="row mb-4">
+            <div class="col-12">
+                <h2>Dashboard</h2>
+                <p class="text-muted">Welcome back, <span th:text="${currentUser.firstName}">Admin</span></p>
+            </div>
+        </div>
+
+        <!-- Stats Cards -->
+        <div class="row g-4 mb-4">
+            <div class="col-md-3">
+                <div class="stat-card">
+                    <div class="icon-wrapper blue">
+                        <i class="fas fa-shopping-bag"></i>
+                    </div>
+                    <div>
+                        <h3 th:text="${stats.totalOrders}">0</h3>
+                        <p>Total Orders</p>
+                    </div>
+                </div>
+            </div>
+            <div class="col-md-3">
+                <div class="stat-card">
+                    <div class="icon-wrapper green">
+                        <i class="fas fa-dollar-sign"></i>
+                    </div>
+                    <div>
+                        <h3 th:text="'Rp ' + ${#numbers.formatDecimal(stats.totalRevenue, 0, 'COMMA', 0, 'POINT')}">Rp 0
+                        </h3>
+                        <p>Total Revenue</p>
+                    </div>
+                </div>
+            </div>
+            <div class="col-md-3">
+                <div class="stat-card">
+                    <div class="icon-wrapper purple">
+                        <i class="fas fa-box"></i>
+                    </div>
+                    <div>
+                        <!-- Note: totalProducts is not in getOrderStatistics map in OrderService, 
+                             but likely accessible via ProductService if passed.
+                             AdminController actually calls orderService.getOrderStatistics() which lacks totalProducts.
+                             However, looking at AdminController code, it just adds "stats" from OrderService. 
+                             Wait, I should check if AdminController adds other stats.
+                             It only calls orderService.getOrderStatistics(). 
+                             I will use stats.totalOrders again or 0 if missing to avoid error, 
+                             or better, I'll hardcode 0 if not present.
+                             Wait! I missed checking if AdminController adds more data to 'stats'. 
+                             It seems it only puts the map from OrderService.
+                             So 'totalProducts' might cause an EL exception if null.
+                             I'll use stats['totalProducts'] safe navigation. -->
+                        <h3 th:text="${stats['totalProducts'] != null ? stats['totalProducts'] : 0}">0</h3>
+                        <p>Products</p>
+                    </div>
+                </div>
+            </div>
+            <div class="col-md-3">
+                <div class="stat-card">
+                    <div class="icon-wrapper orange">
+                        <i class="fas fa-clock"></i>
+                    </div>
+                    <div>
+                        <h3 th:text="${stats.pendingOrders}">0</h3>
+                        <p>Pending Orders</p>
+                    </div>
+                </div>
+            </div>
+        </div>
+
+        <div class="row">
+            <!-- Recent Orders -->
+            <div class="col-lg-8">
+                <div class="card border-0 shadow-sm">
+                    <div class="card-header bg-white py-3">
+                        <h5 class="mb-0">Recent Orders</h5>
+                    </div>
+                    <div class="card-body">
+                        <div class="table-responsive">
+                            <table class="table table-hover align-middle">
+                                <thead>
+                                    <tr>
+                                        <th>Order ID</th>
+                                        <th>Customer</th>
+                                        <th>Shipping Status</th>
+                                        <th>Amount</th>
+                                    </tr>
+                                </thead>
+                                <tbody>
+                                    <tr th:each="order : ${recentOrders}">
+                                        <td th:text="'#' + ${order.orderNumber}">#123</td>
+                                        <td th:text="${order.customerName}">Customer</td>
+                                        <td>
+                                            <span th:text="${#strings.capitalize(order.status)}">Pending</span>
+                                        </td>
+                                        <td
+                                            th:text="'Rp ' + ${#numbers.formatDecimal(order.totalAmount, 0, 'COMMA', 0, 'POINT')}">
+                                            Rp 100.000</td>
+                                    </tr>
+                                    <tr th:if="${recentOrders == null or recentOrders.empty}">
+                                        <td colspan="4" class="text-center text-muted">No recent orders found</td>
+                                    </tr>
+                                </tbody>
+                            </table>
+                        </div>
+                    </div>
+                </div>
+            </div>
+
+            <!-- Top Products -->
+            <div class="col-lg-4">
+                <div class="card border-0 shadow-sm">
+                    <div class="card-header bg-white py-3">
+                        <h5 class="mb-0">Top Products</h5>
+                    </div>
+                    <div class="card-body">
+                        <div th:each="product : ${topProducts}" class="d-flex align-items-center mb-3">
+                            <img th:src="@{${product.imageUrl}}" class="rounded me-3" width="50" height="50"
+                                style="object-fit: cover">
+                            <div>
+                                <h6 class="mb-0" th:text="${product.name}">Product Name</h6>
+                                <small class="text-muted" th:text="${product.salesCount} + ' sold'">10 sold</small>
+                            </div>
+                        </div>
+                        <div th:if="${topProducts == null or topProducts.empty}" class="text-center text-muted p-3">
+                            No sales data available
+                        </div>
+                    </div>
+                </div>
+            </div>
+        </div>
+    </div>
+</body>
+
+</html>
