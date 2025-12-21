@@ -171,7 +171,12 @@ public class WebOrderController {
         } catch (Exception e) {
             e.printStackTrace();
             System.err.println("Order placement error: " + e.getMessage());
-            return "redirect:/checkout?addressId=" + addressId + "&error=Payment Failed Check Server Console";
+            String errorMessage = "Payment Failed: " + e.getClass().getSimpleName() + " - " + e.getMessage();
+            // Sanitize
+            errorMessage = errorMessage.replaceAll("[^a-zA-Z0-9 :_.-]", "");
+            if (errorMessage.length() > 100) errorMessage = errorMessage.substring(0, 100);
+            
+            return "redirect:/checkout?addressId=" + addressId + "&error=" + errorMessage;
         }
     }
 

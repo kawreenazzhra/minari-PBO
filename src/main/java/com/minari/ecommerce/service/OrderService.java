@@ -68,7 +68,29 @@ public class OrderService {
              // We could log this event.
              log.warn("Order created by non-customer user: {}", user.getEmail());
         }
-        order.setShippingAddress(shippingAddress);
+        // Clone the address to avoid detached entity issues and snapshot it for the order history
+        Address orderAddress = new Address();
+        orderAddress.setRecipientName(shippingAddress.getRecipientName());
+        orderAddress.setPhoneNumber(shippingAddress.getPhoneNumber());
+        orderAddress.setStreetAddress(shippingAddress.getStreetAddress());
+        orderAddress.setApartmentSuite(shippingAddress.getApartmentSuite());
+        orderAddress.setCity(shippingAddress.getCity());
+        orderAddress.setState(shippingAddress.getState());
+        orderAddress.setProvince(shippingAddress.getProvince());
+        orderAddress.setZipcode(shippingAddress.getZipcode());
+        orderAddress.setCountry(shippingAddress.getCountry());
+        orderAddress.setAddressType("SHIPPING_ORDER"); // Distinguish from user saved addresses
+        
+        // Do NOT set customer or ID, this is a standalone record for this order (snapshot)
+        // UPDATE: Set customer to satisfy potential DB NOT NULL constraint on addresses.customer_id
+        if (user instanceof com.minari.ecommerce.entity.Customer) {
+            orderAddress.setCustomer((com.minari.ecommerce.entity.Customer) user);
+        }
+        
+        order.setShippingAddress(orderAddress);
+        
+        // Debug
+        System.err.println("DEBUG: Created new Order Address clone for Order: " + order.getOrderNumber());
         order.setTotalAmount(cart.getTotalAmount());
 
         List<OrderItem> orderItems = cart.getItems().stream()
