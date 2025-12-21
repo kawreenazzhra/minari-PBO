@@ -1,0 +1,193 @@
+<!DOCTYPE html>
+<html lang="en" xmlns:th="http://www.thymeleaf.org">
+
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>MINARI - Order Details</title>
+    <link href="https://cdn.jsdelivr.net/npm/bootstrap@5.3.0/dist/css/bootstrap.min.css" rel="stylesheet">
+    <link
+        href="https://fonts.googleapis.com/css2?family=Playfair+Display:wght@700&family=Poppins:wght@400;500;600&display=swap"
+        rel="stylesheet">
+    <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.4.0/css/all.min.css">
+    <link rel="stylesheet" th:href="@{/css/style1.css}">
+    <link rel="stylesheet" th:href="@{/css/navbar.css}">
+
+    <!-- Navbar Meta & Scripts -->
+    <meta name="_csrf" th:content="${_csrf != null ? _csrf.token : ''}" />
+    <meta name="_csrf_header" th:content="${_csrf != null ? _csrf.headerName : ''}" />
+    <script th:inline="javascript">
+        window.APP_ROLE = /*[[${#authorization.expression('isAuthenticated()') ? 'user' : 'guest'}]]*/ 'guest';
+        window.APP_URL = /*[[@{/}]]*/ '/';
+    </script>
+</head>
+
+<body>
+    <!-- Customer Navbar -->
+    <header id="navMount"></header>
+
+    <div class="main-content" style="margin-left: 0; padding-top: 100px;">
+        <div class="order-detail-header">
+            <div>
+                <a th:href="@{/order-history}" class="back-btn">
+                    <i class="fas fa-arrow-left"></i> Back to Order History
+                </a>
+                <h2 class="page-title mt-3" th:text="'Order #' + ${order.orderNumber}">Order #123</h2>
+            </div>
+            <div class="d-flex align-items-center gap-3">
+                <!-- Payment Status Badge -->
+                <span class="order-status-badge"
+                    th:classappend="${order.payment != null && order.payment.status.name() == 'PAID' ? 'status-completed' : 'status-pending'}"
+                    th:text="${order.payment != null ? order.payment.status : 'UNPAID'}">
+                    PAID
+                </span>
+
+                <!-- Order Status Badge -->
+                <span class="order-status-badge" th:classappend="${order.status.name() == 'PENDING' ? 'status-pending' : 
+                                    (order.status.name() == 'PROCESSING' ? 'status-processing' : 
+                                    (order.status.name() == 'SHIPPED' ? 'status-shipped' : 
+                                    (order.status.name() == 'DELIVERED' ? 'status-completed' : 'status-cancelled')))}"
+                    th:text="${order.status}">
+                    PENDING
+                </span>
+                <span class="detail-value"
+                    th:text="${#temporals.format(order.orderDate, 'dd.MM.yyyy HH:mm')}">Date</span>
+            </div>
+        </div>
+
+        <div class="order-detail-grid">
+            <div class="order-detail-card">
+                <h5>Customer Information</h5>
+                <div class="detail-row">
+                    <span class="detail-label">Customer</span>
+                    <span class="detail-value"
+                        th:text="${order.customer != null ? order.customer.fullName : 'Guest'}">Name</span>
+                </div>
+                <div class="detail-row">
+                    <span class="detail-label">Email</span>
+                    <span class="detail-value"
+                        th:text="${order.customer != null ? order.customer.email : '-'}">Email</span>
+                </div>
+                <div class="detail-row">
+                    <span class="detail-label">Phone</span>
+                    <span class="detail-value"
+                        th:text="${order.user != null && order.user.phone != null ? order.user.phone : '-'}">-</span>
+                </div>
+                <div class="detail-row">
+                    <span class="detail-label">User Type</span>
+                    <span class="detail-value"
+                        th:text="${order.user != null ? 'Registered User' : 'Guest'}">Guest</span>
+                </div>
+            </div>
+
+            <div class="order-detail-card">
+                <h5>Shipping Address</h5>
+                <div class="detail-value">
+                    <span th:if="${order.shippingAddress != null}">
+                        <span th:text="${order.shippingAddress.fullAddress}">Address</span>
+                    </span>
+                    <span th:if="${order.shippingAddress == null}">No shipping address</span>
+                </div>
+            </div>
+        </div>
+
+        <div class="order-detail-card">
+            <h5>Order Items</h5>
+            <div th:each="item : ${order.items}" class="product-item">
+                <div class="product-info">
+                    <div class="product-img">
+                        <img th:if="${item.product != null && item.product.imageUrl != null}"
+                            th:src="@{${item.product.imageUrl}}" th:alt="${item.product.name}">
+                        <div th:if="${item.product == null || item.product.imageUrl == null}"
+                            style="width:60px; height:60px; background:#eee; display:flex; justify-content:center; align-items:center;">
+                            No Img
+                        </div>
+                    </div>
+                    <div>
+                        <div class="product-name"
+                            th:text="${item.product != null ? item.product.name : 'Deleted Product'}">Product Name</div>
+                        <div class="product-category">
+                            <!-- Item variants not explicitly in OrderItem but maybe in product variants or description? 
+                                  Assuming just product name for now or stored in specialized fields if implemented -->
+                            Qty: <span th:text="${item.quantity}">1</span>
+                        </div>
+                    </div>
+                </div>
+                <div class="product-price"
+                    th:text="'Rp ' + ${#numbers.formatDecimal(item.totalPrice, 0, 'POINT', 0, 'COMMA')}">Rp 0</div>
+            </div>
+        </div>
+
+        <div class="order-detail-grid">
+            <div class="order-detail-card">
+                <h5>Delivery Information</h5>
+                <div class="detail-row">
+                    <span class="detail-label">Tracking Number</span>
+                    <span class="detail-value"
+                        th:text="${order.shipment != null ? order.shipment.trackingNumber : '-'}">-</span>
+                </div>
+                <div class="detail-row">
+                    <span class="detail-label">Shipping Cost</span>
+                    <span class="detail-value"
+                        th:text="'Rp ' + ${#numbers.formatDecimal(order.shippingCost, 0, 'POINT', 0, 'COMMA')}">Rp
+                        0</span>
+                </div>
+            </div>
+
+            <div class="order-detail-card">
+                <h5>Payment Summary</h5>
+                <div class="detail-row">
+                    <span class="detail-label">Payment Method</span>
+                    <span class="detail-value"
+                        th:text="${order.payment != null && order.payment.paymentMethod != null ? order.payment.paymentMethod : 'Not specified'}">-</span>
+                </div>
+                <div class="detail-row">
+                    <span class="detail-label">Subtotal</span>
+                    <span class="detail-value"
+                        th:text="'Rp ' + ${#numbers.formatDecimal(order.subtotalAmount, 0, 'POINT', 0, 'COMMA')}">Rp
+                        0</span>
+                </div>
+                <div class="detail-row">
+                    <span class="detail-label">Delivery</span>
+                    <span class="detail-value"
+                        th:text="'Rp ' + ${#numbers.formatDecimal(order.shippingCost, 0, 'POINT', 0, 'COMMA')}">Rp
+                        0</span>
+                </div>
+                <div class="detail-row">
+                    <span class="detail-label">Discount</span>
+                    <span class="detail-value"
+                        th:text="'- Rp ' + ${#numbers.formatDecimal(order.discountAmount, 0, 'POINT', 0, 'COMMA')}">Rp
+                        0</span>
+                </div>
+                <!-- Tax omitted from blade but field exists in entity. Include if desired -->
+                <div class="detail-row" style="border-top: 2px solid #f0f0f0; font-weight: 600;">
+                    <span class="detail-label">Grand Total</span>
+                    <span class="detail-value"
+                        th:text="'Rp ' + ${#numbers.formatDecimal(order.totalAmount, 0, 'POINT', 0, 'COMMA')}">Rp
+                        0</span>
+                </div>
+            </div>
+        </div>
+    </div>
+
+    <footer>
+        <div class="container">
+            <div class="row align-items-center">
+                <div class="col-md-6">
+                    <div class="logo">
+                        <img th:src="@{/images/logofix.png}" alt="Logo MINARI" style="height: 40px; width: auto;">
+                    </div>
+                    <p>Your everyday fashion boutique</p>
+                </div>
+            </div>
+            <div class="footer-divider"></div>
+            <div class="copyright">
+                © 2025 MINARI. All Rights Reserved.
+            </div>
+        </div>
+    </footer>
+    <script src="https://cdn.jsdelivr.net/npm/bootstrap@5.3.0/dist/js/bootstrap.bundle.min.js"></script>
+    <script th:src="@{/js/navbar.js}"></script>
+</body>
+
+</html>

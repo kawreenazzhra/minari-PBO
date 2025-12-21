@@ -727,6 +727,39 @@ public class OrderService {
             com.minari.ecommerce.entity.OrderStatus newStatus = com.minari.ecommerce.entity.OrderStatus
                     .valueOf(statusStr);
             order.setStatus(newStatus);
+
+            // ✅ Auto-update payment status for COD orders based on shipment status
+            if (order.getPayment() != null &&
+                    order.getPayment().getPaymentMethod() == PaymentMethod.COD) {
+
+                switch (newStatus) {
+                    case DELIVERED:
+                        // COD payment is completed when delivered
+                        order.getPayment().setStatus(PaymentStatus.PAID);
+                        order.getPayment().setPaymentDate(java.time.LocalDateTime.now());
+                        log.info("COD Payment marked as PAID for order: {}", order.getOrderNumber());
+                        break;
+
+                    case CANCELLED:
+                        // Order cancelled, payment cancelled
+                        order.getPayment().setStatus(PaymentStatus.CANCELLED);
+                        log.info("Payment marked as CANCELLED for order: {}", order.getOrderNumber());
+                        break;
+
+                    case RETURNED:
+                        // Order returned, payment refunded
+                        order.getPayment().setStatus(PaymentStatus.REFUNDED);
+                        order.getPayment().setRefundDate(java.time.LocalDateTime.now());
+                        order.getPayment().setRefundAmount(order.getTotalAmount());
+                        order.getPayment().setRefundReason("Order returned");
+                        log.info("Payment marked as REFUNDED for order: {}", order.getOrderNumber());
+                        break;
+
+                    default:
+                        // No payment status change for other statuses
+                        break;
+                }
+            }
         } catch (IllegalArgumentException e) {
             // Ignore invalid status or handle error
         }
