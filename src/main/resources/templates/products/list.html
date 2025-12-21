@@ -98,12 +98,14 @@
                                     </div>
 
                                     <div class="p-mini-actions">
-                                        <button class="p-cart" aria-label="Add to cart"
-                                            th:onclick="'event.preventDefault(); window.addToCart(' + ${product.id} + ', \'' + ${#strings.escapeJavaScript(product.name)} + '\', ' + ${product.finalPrice ?: product.price} + ', \'' + ${product.imageUrl ?: ''} + '\')'">
+                                        <button type="button" class="p-cart" aria-label="Add to cart"
+                                            th:data-product-id="${product.id}"
+                                            onclick="event.preventDefault(); event.stopPropagation(); addToCartFromCategory(this.getAttribute('data-product-id'))">
                                             <i class="fas fa-shopping-cart" style="font-size: 16px;"></i>
                                         </button>
-                                        <button class="p-wish" aria-label="Wishlist" th:data-product-id="${product.id}"
-                                            th:onclick="'event.preventDefault(); addToWishlist(' + ${product.id} + ', this)'">
+                                        <button type="button" class="p-wish" aria-label="Wishlist"
+                                            th:data-product-id="${product.id}"
+                                            onclick="event.preventDefault(); event.stopPropagation(); addToWishlist(this.getAttribute('data-product-id'), this)">
                                             <i class="far fa-heart" style="font-size: 16px;"></i>
                                         </button>
                                     </div>

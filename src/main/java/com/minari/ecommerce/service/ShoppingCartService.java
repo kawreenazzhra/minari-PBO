@@ -99,10 +99,48 @@ public class ShoppingCartService {
         
         cartRepository.save(cart);
     }
+
+    /**
+     * Get filtered cart with only selected product IDs
+     */
+    public ShoppingCart getFilteredCart(String email, java.util.List<Long> selectedProductIds) {
+        ShoppingCart cart = getCartForUser(email);
+        
+        if (selectedProductIds == null || selectedProductIds.isEmpty()) {
+            return cart;
+        }
+        
+        // Create a new cart with filtered items
+        ShoppingCart filteredCart = new ShoppingCart();
+        filteredCart.setCustomer(cart.getCustomer());
+        filteredCart.setId(cart.getId());
+        
+        // Filter items by selected product IDs
+        java.util.List<CartItem> filteredItems = cart.getItems().stream()
+            .filter(item -> selectedProductIds.contains(item.getProduct().getId()))
+            .collect(java.util.stream.Collectors.toList());
+        
+        filteredCart.setItems(filteredItems);
+        
+        return filteredCart;
+    }
     
     public void clearCart(String email) {
         ShoppingCart cart = getCartForUser(email);
         cart.getItems().clear();
+        cartRepository.save(cart);
+    }
+    
+    /**
+     * Remove only specific items from cart (used when checking out selected items only)
+     * Keeps unselected items in the cart
+     */
+    public void removeItemsByProductIds(String email, java.util.List<Long> productIds) {
+        ShoppingCart cart = getCartForUser(email);
+        
+        // Remove items that are in the productIds list
+        cart.getItems().removeIf(item -> productIds.contains(item.getProduct().getId()));
+        
         cartRepository.save(cart);
     }
     

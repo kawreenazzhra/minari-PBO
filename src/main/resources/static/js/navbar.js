@@ -86,7 +86,7 @@ function tplGuest() {
         <button id="accBtn" class="btn p-0 border-0" style="background: transparent !important; cursor: pointer;">
           <img src="/images/akun.png" alt="User" width="24" height="24">
         </button>
-        <a href="/products"><img src="/images/whislist.png" alt="Favorite" width="24" height="24"></a>
+        <a href="/wishlist"><img src="/images/whislist.png" alt="Favorite" width="24" height="24"></a>
         <a href="#" id="navSearchBtn"><img src="/images/searchnav.png" alt="Search" width="24" height="24"></a>
         <a href="/cart" class="position-relative">
           <img src="/images/chart.png" alt="Cart" width="24" height="24">
@@ -121,7 +121,7 @@ function tplUser() {
         <button id="accBtn" class="btn p-0 border-0" style="background: transparent !important; cursor: pointer;">
           <img src="/images/akun.png" alt="User" width="24" height="24">
         </button>
-        <a href="/products"><img src="/images/whislist.png" alt="Favorite" width="24" height="24"></a>
+        <a href="/wishlist"><img src="/images/whislist.png" alt="Favorite" width="24" height="24"></a>
         <a href="#" id="navSearchBtn"><img src="/images/searchnav.png" alt="Search" width="24" height="24"></a>
         <a href="/cart" class="position-relative">
           <img src="/images/chart.png" alt="Cart" width="24" height="24">

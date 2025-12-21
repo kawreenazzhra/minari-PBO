@@ -126,9 +126,7 @@ function renderWishlistItems(items) {
 
     root.innerHTML = items.map(item => {
         const product = item.product || item;
-        const imageUrl = product.image
-            ? `/storage/${product.image}`
-            : '/images/default-product.jpg';
+        const imageUrl = product.image_url || product.image || '/images/default-product.jpg';
 
         return `
             <article class="w-item" data-id="${product.id}" data-wishlist-id="${item.id}">
@@ -147,8 +145,8 @@ function renderWishlistItems(items) {
                     <button class="w-btn js-addcart" data-id="${product.id}">
                         Add to cart
                     </button>
-                    <button class="w-heart js-remove" data-id="${item.id}">
-                        Remove
+                    <button class="w-heart js-remove" data-id="${item.id}" title="Remove from wishlist">
+                        <i class="fas fa-heart"></i>
                     </button>
                 </div>
             </article>

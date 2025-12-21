@@ -127,14 +127,22 @@
 
     <div class="container main-content" style="max-width: 800px;">
 
-        <form th:action="@{/checkout/place}" method="POST">
-            <input type="hidden" name="addressId" th:value="${shippingAddress != null ? shippingAddress.id : ''}">
-            <input type="hidden" name="payment_method" th:value="${paymentMethodValue}">
+        <!-- Error Alert -->
+        <div th:if="${error}" class="alert alert-danger alert-dismissible fade show" role="alert">
+            <strong>Error:</strong>
+            <span th:text="${error}">Error message</span>
+            <button type="button" class="btn-close" data-bs-dismiss="alert" aria-label="Close"></button>
+        </div>
 
-            <!-- Product List -->
-            <div class="mb-5">
+        <form th:action="@{/checkout/place}" method="POST" id="checkoutForm">
+            <input type="hidden" name="addressId" th:value="${shippingAddress != null ? shippingAddress.id : ''}">
+            <input type="hidden" name="payment_method" th:value="${paymentMethodValue != null ? paymentMethodValue : 'cod'}">
+            <input type="hidden" name="selectedItems" th:value="${#strings.arrayJoin(cart.items.![product.id], ',')}">
+                <div th:if="${cart.items == null or #lists.isEmpty(cart.items)}" class="alert alert-warning">
+                    Your cart is empty. <a th:href="@{/}">Continue Shopping</a>
+                </div>
                 <div th:each="item : ${cart.items}" class="d-flex align-items-center mb-4">
-                    <img th:src="@{${item.product.imageUrl}}" alt="Product" class="checkout-item-img me-3">
+                    <img th:src="@{${item.product.imageUrl}}" alt="Product" class="checkout-item-img me-3" th:onerror="this.src='/images/placeholder.png'">
                     <div class="flex-grow-1">
                         <h5 class="mb-1" style="font-family: 'Playfair Display', serif;" th:text="${item.product.name}">
                             Product Name</h5>
@@ -199,13 +207,8 @@
                 </div>
             </div>
 
-            <!-- Error Message -->
-            <div th:if="${param.error}" class="alert alert-danger">
-                <span th:text="${param.error}">Error</span>
-            </div>
-
             <!-- Checkout Button -->
-            <button type="submit" class="checkout-btn mb-5">Check out</button>
+            <button type="submit" class="checkout-btn mb-5" th:disabled="${shippingAddress == null}">Check out</button>
 
         </form>
     </div>

@@ -32,13 +32,15 @@ public class OrderService {
     private final ShoppingCartService cartService;
     private final UserRepository userRepository;
     private final EmailService emailService;
+    private final PromotionService promotionService;
 
     public OrderService(OrderRepository orderRepository, ShoppingCartService cartService, UserRepository userRepository,
-            EmailService emailService) {
+            EmailService emailService, PromotionService promotionService) {
         this.orderRepository = orderRepository;
         this.cartService = cartService;
         this.userRepository = userRepository;
         this.emailService = emailService;
+        this.promotionService = promotionService;
     }
 
     public Order createOrderFromCart(String email, Address shippingAddress, PaymentMethod paymentMethod) {
@@ -88,27 +90,67 @@ public class OrderService {
         }
         
         order.setShippingAddress(orderAddress);
-        
-        // Debug
-        System.err.println("DEBUG: Created new Order Address clone for Order: " + order.getOrderNumber());
-        order.setTotalAmount(cart.getTotalAmount());
 
         List<OrderItem> orderItems = cart.getItems().stream()
                 .map(cartItem -> {
                     OrderItem orderItem = new OrderItem();
                     orderItem.setOrder(order);
                     orderItem.setProduct(cartItem.getProduct());
+                    // ✅ Set product_name (required NOT NULL)
+                    if (cartItem.getProduct() != null) {
+                        orderItem.setProductName(cartItem.getProduct().getName());
+                        orderItem.setProductSku(cartItem.getProduct().getSku());
+                        orderItem.setImageUrl(cartItem.getProduct().getImageUrl());
+                    }
                     orderItem.setQuantity(cartItem.getQuantity());
                     orderItem.setUnitPrice(cartItem.getUnitPrice());
-                    orderItem.setTotalPrice(cartItem.getSubtotal());
+                    
+                    // ✅ Apply promotions to calculate discounted price
+                    double unitPrice = cartItem.getUnitPrice();
+                    double discountedPrice = unitPrice;
+                    
+                    if (cartItem.getProduct() != null) {
+                        Long productId = cartItem.getProduct().getId();
+                        Long categoryId = cartItem.getProduct().getCategory() != null ? cartItem.getProduct().getCategory().getId() : null;
+                        discountedPrice = promotionService.applyBestPromotion(unitPrice, productId, categoryId);
+                    }
+                    
+                    double discount = unitPrice - discountedPrice;
+                    double discountedSubtotal = discountedPrice * cartItem.getQuantity();
+                    
+                    // Store the discount for this item
+                    if (discount > 0) {
+                        orderItem.setDiscountPrice(discountedPrice);
+                    }
+                    
+                    orderItem.setTotalPrice(discountedSubtotal);
                     return orderItem;
                 })
                 .collect(Collectors.toList());
 
+        // Calculate total discount from all items
+        double totalDiscount = 0;
+        double discountedTotal = 0;
+        
+        for (OrderItem item : orderItems) {
+            discountedTotal += item.getTotalPrice();
+            if (item.getDiscountPrice() != null) {
+                totalDiscount += (item.getUnitPrice() - item.getDiscountPrice()) * item.getQuantity();
+            }
+        }
+
+        // Debug
+        System.err.println("DEBUG: Created new Order Address clone for Order: " + order.getOrderNumber());
+        order.setTotalAmount(discountedTotal);
+        order.setSubtotalAmount(discountedTotal); // ✅ Added: Set subtotal_amount
+        order.setTaxAmount(0.0); // ✅ Set tax to 0 if not calculated
+        order.setShippingCost(0.0); // ✅ Set shipping to 0 if not calculated
+        order.setDiscountAmount(totalDiscount); // ✅ Set discount from promotions
+
         order.setItems(orderItems);
         Payment payment = new Payment();
         payment.setOrder(order);
-        payment.setAmount(order.getTotalAmount());
+        payment.setAmount(discountedTotal); // ✅ Use discounted total for payment
         payment.setPaymentMethod(paymentMethod);
         payment.processPayment(); // Simulasi payment
 
@@ -124,6 +166,235 @@ public class OrderService {
 
         // Clear cart
         cartService.clearCart(email);
+
+        // Send confirmation email
+        emailService.sendOrderConfirmation(user.getEmail(), savedOrder);
+
+        return savedOrder;
+    }
+
+    /**
+     * Create order from a specific cart (used when filtered items are selected)
+     * @param email User email
+     * @param cart The cart (filtered or full) to create order from
+     * @param selectedProductIds Product IDs that were selected for checkout - only these will be removed from cart
+     */
+    public Order createOrderFromCart(String email, ShoppingCart cart, List<Long> selectedProductIds) {
+        User user = userRepository.findByEmail(email)
+                .orElseThrow(() -> new RuntimeException("User not found"));
+
+        if (cart.getItems().isEmpty()) {
+            throw new RuntimeException("Cart is empty");
+        }
+        for (CartItem item : cart.getItems()) {
+            if (!item.getProduct().canFulfillOrder(item.getQuantity())) {
+                throw new RuntimeException("Not enough stock for: " + item.getProduct().getName());
+            }
+        }
+        Order order = new Order();
+        order.setUser(user);
+        // Explicitly generate order number so it's available for Shipment/Payment
+        order.setOrderNumber(order.generateOrderNumber());
+        
+        if (user instanceof com.minari.ecommerce.entity.Customer) {
+            order.setCustomer((com.minari.ecommerce.entity.Customer) user);
+        } else {
+             log.warn("Order created by non-customer user: {}", user.getEmail());
+        }
+
+        List<OrderItem> orderItems = cart.getItems().stream()
+                .map(cartItem -> {
+                    OrderItem orderItem = new OrderItem();
+                    orderItem.setOrder(order);
+                    orderItem.setProduct(cartItem.getProduct());
+                    // ✅ Set product_name (required NOT NULL)
+                    if (cartItem.getProduct() != null) {
+                        orderItem.setProductName(cartItem.getProduct().getName());
+                        orderItem.setProductSku(cartItem.getProduct().getSku());
+                        orderItem.setImageUrl(cartItem.getProduct().getImageUrl());
+                    }
+                    orderItem.setQuantity(cartItem.getQuantity());
+                    orderItem.setUnitPrice(cartItem.getUnitPrice());
+                    
+                    // ✅ Apply promotions to calculate discounted price
+                    double unitPrice = cartItem.getUnitPrice();
+                    double discountedPrice = unitPrice;
+                    
+                    if (cartItem.getProduct() != null) {
+                        Long productId = cartItem.getProduct().getId();
+                        Long categoryId = cartItem.getProduct().getCategory() != null ? cartItem.getProduct().getCategory().getId() : null;
+                        discountedPrice = promotionService.applyBestPromotion(unitPrice, productId, categoryId);
+                    }
+                    
+                    double discount = unitPrice - discountedPrice;
+                    double discountedSubtotal = discountedPrice * cartItem.getQuantity();
+                    
+                    // Store the discount for this item
+                    if (discount > 0) {
+                        orderItem.setDiscountPrice(discountedPrice);
+                    }
+                    
+                    orderItem.setTotalPrice(discountedSubtotal);
+                    return orderItem;
+                })
+                .collect(Collectors.toList());
+
+        // Calculate total discount from all items
+        double totalDiscount = 0;
+        double discountedTotal = 0;
+        
+        for (OrderItem item : orderItems) {
+            discountedTotal += item.getTotalPrice();
+            if (item.getDiscountPrice() != null) {
+                totalDiscount += (item.getUnitPrice() - item.getDiscountPrice()) * item.getQuantity();
+            }
+        }
+
+        order.setTotalAmount(discountedTotal);
+        order.setSubtotalAmount(discountedTotal);
+        order.setTaxAmount(0.0);
+        order.setShippingCost(0.0);
+        order.setDiscountAmount(totalDiscount);
+        order.setItems(orderItems);
+        
+        // Save order (without payment/shipment for now, those come from main createOrderFromCart)
+        Order savedOrder = orderRepository.save(order);
+
+        // Remove only selected items from cart (keep unselected items)
+        if (selectedProductIds != null && !selectedProductIds.isEmpty()) {
+            cartService.removeItemsByProductIds(email, selectedProductIds);
+        } else {
+            // If no selected IDs provided, clear entire cart (backward compatibility)
+            cartService.clearCart(email);
+        }
+
+        // Send confirmation email
+        emailService.sendOrderConfirmation(user.getEmail(), savedOrder);
+
+        return savedOrder;
+    }
+
+    /**
+     * Create order from filtered cart with address and payment method
+     * @param email User email
+     * @param shippingAddress Shipping address for order
+     * @param paymentMethod Payment method (COD, BANK_TRANSFER, E_WALLET)
+     * @param cart The cart (filtered or full) to create order from
+     * @param selectedProductIds Product IDs that were selected for checkout - only these will be removed from cart
+     */
+    public Order createOrderFromCart(String email, Address shippingAddress, PaymentMethod paymentMethod, ShoppingCart cart, List<Long> selectedProductIds) {
+        User user = userRepository.findByEmail(email)
+                .orElseThrow(() -> new RuntimeException("User not found"));
+
+        if (cart.getItems().isEmpty()) {
+            throw new RuntimeException("Cart is empty");
+        }
+        for (CartItem item : cart.getItems()) {
+            if (!item.getProduct().canFulfillOrder(item.getQuantity())) {
+                throw new RuntimeException("Not enough stock for: " + item.getProduct().getName());
+            }
+        }
+        Order order = new Order();
+        order.setUser(user);
+        order.setOrderNumber(order.generateOrderNumber());
+        
+        if (user instanceof com.minari.ecommerce.entity.Customer) {
+            order.setCustomer((com.minari.ecommerce.entity.Customer) user);
+        } else {
+             log.warn("Order created by non-customer user: {}", user.getEmail());
+        }
+        
+        // Clone the address to avoid detached entity issues
+        Address orderAddress = new Address();
+        orderAddress.setRecipientName(shippingAddress.getRecipientName());
+        orderAddress.setPhoneNumber(shippingAddress.getPhoneNumber());
+        orderAddress.setStreetAddress(shippingAddress.getStreetAddress());
+        orderAddress.setApartmentSuite(shippingAddress.getApartmentSuite());
+        orderAddress.setCity(shippingAddress.getCity());
+        orderAddress.setState(shippingAddress.getState());
+        orderAddress.setProvince(shippingAddress.getProvince());
+        orderAddress.setZipcode(shippingAddress.getZipcode());
+        orderAddress.setCountry(shippingAddress.getCountry());
+        orderAddress.setAddressType("SHIPPING_ORDER");
+        
+        if (user instanceof com.minari.ecommerce.entity.Customer) {
+            orderAddress.setCustomer((com.minari.ecommerce.entity.Customer) user);
+        }
+        
+        order.setShippingAddress(orderAddress);
+
+        List<OrderItem> orderItems = cart.getItems().stream()
+                .map(cartItem -> {
+                    OrderItem orderItem = new OrderItem();
+                    orderItem.setOrder(order);
+                    orderItem.setProduct(cartItem.getProduct());
+                    if (cartItem.getProduct() != null) {
+                        orderItem.setProductName(cartItem.getProduct().getName());
+                        orderItem.setProductSku(cartItem.getProduct().getSku());
+                        orderItem.setImageUrl(cartItem.getProduct().getImageUrl());
+                    }
+                    orderItem.setQuantity(cartItem.getQuantity());
+                    orderItem.setUnitPrice(cartItem.getUnitPrice());
+                    
+                    double unitPrice = cartItem.getUnitPrice();
+                    double discountedPrice = unitPrice;
+                    
+                    if (cartItem.getProduct() != null) {
+                        Long productId = cartItem.getProduct().getId();
+                        Long categoryId = cartItem.getProduct().getCategory() != null ? cartItem.getProduct().getCategory().getId() : null;
+                        discountedPrice = promotionService.applyBestPromotion(unitPrice, productId, categoryId);
+                    }
+                    
+                    double discount = unitPrice - discountedPrice;
+                    double discountedSubtotal = discountedPrice * cartItem.getQuantity();
+                    
+                    if (discount > 0) {
+                        orderItem.setDiscountPrice(discountedPrice);
+                    }
+                    
+                    orderItem.setTotalPrice(discountedSubtotal);
+                    return orderItem;
+                })
+                .collect(Collectors.toList());
+
+        double totalDiscount = 0;
+        double discountedTotal = 0;
+        
+        for (OrderItem item : orderItems) {
+            discountedTotal += item.getTotalPrice();
+            if (item.getDiscountPrice() != null) {
+                totalDiscount += (item.getUnitPrice() - item.getDiscountPrice()) * item.getQuantity();
+            }
+        }
+
+        order.setTotalAmount(discountedTotal);
+        order.setSubtotalAmount(discountedTotal);
+        order.setTaxAmount(0.0);
+        order.setShippingCost(0.0);
+        order.setDiscountAmount(totalDiscount);
+        order.setItems(orderItems);
+        
+        Payment payment = new Payment();
+        payment.setOrder(order);
+        payment.setAmount(discountedTotal);
+        payment.setPaymentMethod(paymentMethod);
+        payment.processPayment();
+
+        order.setPayment(payment);
+
+        if (payment.getStatus() == PaymentStatus.PAID) {
+            order.createShipment(generateTrackingNumber(), "J&Tuh");
+        }
+
+        Order savedOrder = orderRepository.save(order);
+
+        // Remove only selected items from cart (keep unselected items)
+        if (selectedProductIds != null && !selectedProductIds.isEmpty()) {
+            cartService.removeItemsByProductIds(email, selectedProductIds);
+        } else {
+            // If no selected IDs provided, clear entire cart (backward compatibility)
+            cartService.clearCart(email);
+        }
 
         // Send confirmation email
         emailService.sendOrderConfirmation(user.getEmail(), savedOrder);
@@ -174,7 +445,14 @@ public class OrderService {
      * Get full Order entity by ID
      */
     public Order getOrderEntityById(Long id) {
-        return orderRepository.findById(id).orElse(null);
+        return orderRepository.findByIdWithDetails(id).orElse(null);
+    }
+
+    /**
+     * Get order entity by order number
+     */
+    public Order getOrderEntityByOrderNumber(String orderNumber) {
+        return orderRepository.findByOrderNumberWithDetails(orderNumber).orElse(null);
     }
 
     /**
@@ -239,15 +517,16 @@ public class OrderService {
         Map<String, Object> stats = new HashMap<>();
         List<Order> allOrders = orderRepository.findAll();
 
-        stats.put("totalOrders", (long) allOrders.size());
-        stats.put("pendingOrders", 0L);
-        stats.put("completedOrders", 0L);
-        stats.put("cancelledOrders", 0L);
-        stats.put("totalRevenue", allOrders.stream()
+        stats.put("total_orders", (long) allOrders.size());
+        stats.put("pending_orders", 0L);
+        stats.put("completed_orders", 0L);
+        stats.put("cancelled_orders", 0L);
+        stats.put("total_revenue", allOrders.stream()
                 .mapToDouble(Order::getTotalAmount)
                 .sum());
-        stats.put("averageOrderValue", allOrders.isEmpty() ? 0.0
+        stats.put("average_order_value", allOrders.isEmpty() ? 0.0
                 : allOrders.stream().mapToDouble(Order::getTotalAmount).average().orElse(0.0));
+        stats.put("total_customers", 0L);
 
         return stats;
     }

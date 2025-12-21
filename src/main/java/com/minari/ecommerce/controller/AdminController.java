@@ -454,8 +454,19 @@ public class AdminController {
     }
 
     @GetMapping("/orders/{id}")
-    public String orderDetail(@PathVariable Long id, Model model) {
-        com.minari.ecommerce.entity.Order order = orderService.getOrderEntityById(id);
+    public String orderDetail(@PathVariable String id, Model model) {
+        // Handle both numeric ID and order number
+        com.minari.ecommerce.entity.Order order = null;
+        
+        try {
+            // Try to parse as numeric ID first
+            Long numericId = Long.parseLong(id);
+            order = orderService.getOrderEntityById(numericId);
+        } catch (NumberFormatException e) {
+            // If not numeric, treat as order number
+            order = orderService.getOrderEntityByOrderNumber(id);
+        }
+        
         if (order == null) {
             return "redirect:/admin/orders";
         }

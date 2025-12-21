@@ -14,6 +14,8 @@ import org.springframework.web.bind.annotation.GetMapping;
 import org.springframework.web.bind.annotation.PostMapping;
 import org.springframework.web.bind.annotation.RequestMapping;
 import org.springframework.web.bind.annotation.RequestParam;
+import org.slf4j.Logger;
+import org.slf4j.LoggerFactory;
 
 import jakarta.servlet.http.HttpSession;
 import java.util.List;
@@ -22,6 +24,8 @@ import java.util.List;
 @RequestMapping("/checkout")
 public class WebOrderController {
 
+    private static final Logger log = LoggerFactory.getLogger(WebOrderController.class);
+    
     private final OrderService orderService;
     private final ShoppingCartService cartService;
     private final UserRepository userRepository;
@@ -39,20 +43,65 @@ public class WebOrderController {
     public String checkout(Authentication authentication, 
                          @RequestParam(value = "addressId", required = false) Long addressId,
                          @RequestParam(value = "paymentMethod", required = false) String paymentMethodStr,
+                         @RequestParam(value = "error", required = false) String error,
+                         @RequestParam(value = "selectedItems", required = false) String selectedItemsParam,
+                         jakarta.servlet.http.HttpSession session,
                          Model model) {
         if (authentication == null) return "redirect:/login";
         String email = authentication.getName();
         
-        // 1. Get Cart
-        com.minari.ecommerce.entity.ShoppingCart cart = cartService.getCartForUser(email);
-        if (cart.getItems().isEmpty()) {
+        // 1. Get Cart (with filtering if selected items provided)
+        com.minari.ecommerce.entity.ShoppingCart cart = null;
+        
+        // Parse selected items from comma-separated string
+        java.util.List<Long> selectedProductIds = new java.util.ArrayList<>();
+        
+        // First, check if selectedItems param was provided in this request
+        if (selectedItemsParam != null && !selectedItemsParam.isEmpty()) {
+            try {
+                String[] ids = selectedItemsParam.split(",");
+                for (String id : ids) {
+                    selectedProductIds.add(Long.parseLong(id.trim()));
+                }
+                // Save to session for persistence across checkout steps
+                session.setAttribute("checkoutSelectedItems", selectedProductIds);
+            } catch (Exception e) {
+                log.warn("Failed to parse selectedItems: {}", e.getMessage());
+            }
+        } else {
+            // Try to get from session if not in request param
+            @SuppressWarnings("unchecked")
+            java.util.List<Long> sessionItems = (java.util.List<Long>) session.getAttribute("checkoutSelectedItems");
+            if (sessionItems != null) {
+                selectedProductIds = sessionItems;
+            }
+        }
+        
+        // Get filtered or full cart
+        if (!selectedProductIds.isEmpty()) {
+            cart = cartService.getFilteredCart(email, selectedProductIds);
+        } else {
+            // No selected items, use full cart
+            cart = cartService.getCartForUser(email);
+        }
+        
+        if (cart == null || cart.getItems().isEmpty()) {
             return "redirect:/cart";
         }
+        
+        // Validate cart items have products
+        cart.getItems().stream()
+            .filter(item -> item.getProduct() == null)
+            .forEach(item -> {
+                throw new RuntimeException("Cart item missing product reference");
+            });
+            
         model.addAttribute("cart", cart);
         model.addAttribute("total", cart.getTotalAmount()); // shipping calc can be added later
 
         // 2. Resolve Address
-        User user = userRepository.findByEmail(email).orElseThrow();
+        User user = userRepository.findByEmail(email).orElseThrow(() -> 
+            new RuntimeException("User not found: " + email));
         List<Address> addresses = List.of();
         if (user instanceof com.minari.ecommerce.entity.Customer) {
             addresses = addressRepository.findByCustomer((com.minari.ecommerce.entity.Customer) user);
@@ -61,10 +110,14 @@ public class WebOrderController {
         Address selectedAddress = null;
         if (addressId != null) {
             selectedAddress = addressRepository.findById(addressId).orElse(null);
+            if (selectedAddress == null) {
+                model.addAttribute("error", "Selected address not found");
+            }
         } else if (!addresses.isEmpty()) {
             selectedAddress = addresses.get(0); // Default to first
         }
         model.addAttribute("shippingAddress", selectedAddress);
+        model.addAttribute("addresses", addresses);
 
         // 3. Resolve Payment
         PaymentMethod selectedPayment = PaymentMethod.COD; // Default
@@ -75,12 +128,17 @@ public class WebOrderController {
                 paymentDisplay = "Virtual Account Transfer";
             } else if ("e_wallet".equalsIgnoreCase(paymentMethodStr)) {
                 selectedPayment = PaymentMethod.E_WALLET;
-                 paymentDisplay = "E-Wallet";
+                paymentDisplay = "E-Wallet";
             }
         }
         model.addAttribute("paymentMethod", selectedPayment);
         model.addAttribute("paymentMethodName", paymentDisplay);
         model.addAttribute("paymentMethodValue", paymentMethodStr != null ? paymentMethodStr : "cod");
+        
+        // Add error if present
+        if (error != null && !error.isBlank()) {
+            model.addAttribute("error", error);
+        }
 
         return "checkout/summary";
     }
@@ -138,6 +196,18 @@ public class WebOrderController {
                               @RequestParam(value = "addressId", required = false) Long addressId,
                               Model model) {
         if (authentication == null) return "redirect:/login";
+        
+        // Validate that address was selected
+        if (addressId == null || addressId <= 0) {
+            return "redirect:/checkout?error=Please select an address first";
+        }
+        
+        // Verify address exists
+        Address address = addressRepository.findById(addressId).orElse(null);
+        if (address == null) {
+            return "redirect:/checkout?error=Selected address not found";
+        }
+        
         model.addAttribute("addressId", addressId);
         return "checkout/payment_selection";
     }
@@ -145,37 +215,91 @@ public class WebOrderController {
     @PostMapping("/place")
     public String placeOrder(Authentication authentication,
             @RequestParam(value = "addressId", required = false) Long addressId,
-            @RequestParam("payment_method") String paymentMethodStr) {
+            @RequestParam("payment_method") String paymentMethodStr,
+            @RequestParam(value = "selectedItems", required = false) String selectedItemsParam,
+            jakarta.servlet.http.HttpSession session) {
         
         if (authentication == null) return "redirect:/login";
         
-        // ... (Error handling logic same as before)
-        if (addressId == null) {
-             // Fallback if null, try to find default? Or error.
-             return "redirect:/checkout?error=Missing address";
+        String email = authentication.getName();
+        
+        // Parse selected items if provided
+        java.util.List<Long> selectedProductIds = new java.util.ArrayList<>();
+        if (selectedItemsParam != null && !selectedItemsParam.isEmpty()) {
+            try {
+                String[] ids = selectedItemsParam.split(",");
+                for (String id : ids) {
+                    selectedProductIds.add(Long.parseLong(id.trim()));
+                }
+            } catch (Exception e) {
+                log.warn("Failed to parse selectedItems in placeOrder: {}", e.getMessage());
+            }
+        }
+        
+        // Validate address is provided
+        if (addressId == null || addressId <= 0) {
+            return "redirect:/checkout?error=Please select a shipping address";
         }
 
-        String email = authentication.getName();
+        // Fetch and validate address exists
         Address address = addressRepository.findById(addressId)
-                .orElseThrow(() -> new RuntimeException("Address not found"));
+                .orElse(null);
+        
+        if (address == null) {
+            return "redirect:/checkout?error=Shipping address not found";
+        }
 
+        // Validate payment method
         PaymentMethod method = PaymentMethod.COD;
-        if ("bank_transfer".equalsIgnoreCase(paymentMethodStr))
+        if ("bank_transfer".equalsIgnoreCase(paymentMethodStr)) {
             method = PaymentMethod.BANK_TRANSFER;
-        else if ("e_wallet".equalsIgnoreCase(paymentMethodStr))
+        } else if ("e_wallet".equalsIgnoreCase(paymentMethodStr)) {
             method = PaymentMethod.E_WALLET;
+        } else if (!"cod".equalsIgnoreCase(paymentMethodStr) && !"".equals(paymentMethodStr)) {
+            return "redirect:/checkout?addressId=" + addressId + "&error=Invalid payment method selected";
+        }
 
         try {
-            com.minari.ecommerce.entity.Order savedOrder = orderService.createOrderFromCart(email, address, method);
+            // Get filtered cart if selected items provided, otherwise full cart
+            com.minari.ecommerce.entity.ShoppingCart cart;
+            if (!selectedProductIds.isEmpty()) {
+                cart = cartService.getFilteredCart(email, selectedProductIds);
+            } else {
+                cart = cartService.getCartForUser(email);
+            }
+            
+            if (cart == null || cart.getItems().isEmpty()) {
+                return "redirect:/cart?error=Your cart is empty";
+            }
+            
+            // Create the order from the filtered/full cart
+            com.minari.ecommerce.entity.Order savedOrder = orderService.createOrderFromCart(email, address, method, cart, selectedProductIds);
+            
+            if (savedOrder == null || savedOrder.getOrderNumber() == null) {
+                return "redirect:/checkout?addressId=" + addressId + "&error=Order creation failed - order number not generated";
+            }
+            
+            // Clear checkout session after successful order
+            session.removeAttribute("checkoutSelectedItems");
+            
             return "redirect:/checkout/success?orderNumber=" + savedOrder.getOrderNumber();
+        } catch (RuntimeException e) {
+            e.printStackTrace();
+            String errorMessage = e.getMessage();
+            if (errorMessage == null) {
+                errorMessage = "Order creation failed";
+            }
+            // Sanitize error message for URL
+            errorMessage = errorMessage.replaceAll("[^a-zA-Z0-9 :_.-]", "");
+            if (errorMessage.length() > 100) {
+                errorMessage = errorMessage.substring(0, 100);
+            }
+            
+            return "redirect:/checkout?addressId=" + addressId + "&error=" + errorMessage;
         } catch (Exception e) {
             e.printStackTrace();
-            System.err.println("Order placement error: " + e.getMessage());
-            String errorMessage = "Payment Failed: " + e.getClass().getSimpleName() + " - " + e.getMessage();
-            // Sanitize
-            errorMessage = errorMessage.replaceAll("[^a-zA-Z0-9 :_.-]", "");
-            if (errorMessage.length() > 100) errorMessage = errorMessage.substring(0, 100);
-            
+            System.err.println("Unexpected error during order placement: " + e.getMessage());
+            String errorMessage = "Unexpected error: " + e.getClass().getSimpleName();
             return "redirect:/checkout?addressId=" + addressId + "&error=" + errorMessage;
         }
     }

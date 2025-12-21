@@ -74,6 +74,13 @@
 
     <div class="container main-content" style="max-width: 600px; padding-top: 100px;">
 
+        <!-- Error Alert -->
+        <div th:if="${error}" class="alert alert-danger alert-dismissible fade show" role="alert">
+            <strong>Error:</strong>
+            <span th:text="${error}">Error message</span>
+            <button type="button" class="btn-close" data-bs-dismiss="alert" aria-label="Close"></button>
+        </div>
+
         <a th:href="@{/checkout(addressId=${addressId})}" class="back-link">
             <i class="fas fa-chevron-left me-2" style="font-size: 1rem;"></i> Back to order
         </a>

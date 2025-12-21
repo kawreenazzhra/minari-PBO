@@ -194,10 +194,18 @@ body {
   display: block;
 }
 
-/* (opsional) state aktif wishlist */
+/* state aktif wishlist - solid filled heart */
 .p-wish.active {
-  border-color: #ffb5c3;
-  background: #fff7fa;
+  border-color: #ff5978;
+  background: #fff5f7;
+}
+
+.p-wish.active i {
+  color: #ff5978 !important;
+}
+
+.p-wish i {
+  transition: color 0.3s ease, transform 0.2s ease;
 }
 
 /* hilangkan rounding dan gap antar-kartu benar2 nempel */
@@ -285,4 +293,41 @@ body {
   text-decoration: none;
   color: inherit;
   display: block;
+}
+
+/* Toast Notification */
+.mini-toast {
+  position: fixed;
+  bottom: 20px;
+  right: 20px;
+  background: #333;
+  color: #fff;
+  padding: 14px 20px;
+  border-radius: 6px;
+  box-shadow: 0 4px 12px rgba(0, 0, 0, 0.15);
+  font-size: 14px;
+  z-index: 9999;
+  opacity: 0;
+  transform: translateY(20px);
+  transition: all 0.3s ease;
+  pointer-events: none;
+  max-width: 300px;
+}
+
+.mini-toast.show {
+  opacity: 1;
+  transform: translateY(0);
+  pointer-events: auto;
+}
+
+.mini-toast #mtMsg {
+  display: block;
+  font-weight: 500;
+  margin-bottom: 4px;
+}
+
+.mini-toast #mtSub {
+  display: block;
+  font-size: 12px;
+  opacity: 0.8;
 }

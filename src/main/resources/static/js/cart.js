@@ -207,9 +207,9 @@ document.addEventListener('DOMContentLoaded', () => {
                 return;
             }
 
-            // Redirect to new checkout flow
-            // Note: Currently checking out sends all items. Partial checkout logic requires backend update.
-            window.location.href = '/checkout';
+            // Send selected items as query parameter
+            const selectedItemsParam = selectedIds.join(',');
+            window.location.href = '/checkout?selectedItems=' + encodeURIComponent(selectedItemsParam);
         });
     }
 

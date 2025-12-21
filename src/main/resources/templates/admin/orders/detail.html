@@ -80,16 +80,16 @@
                 <h5>Customer Information</h5>
                 <div class="detail-row">
                     <span class="detail-label">Customer</span>
-                    <span class="detail-value" th:text="${order.customer.fullName}">Name</span>
+                    <span class="detail-value" th:text="${order.customer != null ? order.customer.fullName : 'Guest'}">Name</span>
                 </div>
                 <div class="detail-row">
                     <span class="detail-label">Email</span>
-                    <span class="detail-value" th:text="${order.customer.email}">Email</span>
+                    <span class="detail-value" th:text="${order.customer != null ? order.customer.email : '-'}">Email</span>
                 </div>
                 <div class="detail-row">
                     <span class="detail-label">Phone</span>
                     <span class="detail-value"
-                        th:text="${order.customer.phoneNumber != null ? order.customer.phoneNumber : '-'}">-</span>
+                        th:text="${order.user != null && order.user.phone != null ? order.user.phone : '-'}">-</span>
                 </div>
                 <div class="detail-row">
                     <span class="detail-label">User Type</span>
