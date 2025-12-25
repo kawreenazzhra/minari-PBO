@@ -1,0 +1,279 @@
+<!DOCTYPE html>
+<html lang="en" xmlns:th="http://www.thymeleaf.org">
+
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>MINARI | Order Details</title>
+
+    <link href="https://cdn.jsdelivr.net/npm/bootstrap@5.3.0/dist/css/bootstrap.min.css" rel="stylesheet">
+    <link
+        href="https://fonts.googleapis.com/css2?family=Playfair+Display:ital,wght@0,400..900;1,400..900&family=Poppins:ital,wght@0,100;0,200;0,300;0,400;0,500;0,600;0,700;0,800;0,900;1,100;1,200;1,300;1,400;1,500;1,600;1,700;1,800;1,900&display=swap"
+        rel="stylesheet">
+    <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.4.0/css/all.min.css">
+
+    <link rel="stylesheet" th:href="@{/css/navbar.css}">
+    <link rel="stylesheet" th:href="@{/css/landing.css}">
+
+    <style>
+        body {
+            background-color: #FFF6F0;
+            font-family: 'Poppins', sans-serif;
+            color: #1E1E1E;
+            padding-top: 60px !important;
+        }
+
+        .container-narrow {
+            max-width: 800px;
+            margin: 0 auto;
+            padding: 20px;
+        }
+
+        .header-section {
+            display: flex;
+            align-items: center;
+            gap: 20px;
+            margin-bottom: 30px;
+        }
+
+        .btn-back-circle {
+            width: 44px;
+            height: 44px;
+            background-color: #f6beab;
+            /* Peach/Pink from mockup */
+            border-radius: 50%;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            color: #1E1E1E;
+            text-decoration: none;
+            transition: all 0.2s;
+        }
+
+        .btn-back-circle:hover {
+            background-color: #e5a794;
+            color: #000;
+        }
+
+        .details-title {
+            font-family: 'Playfair Display', serif;
+            font-size: 24px;
+            font-weight: 700;
+            margin: 0;
+        }
+
+        .status-badge-large {
+            display: inline-flex;
+            align-items: center;
+            gap: 8px;
+            background-color: #fff4e0;
+            color: #8c6a24;
+            padding: 8px 16px;
+            border-radius: 50px;
+            font-size: 14px;
+            font-weight: 500;
+            margin-bottom: 30px;
+        }
+
+        .status-badge-large.pending {
+            background-color: #fff4e0;
+            color: #8c6a24;
+        }
+
+        .status-badge-large.shipped {
+            background-color: #e8f5ff;
+            color: #2c5282;
+        }
+
+        .status-badge-large.delivered {
+            background-color: #e8f9ed;
+            color: #276749;
+        }
+
+        .card-custom {
+            background: white;
+            border-radius: 12px;
+            padding: 24px;
+            margin-bottom: 24px;
+            box-shadow: 0 2px 10px rgba(0, 0, 0, 0.05);
+            border: none;
+        }
+
+        .card-header-custom {
+            font-weight: 600;
+            font-size: 16px;
+            margin-bottom: 20px;
+            color: #1E1E1E;
+        }
+
+        .info-grid {
+            display: grid;
+            grid-template-columns: 1fr 1fr 1fr;
+            gap: 20px;
+        }
+
+        .info-item label {
+            display: block;
+            font-size: 12px;
+            color: #757575;
+            margin-bottom: 4px;
+            text-transform: uppercase;
+            letter-spacing: 0.5px;
+        }
+
+        .info-item span {
+            font-size: 14px;
+            font-weight: 500;
+        }
+
+        .product-item {
+            display: flex;
+            gap: 20px;
+            align-items: center;
+        }
+
+        .product-image {
+            width: 80px;
+            height: 80px;
+            object-fit: cover;
+            border-radius: 8px;
+            background: #f9f9f9;
+        }
+
+        .product-details h4 {
+            font-size: 16px;
+            font-weight: 600;
+            margin-bottom: 4px;
+        }
+
+        .product-details p {
+            font-size: 14px;
+            color: #666;
+            margin: 0;
+        }
+
+        .product-price {
+            font-size: 14px;
+            color: #d68c78;
+            font-weight: 600;
+            margin-top: 4px;
+        }
+
+        .summary-row {
+            display: flex;
+            justify-content: space-between;
+            align-items: center;
+            margin-bottom: 12px;
+        }
+
+        .summary-label {
+            font-size: 14px;
+            color: #757575;
+        }
+
+        .summary-value {
+            font-size: 14px;
+            font-weight: 600;
+        }
+
+        .total-value {
+            font-size: 18px;
+            font-weight: 700;
+        }
+    </style>
+</head>
+
+<body>
+    <script th:inline="javascript">
+        window.APP_ROLE = /*[[${#authorization.expression('isAuthenticated()') ? (#authorization.expression('hasRole(''ADMIN'')') ? 'admin' : 'user') : 'guest'}]]*/ 'guest';
+    </script>
+    <header id="navMount"></header>
+
+    <main class="container-narrow">
+        <!-- Header with Back Button -->
+        <div class="header-section">
+            <a href="/order-history" class="btn-back-circle">
+                <i class="fas fa-arrow-left"></i>
+            </a>
+            <h1 class="details-title" th:text="'Order Details ' + ${order.orderNumber}">Order Details MIN20251225505581
+            </h1>
+        </div>
+
+        <!-- Status Badge -->
+        <div class="status-badge-large" th:classappend="${#strings.toLowerCase(order.status)}">
+            <i class="far fa-clock"></i>
+            <span th:text="${#strings.capitalize(#strings.toLowerCase(order.status))}">Pending</span>
+        </div>
+
+        <!-- Order Information Card -->
+        <div class="card-custom">
+            <div class="card-header-custom">Order Information</div>
+            <div class="info-grid">
+                <div class="info-item">
+                    <label>Order Number</label>
+                    <span th:text="${order.orderNumber}">MIN20251225505581</span>
+                </div>
+                <div class="info-item">
+                    <label>Order Date</label>
+                    <span th:text="${#temporals.format(order.orderDate, 'dd MMM yyyy')}">25 Dec 2025</span>
+                </div>
+                <div class="info-item">
+                    <label>Status</label>
+                    <span class="text-success" th:text="${#strings.capitalize(#strings.toLowerCase(order.status))}"
+                        th:style="${order.status.name() == 'PENDING'} ? 'color: #8c6a24 !important;' : ''">Pending</span>
+                </div>
+            </div>
+        </div>
+
+        <!-- Ordered Products Card -->
+        <div class="card-custom">
+            <div class="card-header-custom">Ordered Products</div>
+            <div th:each="item : ${order.items}" class="product-item">
+                <img th:src="@{${item.imageUrl}}" class="product-image" alt="Product"
+                    onerror="this.src='/images/default-product.jpg'">
+                <div class="product-details">
+                    <h4 th:text="${item.productName}">Cherry white fleece jacket</h4>
+                    <p th:text="'Qty: ' + ${item.quantity}">Qty: 1</p>
+                    <div class="product-price"
+                        th:text="'Rp ' + ${#numbers.formatDecimal(item.unitPrice, 0, 'POINT', 0, 'COMMA')}">Rp 250.000
+                    </div>
+                </div>
+            </div>
+        </div>
+
+        <!-- Payment Summary Card -->
+        <div class="card-custom">
+            <div class="card-header-custom">Payment Summary</div>
+            <div class="summary-row">
+                <span class="summary-label">Payment Method</span>
+                <span class="summary-value" th:text="${order.payment.paymentMethod.name().replace('_', ' ')}">Bank
+                    Transfer</span>
+            </div>
+            <div class="summary-row mt-3">
+                <span class="summary-label">Subtotal products</span>
+                <span class="summary-value"
+                    th:text="'Rp ' + ${#numbers.formatDecimal(order.subtotalAmount, 0, 'POINT', 0, 'COMMA')}">Rp
+                    175.000</span>
+            </div>
+            <div class="summary-row">
+                <span class="summary-label">Shipping fee</span>
+                <span class="summary-value"
+                    th:text="'Rp ' + ${#numbers.formatDecimal(order.shippingCost, 0, 'POINT', 0, 'COMMA')}">Rp
+                    15.000</span>
+            </div>
+            <hr style="border-top: 1px solid #eee; margin: 15px 0;">
+            <div class="summary-row">
+                <span class="summary-label" style="font-weight: 600; color: #1E1E1E;">Total</span>
+                <span class="total-value"
+                    th:text="'Rp ' + ${#numbers.formatDecimal(order.totalAmount, 0, 'POINT', 0, 'COMMA')}">Rp
+                    190.000</span>
+            </div>
+        </div>
+
+    </main>
+
+    <script src="https://cdn.jsdelivr.net/npm/bootstrap@5.3.0/dist/js/bootstrap.bundle.min.js"></script>
+    <script th:src="@{/js/navbar.js}"></script>
+</body>
+
+</html>

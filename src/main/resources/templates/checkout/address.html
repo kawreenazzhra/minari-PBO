@@ -217,7 +217,7 @@
             });
             element.querySelector('.address-card').classList.add('selected');
 
-            // Redirect after delay
+            // Redirect back to checkout summary
             setTimeout(function () {
                 let url = '/payment?addressId=' + addressId;
                 if (paymentMethod && paymentMethod !== '' && paymentMethod !== 'null') {

@@ -59,7 +59,7 @@ public class OrderService {
             }
         }
         Order order = new Order();
-        order.setOrderNumber("ORD-" + System.currentTimeMillis() + "-" + new Random().nextInt(1000));
+        order.setOrderNumber("MIN" + System.currentTimeMillis() + new Random().nextInt(100));
         order.setOrderDate(LocalDateTime.now());
         order.setUser(user);
         if (user instanceof com.minari.ecommerce.entity.Customer) {
@@ -84,19 +84,16 @@ public class OrderService {
         // Do NOT set ID, let it generate a new unique ID for this order history record
         
         order.setShippingAddress(orderAddress);
-        order.setTotalAmount(cart.getTotalAmount());
-        order.setSubtotalAmount(cart.getTotalAmount()); // Set subtotal to avoid null constraint error
+    
+    double productsSubtotal = cart.getTotalAmount();
+    double shippingFee = 15000.0;
+    
+    order.setSubtotalAmount(productsSubtotal);
+    order.setShippingCost(shippingFee);
+    order.setTotalAmount(productsSubtotal + shippingFee);
 
         List<OrderItem> orderItems = cart.getItems().stream()
-                .map(cartItem -> {
-                    OrderItem orderItem = new OrderItem();
-                    orderItem.setOrder(order);
-                    orderItem.setProduct(cartItem.getProduct());
-                    orderItem.setQuantity(cartItem.getQuantity());
-                    orderItem.setUnitPrice(cartItem.getUnitPrice());
-                    orderItem.setTotalPrice(cartItem.getSubtotal());
-                    return orderItem;
-                })
+                .map(cartItem -> new OrderItem(order, cartItem.getProduct(), cartItem))
                 .collect(Collectors.toList());
 
         order.setItems(orderItems);
@@ -123,9 +120,10 @@ public class OrderService {
         cartService.clearCart(email);
         System.out.println("[OrderService] Cart cleared successfully");
 
-        // Send confirmation email
+        // Send confirmation email and admin notification
         try {
              emailService.sendOrderConfirmation(user.getEmail(), savedOrder);
+             emailService.sendAdminOrderNotification(savedOrder);
         } catch (Exception e) {
              log.error("Failed to send order confirmation email", e);
              // Don't rollback order for email failure
@@ -243,9 +241,9 @@ public class OrderService {
         List<Order> allOrders = orderRepository.findAll();
 
         stats.put("totalOrders", (long) allOrders.size());
-        stats.put("pendingOrders", 0L);
-        stats.put("completedOrders", 0L);
-        stats.put("cancelledOrders", 0L);
+        stats.put("pendingOrders", allOrders.stream().filter(o -> o.getStatus() == com.minari.ecommerce.entity.OrderStatus.PENDING).count());
+        stats.put("completedOrders", allOrders.stream().filter(o -> o.getStatus() == com.minari.ecommerce.entity.OrderStatus.DELIVERED).count());
+        stats.put("cancelledOrders", allOrders.stream().filter(o -> o.getStatus() == com.minari.ecommerce.entity.OrderStatus.CANCELLED).count());
         stats.put("totalRevenue", allOrders.stream()
                 .mapToDouble(Order::getTotalAmount)
                 .sum());

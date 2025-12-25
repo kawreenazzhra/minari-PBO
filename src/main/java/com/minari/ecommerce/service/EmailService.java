@@ -32,6 +32,36 @@ public class EmailService {
             System.err.println("Failed to send email: " + e.getMessage());
         }
     }
+
+    public void sendAdminOrderNotification(Order order) {
+        try {
+            SimpleMailMessage message = new SimpleMailMessage();
+            message.setTo("admin@minari.com");
+            message.setSubject("New Order Received - Order #" + order.getOrderNumber());
+            message.setText(String.format("""
+                A new order has been received!
+                
+                Order Number: %s
+                Customer: %s
+                Total Amount: Rp %s
+                Date: %s
+                
+                Please log in to the admin panel to process this order.
+                """,
+                order.getOrderNumber(),
+                order.getUser() != null ? order.getUser().getFullName() : "Anonymous",
+                String.format("%,.0f", order.getTotalAmount()),
+                order.getOrderDate()
+            ));
+            message.setFrom("system@minari.com");
+            
+            // SIMULATION MODE
+            System.out.println("📧 [SIMULATION] Admin Notification sent for Order #" + order.getOrderNumber());
+            
+        } catch (Exception e) {
+            System.err.println("Failed to send admin notification: " + e.getMessage());
+        }
+    }
     
     public void sendEmail(String toEmail, String subject, String content) {
         try {

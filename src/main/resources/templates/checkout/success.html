@@ -1,0 +1,173 @@
+<!DOCTYPE html>
+<html lang="en" xmlns:th="http://www.thymeleaf.org">
+
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>MINARI | Payment Successful</title>
+
+    <link href="https://cdn.jsdelivr.net/npm/bootstrap@5.3.0/dist/css/bootstrap.min.css" rel="stylesheet">
+    <link
+        href="https://fonts.googleapis.com/css2?family=Playfair+Display:ital,wght@0,400..900;1,400..900&family=Poppins:ital,wght@0,100;0,200;0,300;0,400;0,500;0,600;0,700;0,800;0,900;1,100;1,200;1,300;1,400;1,500;1,600;1,700;1,800;1,900&display=swap"
+        rel="stylesheet">
+    <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.4.0/css/all.min.css">
+
+    <link rel="stylesheet" th:href="@{/css/navbar.css}">
+    <link rel="stylesheet" th:href="@{/css/landing.css}">
+
+    <style>
+        body {
+            background-color: #ffffff;
+            font-family: 'Poppins', sans-serif;
+            padding: 0;
+            padding-top: 50px !important;
+            overflow-x: hidden;
+        }
+
+        .success-page {
+            min-height: calc(100vh - 170px);
+            /* Adjust based on navbar height and padding */
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            padding: 40px 20px;
+            text-align: center;
+        }
+
+        .success-container {
+            max-width: 600px;
+            width: 100%;
+        }
+
+        .check-circle {
+            width: 100px;
+            height: 100px;
+            background-color: #f6ebe3;
+            /* Beige circle */
+            border-radius: 50%;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            margin: 0 auto 40px;
+        }
+
+        .check-circle svg {
+            width: 50px;
+            height: 50px;
+        }
+
+        .success-title {
+            font-family: 'Playfair Display', serif;
+            font-size: 48px;
+            font-weight: 500;
+            margin-bottom: 20px;
+            color: #1a1a1a;
+        }
+
+        .success-subtitle {
+            font-size: 18px;
+            color: #757575;
+            margin-bottom: 50px;
+            font-weight: 300;
+        }
+
+        .order-pill {
+            display: inline-block;
+            background-color: #fbf0e8;
+            color: #4a3d34;
+            padding: 12px 30px;
+            border-radius: 50px;
+            font-size: 16px;
+            margin-bottom: 60px;
+            font-weight: 400;
+        }
+
+        .action-buttons {
+            display: flex;
+            gap: 20px;
+            justify-content: center;
+            flex-wrap: wrap;
+        }
+
+        .btn-action {
+            padding: 14px 40px;
+            border-radius: 12px;
+            font-size: 16px;
+            font-weight: 500;
+            text-decoration: none;
+            transition: all 0.3s ease;
+            min-width: 220px;
+            display: inline-flex;
+            align-items: center;
+            justify-content: center;
+        }
+
+        .btn-continue {
+            background-color: #1a1a1a;
+            color: #ffffff;
+            border: none;
+        }
+
+        .btn-continue:hover {
+            background-color: #333333;
+            color: #ffffff;
+            transform: translateY(-2px);
+        }
+
+        .btn-orders {
+            background-color: #ffffff;
+            color: #1a1a1a;
+            border: 1px solid #1a1a1a;
+        }
+
+        .btn-orders:hover {
+            background-color: #f8f8f8;
+            color: #1a1a1a;
+            transform: translateY(-2px);
+        }
+
+        /* Navbar mounting point adjustment */
+        #navMount {
+            position: sticky;
+            top: 0;
+            z-index: 1000;
+            background: white;
+        }
+    </style>
+</head>
+
+<body>
+    <script th:inline="javascript">
+        window.APP_ROLE = /*[[${#authorization.expression('isAuthenticated()') ? (#authorization.expression('hasRole(''ADMIN'')') ? 'admin' : 'user') : 'guest'}]]*/ 'guest';
+    </script>
+
+    <header id="navMount"></header>
+
+    <main class="success-page">
+        <div class="success-container">
+            <div class="check-circle">
+                <svg width="50" height="50" viewBox="0 0 24 24" fill="none" xmlns="http://www.w3.org/2000/svg">
+                    <path d="M5 13L9 17L19 7" stroke="#8B7E74" stroke-width="2" stroke-linecap="round"
+                        stroke-linejoin="round" />
+                </svg>
+            </div>
+
+            <h1 class="success-title">Payment successful!</h1>
+            <p class="success-subtitle">Your order will be processed shortly</p>
+
+            <div class="order-pill">
+                Order <span th:text="'#' + ${orderNumber}">#MIN20251225505581</span>
+            </div>
+
+            <div class="action-buttons">
+                <a href="/" class="btn-action btn-continue">Continue Shopping</a>
+                <a href="/order-history" class="btn-action btn-orders">View My Orders</a>
+            </div>
+        </div>
+    </main>
+
+    <script src="https://cdn.jsdelivr.net/npm/bootstrap@5.3.0/dist/js/bootstrap.bundle.min.js"></script>
+    <script th:src="@{/js/navbar.js}"></script>
+</body>
+
+</html>

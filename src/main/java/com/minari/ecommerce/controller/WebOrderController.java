@@ -129,12 +129,16 @@ public class WebOrderController {
         
         if (authentication == null) return "redirect:/login";
         
+        System.out.println("DEBUG: placeOrder called");
+        System.out.println("DEBUG: addressId = " + addressId);
+        System.out.println("DEBUG: paymentMethodStr = " + paymentMethodStr);
+        
         if (addressId == null) {
-            return "redirect:/checkout?error=missing_address";
+            return "redirect:/payment?error=missing_address";
         }
 
         if (paymentMethodStr == null || paymentMethodStr.isEmpty()) {
-            return "redirect:/checkout?error=missing_payment";
+            return "redirect:/payment?error=missing_payment&addressId=" + addressId;
         }
 
         String email = authentication.getName();
@@ -156,22 +160,54 @@ public class WebOrderController {
             com.minari.ecommerce.entity.Order savedOrder = orderService.createOrderFromCart(email, address, method);
             System.out.println("Order created successfully: " + savedOrder.getOrderNumber());
             System.out.println("Cart should be cleared now");
-            return "redirect:/payment/view?orderNumber=" + savedOrder.getOrderNumber() + 
-                   "&addressId=" + addressId + "&paymentMethod=" + paymentMethodStr;
+            return "redirect:/checkout/order-confirm?orderNumber=" + savedOrder.getOrderNumber() + 
+               "&paymentMethod=" + paymentMethodStr;
         } catch (Exception e) {
             System.err.println("Error creating order: " + e.getMessage()); // Keep sysout just in case
             e.printStackTrace();
-            // Use logger if available (assuming class has Slf4j or similar, if not, relying on sysout/printstacktrace)
-            // But redirect with params to keep selection
-            return "redirect:/checkout?error=creation_failed&addressId=" + addressId + "&paymentMethod=" + paymentMethodStr;
+            // Redirect back to /payment instead of /checkout to avoid address redirect loop
+            return "redirect:/payment?error=creation_failed&addressId=" + addressId + "&paymentMethod=" + paymentMethodStr;
         }
     }
 
-    @GetMapping("/success")
-    public String orderSuccess(@RequestParam("orderNumber") String orderNumber, Authentication authentication, Model model) {
+    @GetMapping("/order-confirm")
+    public String orderSuccess(@RequestParam("orderNumber") String orderNumber,
+                              @RequestParam(value = "paymentMethod", required = false) String paymentMethodStr,
+                              Authentication authentication, 
+                              Model model) {
         if (authentication == null) return "redirect:/login";
+        
+        // Fetch order details using DTO
+        com.minari.ecommerce.dto.OrderDTO orderDTO = orderService.getOrderByNumber(orderNumber);
+        
+        if (orderDTO == null) {
+            return "redirect:/orders/history?error=order_not_found";
+        }
+        
         model.addAttribute("email", authentication.getName());
         model.addAttribute("orderNumber", orderNumber);
-        return "orders/success";
+        model.addAttribute("order", orderDTO);
+        
+        // Determine payment status message based on DTO
+        String paymentStatusMessage;
+        String paymentStatus = "UNKNOWN";
+        
+        if (orderDTO.getPaymentStatus() != null) {
+            paymentStatus = orderDTO.getPaymentStatus();
+            if ("PAID".equalsIgnoreCase(paymentStatus)) {
+                paymentStatusMessage = "Payment successful! Your order has been confirmed.";
+            } else if ("PENDING".equalsIgnoreCase(paymentStatus)) {
+                paymentStatusMessage = "Payment pending - Please pay on delivery.";
+            } else {
+                paymentStatusMessage = "Payment status: " + paymentStatus;
+            }
+        } else {
+            paymentStatusMessage = "Payment information not available.";
+        }
+        
+        model.addAttribute("paymentStatusMessage", paymentStatusMessage);
+        model.addAttribute("paymentStatus", paymentStatus);
+        
+        return "checkout/success";
     }
 }

@@ -8,12 +8,12 @@ import org.springframework.security.core.Authentication;
 import org.springframework.stereotype.Controller;
 import org.springframework.ui.Model;
 import org.springframework.web.bind.annotation.GetMapping;
+import org.springframework.web.bind.annotation.PathVariable;
 import org.springframework.web.bind.annotation.RequestMapping;
 
 import java.util.List;
 
 @Controller
-@RequestMapping("/order-history")
 public class OrderHistoryController {
 
     private final OrderService orderService;
@@ -24,7 +24,7 @@ public class OrderHistoryController {
         this.userRepository = userRepository;
     }
 
-    @GetMapping
+    @GetMapping("/order-history")
     public String viewOrderHistory(Authentication authentication, Model model) {
         if (authentication == null || !authentication.isAuthenticated() || authentication.getPrincipal().equals("anonymousUser")) {
             return "redirect:/login";
@@ -35,8 +35,23 @@ public class OrderHistoryController {
         
         model.addAttribute("orders", orders);
         
-        userRepository.findByEmail(email).ifPresent(user -> model.addAttribute("user", user));
-
         return "orders/history";
+    }
+
+    @GetMapping("/order/{id}")
+    public String viewOrderDetails(@PathVariable("id") Long id, Authentication authentication, Model model) {
+        if (authentication == null || !authentication.isAuthenticated() || authentication.getPrincipal().equals("anonymousUser")) {
+            return "redirect:/login";
+        }
+
+        String email = authentication.getName();
+        Order order = orderService.getOrderEntityById(id);
+
+        if (order == null || !order.getUser().getEmail().equals(email)) {
+            return "redirect:/order-history?error=access_denied";
+        }
+
+        model.addAttribute("order", order);
+        return "orders/details";
     }
 }

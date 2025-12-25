@@ -21,6 +21,10 @@
     <link rel="stylesheet" th:href="@{/css/landing.css}">
     <link rel="stylesheet" th:href="@{/css/payment.css}">
     <style>
+        body {
+            padding-top: 50px !important;
+        }
+
         .summary-link-card {
             background: #FFF6F0;
             border: 1px solid #ead9d2;
@@ -81,6 +85,7 @@
         <div class="container mb-5" style="margin-top: 100px;">
             <h2 class="page-title text-center">Checkout</h2>
 
+            <!-- Form submits to place order. Hidden inputs provide the necessary addressId and payment_method -->
             <form th:action="@{/checkout/place}" method="post" id="checkoutForm">
                 <input type="hidden" name="addressId" th:value="${selectedAddress != null ? selectedAddress.id : ''}">
                 <input type="hidden" name="payment_method" th:value="${selectedPaymentMethod ?: ''}">
@@ -122,7 +127,8 @@
                 <!-- Shipping Address Link -->
                 <!-- Includes paymentMethod so it persists when returning -->
                 <a th:href="@{/checkout/address(addressId=${addressId}, paymentMethod=${selectedPaymentMethod})}"
-                    class="summary-link-card">
+                    class="summary-link-card"
+                    th:style="${selectedAddress == null ? 'border: 1px dashed #d68c78;' : ''}">
                     <div class="summary-label">Shipping to</div>
                     <div class="summary-value">
                         <!-- Format: Type (Name) - e.g., home (aya) -->
@@ -177,7 +183,7 @@
                                 th:text="'Rp ' + ${#numbers.formatDecimal(currentTotal + shipping, 0, 'POINT', 0, 'COMMA')}">Rp
                                 204.000</span>
                         </div>
-                        <button type="submit" class="btn-checkout"
+                        <button type="button" class="btn-checkout" onclick="submitCheckoutForm()"
                             style="background: #FFF6F0; border: none; color: #d68c78; padding: 12px 32px; border-radius: 8px; font-weight: 600; font-size: 16px; cursor: pointer;">
                             Check Out
                         </button>

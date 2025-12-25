@@ -19,7 +19,7 @@
         body {
             background-color: #FFF6F0;
             font-family: 'Poppins', sans-serif;
-            padding-top: 160px;
+            padding-top: 60px !important;
         }
 
         .page-title {
@@ -28,7 +28,7 @@
             font-weight: 700;
             color: #1E1E1E;
             text-align: center;
-            margin: 60px 0;
+            margin: 20px 0;
         }
 
         .order-card {
@@ -248,7 +248,7 @@
                             Total: Rp 204.000
                         </div>
                     </div>
-                    <a th:href="@{/order-history/{id}(id=${order.id})}" class="btn-view-details">View Details</a>
+                    <a th:href="@{/order/{id}(id=${order.id})}" class="btn-view-details">View Details</a>
                 </div>
             </div>
         </div>

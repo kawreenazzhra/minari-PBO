@@ -53,7 +53,7 @@ public class PaymentController {
                 // Find selected
                  model.addAttribute("selectedAddress", addresses.stream().filter(a -> a.getId().equals(addressId)).findFirst().orElse(null));
             }
-            // Removed default selection to respect user choice
+            // No default selection - user must choose
         } else {
             model.addAttribute("addresses", List.of());
         }
