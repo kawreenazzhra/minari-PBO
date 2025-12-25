@@ -73,6 +73,10 @@ function addToWishlist(productId, buttonElement) {
     .then(data => {
       if (data.success) {
         showToast(`"${productName}" has been added to your wishlist.`);
+        // Update badge
+        if (typeof window.updateWishlistCounter === 'function') {
+          window.updateWishlistCounter(data.wishlist_count);
+        }
       } else {
         // If already in wishlist, remove it (logic from original code, assuming API behaves this way or we want toggle)
         if (data.message && data.message.includes('already')) {
@@ -118,6 +122,10 @@ function removeFromWishlist(productId, buttonElement, productName) {
     .then(data => {
       if (data.success) {
         showToast(`"${productName}" removed from wishlist.`);
+        // Update badge
+        if (typeof window.updateWishlistCounter === 'function') {
+          window.updateWishlistCounter(data.wishlist_count);
+        }
         if (buttonElement) {
           buttonElement.classList.remove('active');
           const icon = buttonElement.querySelector('i');

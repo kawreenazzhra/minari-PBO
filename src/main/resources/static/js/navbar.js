@@ -5,6 +5,68 @@ const Role = {
   ADMIN: 'admin'
 };
 
+// ====== Toast Notification System ======
+function showToast(message, type = 'success') {
+  const toast = document.createElement('div');
+  toast.className = `toast-notification ${type}`;
+  toast.innerHTML = `
+    <i class="fas ${type === 'success' ? 'fa-check-circle' : 'fa-exclamation-circle'}"></i>
+    <span>${message}</span>
+  `;
+
+  // Add styles
+  toast.style.cssText = `
+    position: fixed;
+    top: 90px;
+    right: 20px;
+    z-index: 99999;
+    background: white;
+    padding: 12px 20px;
+    border-radius: 10px;
+    box-shadow: 0 4px 12px rgba(0, 0, 0, 0.15);
+    display: flex;
+    align-items: center;
+    gap: 10px;
+    font-size: 14px;
+    font-weight: 500;
+    max-width: 350px;
+    transform: translateX(400px);
+    transition: transform 0.4s ease;
+    ${type === 'success' ? 'border-left: 4px solid #198754; color: #0f5132;' : 'border-left: 4px solid #dc3545; color: #842029;'}
+  `;
+
+  document.body.appendChild(toast);
+
+  // Trigger animation
+  setTimeout(() => {
+    toast.style.transform = 'translateX(0)';
+  }, 10);
+
+  // Remove after 3 seconds
+  setTimeout(() => {
+    toast.style.transform = 'translateX(400px)';
+    setTimeout(() => toast.remove(), 400);
+  }, 3000);
+}
+
+// Check for logout success on page load
+if (document.readyState === 'loading') {
+  document.addEventListener('DOMContentLoaded', function () {
+    const urlParams = new URLSearchParams(window.location.search);
+    if (urlParams.get('logout') === 'success') {
+      showToast('Logout berhasil!', 'success');
+      // Clean URL without reloading
+      window.history.replaceState({}, document.title, window.location.pathname);
+    }
+  });
+} else {
+  const urlParams = new URLSearchParams(window.location.search);
+  if (urlParams.get('logout') === 'success') {
+    showToast('Logout berhasil!', 'success');
+    window.history.replaceState({}, document.title, window.location.pathname);
+  }
+}
+
 // ====== Templates ======
 function tplGuest() {
   return `
@@ -18,11 +80,14 @@ function tplGuest() {
         <button id="accBtn" class="btn p-0 border-0" style="background: transparent !important; cursor: pointer;">
           <img src="/images/akun.png" alt="User" width="24" height="24">
         </button>
-        <a href="/wishlist"><img src="/images/whislist.png" alt="Favorite" width="24" height="24"></a>
+        <a href="/wishlist" style="position: relative; display: inline-block;">
+          <img src="/images/whislist.png" alt="Favorite" width="24" height="24">
+          <span id="wishlistCounter" class="wishlist-counter" style="display: none; position: absolute; top: -8px; right: -8px; background: #E9967A; color: white; border-radius: 50%; width: 18px; height: 18px; font-size: 11px; font-weight: 600; align-items: center; justify-content: center;">0</span>
+        </a>
         <a href="/search"><img src="/images/searchnav.png" alt="Search" width="24" height="24"></a>
         <a href="/cart" style="position: relative; display: inline-block;">
           <img src="/images/chart.png" alt="Cart" width="24" height="24">
-          <span id="cartCounter" class="cart-counter" style="display: none; position: absolute; top: -8px; right: -8px; background: #E9967A; color: white; border-radius: 50%; width: 18px; height: 18px; font-size: 11px; font-weight: 600; display: flex; align-items: center; justify-content: center;">0</span>
+          <span id="cartCounter" class="cart-counter" style="display: none; position: absolute; top: -8px; right: -8px; background: #E9967A; color: white; border-radius: 50%; width: 18px; height: 18px; font-size: 11px; font-weight: 600; align-items: center; justify-content: center;">0</span>
         </a>
         <a href="/menu"><img src="/images/menu.png" alt="Menu" width="24" height="24"></a>
       </div>
@@ -81,11 +146,14 @@ function tplUser() {
         <button id="accBtn" class="btn p-0 border-0" style="background: transparent !important; cursor: pointer;">
           <img src="/images/akun.png" alt="User" width="24" height="24">
         </button>
-        <a href="/wishlist"><img src="/images/whislist.png" alt="Favorite" width="24" height="24"></a>
+        <a href="/wishlist" style="position: relative; display: inline-block;">
+          <img src="/images/whislist.png" alt="Favorite" width="24" height="24">
+          <span id="wishlistCounter" class="wishlist-counter" style="display: none; position: absolute; top: -8px; right: -8px; background: #E9967A; color: white; border-radius: 50%; width: 18px; height: 18px; font-size: 11px; font-weight: 600; align-items: center; justify-content: center;">0</span>
+        </a>
         <a href="/search"><img src="/images/searchnav.png" alt="Search" width="24" height="24"></a>
         <a href="/cart" style="position: relative; display: inline-block;">
           <img src="/images/chart.png" alt="Cart" width="24" height="24">
-          <span id="cartCounter" class="cart-counter" style="display: none; position: absolute; top: -8px; right: -8px; background: #E9967A; color: white; border-radius: 50%; width: 18px; height: 18px; font-size: 11px; font-weight: 600; display: flex; align-items: center; justify-content: center;">0</span>
+          <span id="cartCounter" class="cart-counter" style="display: none; position: absolute; top: -8px; right: -8px; background: #E9967A; color: white; border-radius: 50%; width: 18px; height: 18px; font-size: 11px; font-weight: 600; align-items: center; justify-content: center;">0</span>
         </a>
         <a href="/menu"><img src="/images/menu.png" alt="Menu" width="24" height="24"></a>
       </div>
@@ -95,7 +163,7 @@ function tplUser() {
   <div id="accMini" class="accmini" style="display: none; position: fixed; z-index: 9999; background: #FFF6F0; border: 1px solid #ead9d2; border-radius: 12px; box-shadow: 0 12px 28px rgba(0, 0, 0, 0.15); padding: 14px 12px 12px; width: 220px;">
     <div class="accmini__row" style="display: flex; align-items: center; gap: 8px; margin-bottom: 10px;">
       <img src="/images/akun.png" width="16" height="16" class="accmini__icon" alt="">
-      <a class="accmini__link" href="/account" style="font-weight: 500; color: #1f1f1f; text-decoration: none;">Account</a>
+      <a class="accmini__link" href="/profile" style="font-weight: 500; color: #1f1f1f; text-decoration: none;">Account</a>
     </div>
     <div class="accmini__row" style="display: flex; align-items: center; gap: 8px; margin-bottom: 10px;">
       <img src="/images/order history.png" width="16" height="16" class="accmini__icon" alt="">
@@ -250,7 +318,33 @@ function attachEventListeners() {
     if (logoutBtn) {
       logoutBtn.addEventListener('click', function (e) {
         e.preventDefault();
-        window.location.href = '/logout';
+        e.stopPropagation();
+
+        // Close the dropdown
+        if (currentAccMini) {
+          currentAccMini.style.display = 'none';
+          currentAccMini.style.pointerEvents = 'none';
+        }
+
+        // Create and submit logout form
+        const csrfToken = document.querySelector('meta[name="_csrf"]')?.content;
+        const csrfHeader = document.querySelector('meta[name="_csrf_header"]')?.content;
+
+        const form = document.createElement('form');
+        form.method = 'POST';
+        form.action = '/logout';
+        form.style.display = 'none';
+
+        if (csrfToken) {
+          const input = document.createElement('input');
+          input.type = 'hidden';
+          input.name = '_csrf';
+          input.value = csrfToken;
+          form.appendChild(input);
+        }
+
+        document.body.appendChild(form);
+        form.submit();
       });
     }
 
@@ -337,4 +431,45 @@ if (document.readyState === 'loading') {
   document.addEventListener('DOMContentLoaded', fetchCartCount);
 } else {
   fetchCartCount();
+}
+
+// ====== Wishlist Counter Functions ======
+
+// Update wishlist counter badge
+window.updateWishlistCounter = function (count) {
+  const counter = document.getElementById('wishlistCounter');
+  if (counter) {
+    if (count > 0) {
+      counter.textContent = count;
+      counter.style.display = 'flex';
+    } else {
+      counter.style.display = 'none';
+    }
+  }
+};
+
+// Fetch initial wishlist count
+async function fetchWishlistCount() {
+  try {
+    const response = await fetch('/api/wishlist/count', {
+      method: 'GET',
+      headers: {
+        'Accept': 'application/json'
+      }
+    });
+
+    if (response.ok) {
+      const data = await response.json();
+      window.updateWishlistCounter(data.count || 0);
+    }
+  } catch (error) {
+    console.error('Error fetching wishlist count:', error);
+  }
+}
+
+// Fetch wishlist count on page load
+if (document.readyState === 'loading') {
+  document.addEventListener('DOMContentLoaded', fetchWishlistCount);
+} else {
+  fetchWishlistCount();
 }

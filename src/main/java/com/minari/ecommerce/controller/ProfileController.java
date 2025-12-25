@@ -90,6 +90,6 @@ public class ProfileController {
             addressRepository.save(address);
         }
 
-        return "redirect:/profile/address";
+        return "redirect:/profile";
     }
 }

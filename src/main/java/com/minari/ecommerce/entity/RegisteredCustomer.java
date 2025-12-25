@@ -1,11 +1,15 @@
 package com.minari.ecommerce.entity;
 
 import jakarta.persistence.*;
+import java.time.LocalDate;
 
 @Entity
 @Table(name = "registered_customers")
 @PrimaryKeyJoinColumn(name = "user_id")
 public class RegisteredCustomer extends Customer {
+
+    @Column(name = "birth_date")
+    private LocalDate birthDate;
 
     @Column(name = "is_logged_in", nullable = false, columnDefinition = "BOOLEAN DEFAULT FALSE")
     private Boolean isLoggedIn = false;
@@ -47,6 +51,14 @@ public class RegisteredCustomer extends Customer {
     }
 
     // Getters and Setters
+    public LocalDate getBirthDate() {
+        return birthDate;
+    }
+
+    public void setBirthDate(LocalDate birthDate) {
+        this.birthDate = birthDate;
+    }
+
     public Boolean getIsLoggedIn() {
         return isLoggedIn;
     }

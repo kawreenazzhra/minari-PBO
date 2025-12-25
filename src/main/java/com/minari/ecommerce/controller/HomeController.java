@@ -7,6 +7,7 @@ import com.minari.ecommerce.service.CatalogService;
 import org.springframework.stereotype.Controller;
 import org.springframework.ui.Model;
 import org.springframework.web.bind.annotation.GetMapping;
+import org.springframework.web.bind.annotation.RequestParam;
 import java.util.List;
 import java.util.stream.Collectors;
 
@@ -24,7 +25,12 @@ public class HomeController {
     }
 
     @GetMapping("/")
-    public String home(Model model) {
+    public String home(@RequestParam(required = false) String logout, Model model) {
+        // Handle logout success message
+        if ("success".equals(logout)) {
+            model.addAttribute("logoutSuccess", true);
+        }
+        
         // Get all products and limit to 4 featured ones
         List<Product> allProducts = productService.getAllProducts();
         List<Product> featuredProducts = allProducts.stream()

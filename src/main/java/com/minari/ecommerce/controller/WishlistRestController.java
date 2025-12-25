@@ -83,10 +83,11 @@ public class WishlistRestController {
 
         try {
             boolean added = wishlistService.addToWishlist(customer.getId(), request.getProduct_id());
+            int count = wishlistService.countWishlistItems(customer.getId());
             if (added) {
-                 return ResponseEntity.ok(Map.of("success", true, "message", "Product added to wishlist"));
+                 return ResponseEntity.ok(Map.of("success", true, "message", "Product added to wishlist", "wishlist_count", count));
             } else {
-                 return ResponseEntity.ok(Map.of("success", false, "message", "Product already in wishlist"));
+                 return ResponseEntity.ok(Map.of("success", false, "message", "Product already in wishlist", "wishlist_count", count));
             }
         } catch (Exception e) {
             return ResponseEntity.badRequest().body(Map.of("success", false, "message", e.getMessage()));
@@ -102,10 +103,20 @@ public class WishlistRestController {
 
         try {
             wishlistService.removeFromWishlist(customer.getId(), productId);
-            return ResponseEntity.ok(Map.of("success", true, "message", "Product removed from wishlist"));
+            int count = wishlistService.countWishlistItems(customer.getId());
+            return ResponseEntity.ok(Map.of("success", true, "message", "Product removed from wishlist", "wishlist_count", count));
         } catch (Exception e) {
             return ResponseEntity.badRequest().body(Map.of("success", false, "message", e.getMessage()));
         }
+    }
+
+    @GetMapping("/count")
+    public ResponseEntity<?> getWishlistCount() {
+        RegisteredCustomer customer = getCurrentCustomer();
+        if (customer == null) {
+            return ResponseEntity.ok(Map.of("count", 0));
+        }
+        return ResponseEntity.ok(Map.of("count", wishlistService.countWishlistItems(customer.getId())));
     }
     
     // DTO class

@@ -99,9 +99,9 @@ function renderGuestView() {
 }
 
 function renderEmptyView() {
-     const root = document.getElementById('wishList');
-     if(!root) return;
-     root.innerHTML = `
+    const root = document.getElementById('wishList');
+    if (!root) return;
+    root.innerHTML = `
         <div class="empty-wishlist text-center py-5">
             <h3 class="mb-3">Your wishlist is empty</h3>
             <p class="text-muted mb-4">Start adding items you love!</p>
@@ -189,10 +189,14 @@ document.addEventListener('DOMContentLoaded', async () => {
             if (!card) return;
 
             if (removeBtn) {
-                const wishlistId = card.dataset.wishlistId;
-                const result = await removeFromWishlist(wishlistId);
+                const productId = card.dataset.id; // Use product ID instead of wishlist ID for removal
+                const result = await removeFromWishlist(productId);
                 if (result.success) {
                     showToast('Removed from wishlist');
+                    // Update navbar badge
+                    if (typeof window.updateWishlistCounter === 'function') {
+                        window.updateWishlistCounter(result.wishlist_count);
+                    }
                     // Refresh
                     const items = await fetchWishlist();
                     renderWishlistItems(items || []);

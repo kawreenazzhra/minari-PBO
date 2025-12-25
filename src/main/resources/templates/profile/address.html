@@ -1,0 +1,196 @@
+<!DOCTYPE html>
+<html lang="en" xmlns:th="http://www.thymeleaf.org">
+
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>MINARI | My Addresses</title>
+
+    <link href="https://cdn.jsdelivr.net/npm/bootstrap@5.3.0/dist/css/bootstrap.min.css" rel="stylesheet">
+    <link
+        href="https://fonts.googleapis.com/css2?family=Playfair+Display:wght@600;700&family=Poppins:wght@300;400;500;600&display=swap"
+        rel="stylesheet">
+    <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.4.0/css/all.min.css">
+
+    <link rel="stylesheet" th:href="@{/css/navbar.css}">
+    <link rel="stylesheet" th:href="@{/css/landing.css}">
+
+    <style>
+        body {
+            background-color: #FFF6F0;
+            font-family: 'Poppins', sans-serif;
+            padding-top: 120px;
+        }
+
+        .page-title {
+            font-family: 'Playfair Display', serif;
+            font-weight: 700;
+            color: #1E1E1E;
+            margin: 40px 0 30px 0;
+            text-align: center;
+        }
+
+        .address-card {
+            background: white;
+            border: 2px solid #ddd;
+            border-radius: 8px;
+            padding: 20px;
+            margin-bottom: 15px;
+            position: relative;
+        }
+
+        .address-label {
+            font-weight: 700;
+            font-size: 16px;
+            margin-bottom: 8px;
+        }
+
+        .address-details {
+            font-size: 14px;
+            color: #555;
+            line-height: 1.6;
+        }
+
+        .btn-add-new {
+            width: 100%;
+            border: 2px solid #1E1E1E;
+            background: white;
+            padding: 15px;
+            border-radius: 8px;
+            color: #1E1E1E;
+            font-weight: 600;
+            margin-top: 20px;
+            transition: all 0.2s;
+            font-size: 16px;
+        }
+
+        .btn-add-new:hover {
+            background: #1E1E1E;
+            color: white;
+        }
+
+        .btn-back {
+            display: inline-flex;
+            align-items: center;
+            gap: 8px;
+            color: #1E1E1E;
+            text-decoration: none;
+            font-weight: 500;
+            margin-bottom: 20px;
+        }
+
+        .btn-back:hover {
+            color: #d68c78;
+        }
+
+        .empty-state {
+            text-align: center;
+            padding: 60px 20px;
+            color: #666;
+        }
+
+        .empty-state i {
+            font-size: 64px;
+            color: #ddd;
+            margin-bottom: 20px;
+        }
+    </style>
+</head>
+
+<body>
+    <script th:inline="javascript">
+        window.APP_ROLE = /*[[${#authorization.expression('isAuthenticated()') ? (#authorization.expression('hasRole(''ADMIN'')') ? 'admin' : 'user') : 'guest'}]]*/ 'guest';
+    </script>
+    <header id="navMount"></header>
+
+    <div class="container" style="max-width: 600px;">
+        <a href="/profile" class="btn-back">
+            <i class="fas fa-arrow-left"></i> Back to Profile
+        </a>
+
+        <h2 class="page-title">My Addresses</h2>
+
+        <!-- Address List -->
+        <div th:if="${addresses != null and !addresses.isEmpty()}">
+            <div th:each="addr : ${addresses}">
+                <div class="address-card">
+                    <div class="address-label" th:text="${addr.addressType ?: 'Home'}">Home</div>
+                    <div class="address-details">
+                        <div style="font-weight: 600; margin-bottom: 4px;">
+                            <span th:text="${addr.recipientName}">Name</span> |
+                            <span th:text="${addr.phoneNumber}">Phone</span>
+                        </div>
+                        <div th:text="${addr.streetAddress}">Street</div>
+                        <div>
+                            <span th:text="${addr.city}">City</span>,
+                            <span th:text="${addr.zipcode}">Zip</span>
+                        </div>
+                    </div>
+                </div>
+            </div>
+        </div>
+
+        <!-- Empty State -->
+        <div th:if="${addresses == null or addresses.isEmpty()}" class="empty-state">
+            <i class="fas fa-map-marker-alt"></i>
+            <h5>No addresses saved yet</h5>
+            <p style="color: #999;">Add your first address below</p>
+        </div>
+
+        <!-- Add New Address Button -->
+        <button type="button" class="btn btn-add-new" data-bs-toggle="modal" data-bs-target="#addAddressModal">
+            <i class="fas fa-plus me-2"></i> Add New Address
+        </button>
+    </div>
+
+    <!-- Add Address Modal -->
+    <div class="modal fade" id="addAddressModal" tabindex="-1">
+        <div class="modal-dialog">
+            <div class="modal-content">
+                <div class="modal-header">
+                    <h5 class="modal-title">Add New Address</h5>
+                    <button type="button" class="btn-close" data-bs-dismiss="modal"></button>
+                </div>
+                <div class="modal-body">
+                    <form th:action="@{/profile/address}" method="post">
+                        <div class="mb-3">
+                            <label class="form-label">Address Type</label>
+                            <input type="text" class="form-control" name="addressType" placeholder="Home, Office, etc."
+                                value="Home">
+                        </div>
+                        <div class="mb-3">
+                            <label class="form-label">Recipient Name</label>
+                            <input type="text" class="form-control" name="recipientName" required>
+                        </div>
+                        <div class="mb-3">
+                            <label class="form-label">Phone Number</label>
+                            <input type="text" class="form-control" name="phoneNumber" required>
+                        </div>
+                        <div class="mb-3">
+                            <label class="form-label">Street Address</label>
+                            <textarea class="form-control" name="streetAddress" rows="2" required></textarea>
+                        </div>
+                        <div class="row mb-3">
+                            <div class="col">
+                                <label class="form-label">City</label>
+                                <input type="text" class="form-control" name="city" required>
+                            </div>
+                            <div class="col">
+                                <label class="form-label">Zip Code</label>
+                                <input type="text" class="form-control" name="zipcode" required>
+                            </div>
+                        </div>
+                        <input type="hidden" name="country" value="Indonesia">
+
+                        <button type="submit" class="btn btn-dark w-100">Save Address</button>
+                    </form>
+                </div>
+            </div>
+        </div>
+    </div>
+
+    <script src="https://cdn.jsdelivr.net/npm/bootstrap@5.3.0/dist/js/bootstrap.bundle.min.js"></script>
+    <script th:src="@{/js/navbar.js}"></script>
+</body>
+
+</html>
