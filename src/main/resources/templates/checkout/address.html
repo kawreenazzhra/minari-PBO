@@ -19,14 +19,17 @@
         body {
             background-color: #FFF6F0;
             font-family: 'Poppins', sans-serif;
-            padding-top: 120px;
+            padding-top: 140px;
+            padding-bottom: 40px;
+            min-height: 100vh;
+            overflow-y: auto;
         }
 
         .page-title {
             font-family: 'Playfair Display', serif;
             font-weight: 700;
             color: #1E1E1E;
-            margin: 40px 0 30px 0;
+            margin: 20px 0 30px 0;
             text-align: center;
         }
 
@@ -104,6 +107,30 @@
             color: #ddd;
             margin-bottom: 20px;
         }
+
+        .address-list-container {
+            max-height: calc(100vh - 300px);
+            overflow-y: auto;
+            padding-right: 5px;
+        }
+
+        .address-list-container::-webkit-scrollbar {
+            width: 6px;
+        }
+
+        .address-list-container::-webkit-scrollbar-track {
+            background: #f1f1f1;
+            border-radius: 10px;
+        }
+
+        .address-list-container::-webkit-scrollbar-thumb {
+            background: #d68c78;
+            border-radius: 10px;
+        }
+
+        .address-list-container::-webkit-scrollbar-thumb:hover {
+            background: #c67b68;
+        }
     </style>
 </head>
 
@@ -118,28 +145,30 @@
 
         <!-- Address List -->
         <div th:if="${addresses != null and !addresses.isEmpty()}">
-            <div th:each="addr : ${addresses}">
-                <a href="javascript:void(0)" th:attr="data-id=${addr.id}" onclick="selectAddress(this)"
-                    style="text-decoration: none; color: inherit;">
-                    <div class="address-card"
-                        th:classappend="${selectedAddressId != null and selectedAddressId == addr.id} ? 'selected' : ''"
-                        th:id="'addr-' + ${addr.id}">
-                        <i class="fas fa-check check-icon"></i>
+            <div class="address-list-container">
+                <div th:each="addr : ${addresses}">
+                    <a href="javascript:void(0)" th:attr="data-id=${addr.id}" onclick="selectAddress(this)"
+                        style="text-decoration: none; color: inherit;">
+                        <div class="address-card"
+                            th:classappend="${selectedAddressId != null and selectedAddressId == addr.id} ? 'selected' : ''"
+                            th:id="'addr-' + ${addr.id}">
+                            <i class="fas fa-check check-icon"></i>
 
-                        <div class="address-label" th:text="${addr.addressType ?: 'Home'}">Home</div>
-                        <div class="address-details">
-                            <div style="font-weight: 600; margin-bottom: 4px;">
-                                <span th:text="${addr.recipientName}">Name</span> |
-                                <span th:text="${addr.phoneNumber}">Phone</span>
-                            </div>
-                            <div th:text="${addr.streetAddress}">Street</div>
-                            <div>
-                                <span th:text="${addr.city}">City</span>,
-                                <span th:text="${addr.zipcode}">Zip</span>
+                            <div class="address-label" th:text="${addr.addressType ?: 'Home'}">Home</div>
+                            <div class="address-details">
+                                <div style="font-weight: 600; margin-bottom: 4px;">
+                                    <span th:text="${addr.recipientName}">Name</span> |
+                                    <span th:text="${addr.phoneNumber}">Phone</span>
+                                </div>
+                                <div th:text="${addr.streetAddress}">Street</div>
+                                <div>
+                                    <span th:text="${addr.city}">City</span>,
+                                    <span th:text="${addr.zipcode}">Zip</span>
+                                </div>
                             </div>
                         </div>
-                    </div>
-                </a>
+                    </a>
+                </div>
             </div>
         </div>
 

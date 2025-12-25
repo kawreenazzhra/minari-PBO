@@ -30,16 +30,23 @@
                 </thead>
                 <tbody>
                     <tr th:each="promo : ${promotions}">
-                        <td><strong th:text="${promo.code}">CODE</strong></td>
+                        <td><strong th:text="${promo.promoCode}">CODE</strong></td>
                         <td th:text="${promo.description}">Desc</td>
-                        <td
-                            th:text="${promo.discountPercentage != null ? promo.discountPercentage + '%' : (promo.discountAmount != null ? 'Rp ' + promo.discountAmount : '-')}">
-                            10%</td>
+                        <td>
+                            <span th:if="${promo.discountType.name() == 'PERCENTAGE'}"
+                                th:text="${#numbers.formatDecimal(promo.discountValue, 1, 0) + '%'}">10%</span>
+                            <span th:if="${promo.discountType.name() == 'FIXED_AMOUNT'}"
+                                th:text="'Rp ' + ${#numbers.formatDecimal(promo.discountValue, 0, 'COMMA', 0, 'POINT')}">Rp
+                                10.000</span>
+                            <span
+                                th:if="${promo.discountType.name() != 'PERCENTAGE' and promo.discountType.name() != 'FIXED_AMOUNT'}"
+                                th:text="${promo.discountType}">Type</span>
+                        </td>
                         <td th:text="${#temporals.format(promo.startDate, 'dd MMM yyyy')}">01 Jan 2025</td>
                         <td th:text="${#temporals.format(promo.endDate, 'dd MMM yyyy')}">31 Jan 2025</td>
                         <td>
-                            <span th:text="${promo.active ? 'Active' : 'Inactive'}"
-                                th:class="${promo.active ? 'badge-status badge-active' : 'badge-status badge-inactive'}">
+                            <span th:text="${promo.isActive ? 'Active' : 'Inactive'}"
+                                th:class="${promo.isActive ? 'badge-status badge-active' : 'badge-status badge-inactive'}">
                                 Active
                             </span>
                         </td>
@@ -49,7 +56,7 @@
                                 <i class="fas fa-edit" title="Edit"></i>
                             </a>
                             <button type="button" class="btn btn-link p-0 text-danger"
-                                th:attr="data-id=${promo.id},data-code=${promo.code}"
+                                th:attr="data-id=${promo.id},data-code=${promo.promoCode}"
                                 onclick="confirmDelete(this.getAttribute('data-id'), this.getAttribute('data-code'))">
                                 <i class="fas fa-trash"></i>
                             </button>

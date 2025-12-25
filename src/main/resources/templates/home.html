@@ -4,6 +4,8 @@
 <head>
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <meta name="_csrf" th:content="${_csrf.token}" />
+    <meta name="_csrf_header" th:content="${_csrf.headerName}" />
     <title>MINARI - Your Everyday Fashion Boutique</title>
     <!-- Simple partial inclusion if it existed, otherwise just keeping standard imports -->
     <!-- Assuming navbar-scripts corresponds to necessary js/css or meta -->

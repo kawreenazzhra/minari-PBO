@@ -105,8 +105,8 @@ public class OrderService {
 
         order.setPayment(payment);
 
-        // Create shipment if payment is successful
-        if (payment.getStatus() == PaymentStatus.PAID) {
+        // Create shipment if payment is successful OR if COD
+        if (payment.getStatus() == PaymentStatus.PAID || payment.getPaymentMethod() == PaymentMethod.COD) {
             order.createShipment(generateTrackingNumber(), "J&Tuh");
         }
 
@@ -389,8 +389,19 @@ public class OrderService {
                 .taxAmount(order.getTaxAmount())
                 .shippingCost(order.getShippingCost())
                 .discountAmount(order.getDiscountAmount())
+                .paymentStatus(order.getPayment() != null ? order.getPayment().getStatus().toString() : "PENDING")
+                .paymentMethod(order.getPayment() != null ? order.getPayment().getPaymentMethod().toString() : null)
                 .orderDate(order.getOrderDate())
                 .updatedAt(order.getUpdatedAt())
+                .items(order.getItems().stream().map(item -> OrderDTO.OrderItemDTO.builder()
+                        .id(item.getId())
+                        .productId(item.getProduct() != null ? item.getProduct().getId() : null)
+                        .productName(item.getProductName())
+                        .productSku(item.getProductSku())
+                        .quantity(item.getQuantity())
+                        .unitPrice(item.getUnitPrice())
+                        .totalPrice(item.getTotalPrice())
+                        .build()).collect(Collectors.toList()))
                 .build();
     }
 
@@ -402,6 +413,15 @@ public class OrderService {
             com.minari.ecommerce.entity.OrderStatus newStatus = com.minari.ecommerce.entity.OrderStatus
                     .valueOf(statusStr);
             order.setStatus(newStatus);
+
+            // Auto-update Payment Status for COD when Delivered
+            if (newStatus == com.minari.ecommerce.entity.OrderStatus.DELIVERED && 
+                order.getPayment() != null && 
+                order.getPayment().getPaymentMethod() == PaymentMethod.COD) {
+                
+                order.getPayment().setStatus(PaymentStatus.PAID);
+                order.getPayment().setPaymentDate(LocalDateTime.now());
+            }
         } catch (IllegalArgumentException e) {
             // Ignore invalid status or handle error
         }

@@ -380,6 +380,22 @@ function attachEventListeners() {
 
     console.log('Event listeners attached successfully');
   }
+
+  // Handle search overlay
+  const searchBtn = document.querySelector('a[href="/search"]');
+  const searchOverlay = document.getElementById('searchOverlay');
+  const closeSearchBtn = document.getElementById('closeSearchBtn');
+
+  if (searchBtn && searchOverlay && closeSearchBtn) {
+    searchBtn.addEventListener('click', function (e) {
+      e.preventDefault();
+      searchOverlay.style.display = 'block';
+    });
+
+    closeSearchBtn.addEventListener('click', function () {
+      searchOverlay.style.display = 'none';
+    });
+  }
 }
 
 // Initialize

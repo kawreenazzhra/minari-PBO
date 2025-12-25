@@ -91,27 +91,41 @@ public class AdminController {
     @GetMapping("/promotions/add")
     public String showAddPromotionForm(Model model) {
         model.addAttribute("categories", catalogService.getAllCategories());
+        model.addAttribute("products", productService.getAllProducts());
         return "admin/promotions/add";
     }
 
     @PostMapping("/promotions")
-    public String addPromotion(@RequestParam String code,
+    public String addPromotion(@RequestParam String name,
+            @RequestParam String code,
             @RequestParam String description,
-            @RequestParam Double discountPercentage,
+            @RequestParam(required = false, defaultValue = "PERCENTAGE") String discountType,
+            @RequestParam Double discountValue,
             @RequestParam @DateTimeFormat(iso = DateTimeFormat.ISO.DATE) java.time.LocalDate startDate,
             @RequestParam @DateTimeFormat(iso = DateTimeFormat.ISO.DATE) java.time.LocalDate endDate,
             @RequestParam Boolean isActive,
             @RequestParam(required = false) Integer usageLimit,
             @RequestParam(required = false) Double minPurchaseAmount,
             @RequestParam(required = false) List<Long> categoryIds,
+            @RequestParam(required = false) List<Long> productIds,
             RedirectAttributes redirectAttributes) {
         try {
+            // Validate required fields
+            if (name == null || name.trim().isEmpty()) {
+                redirectAttributes.addFlashAttribute("error", "Promotion name is required");
+                return "redirect:/admin/promotions/add";
+            }
+            if (code == null || code.trim().isEmpty()) {
+                redirectAttributes.addFlashAttribute("error", "Promo code is required");
+                return "redirect:/admin/promotions/add";
+            }
+            
             com.minari.ecommerce.entity.Promotion promo = new com.minari.ecommerce.entity.Promotion();
-            promo.setName(code);
+            promo.setName(name);
             promo.setPromoCode(code);
             promo.setDescription(description);
-            promo.setDiscountType(com.minari.ecommerce.entity.Promotion.DiscountType.PERCENTAGE);
-            promo.setDiscountValue(discountPercentage);
+            promo.setDiscountType(com.minari.ecommerce.entity.Promotion.DiscountType.valueOf(discountType.toUpperCase()));
+            promo.setDiscountValue(discountValue);
             promo.setStartDate(startDate.atStartOfDay());
             promo.setEndDate(endDate.atTime(23, 59, 59));
             promo.setIsActive(isActive);
@@ -119,13 +133,25 @@ public class AdminController {
             promo.setMinPurchaseAmount(minPurchaseAmount != null ? minPurchaseAmount : 0.0);
 
             if (categoryIds != null && !categoryIds.isEmpty()) {
-                promo.setApplicableCategories(categoryIds.toString()); // Simple substitution, ideally JSON
+                // Store as JSON-like string for now
+                promo.setApplicableCategories(categoryIds.toString());
+            }
+            
+            if (productIds != null && !productIds.isEmpty()) {
+                // Store selected products - using excludedProducts field to represent applicable products
+                // Note: This field name is misleading but kept for database compatibility
+                promo.setExcludedProducts(productIds.toString());
             }
 
             promotionRepository.save(promo);
             redirectAttributes.addFlashAttribute("success", "Promotion created successfully!");
+        } catch (IllegalArgumentException e) {
+            redirectAttributes.addFlashAttribute("error", "Invalid discount type: " + discountType);
+            return "redirect:/admin/promotions/add";
         } catch (Exception e) {
+            e.printStackTrace();
             redirectAttributes.addFlashAttribute("error", "Error creating promotion: " + e.getMessage());
+            return "redirect:/admin/promotions/add";
         }
         return "redirect:/admin/promotions";
     }

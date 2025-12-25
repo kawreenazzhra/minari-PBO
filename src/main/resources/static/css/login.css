@@ -2,11 +2,13 @@ body {
   margin: 0;
   font-family: 'Poppins', sans-serif;
   background-color: #ffffff;
-  background-image: url('/images/image_2025-11-09_18-53-51.png'); /* ganti sesuai file kamu */
+  background-image: url('/images/image_2025-11-09_18-53-51.png');
+  /* ganti sesuai file kamu */
   background-size: cover;
   background-repeat: no-repeat;
   background-position: center;
-  background-attachment: fixed; /* biar gambar tetap saat scroll */
+  background-attachment: fixed;
+  /* biar gambar tetap saat scroll */
   min-height: 100vh;
 }
 
@@ -24,7 +26,7 @@ body {
 
 
 .navbar-brand img {
-  filter: drop-shadow(0 1px 1px rgba(0,0,0,0.2));
+  filter: drop-shadow(0 1px 1px rgba(0, 0, 0, 0.2));
 }
 
 .navbar a img {
@@ -37,12 +39,14 @@ body {
 
 /* Section posisi login lebih ke bawah */
 .login-section {
-  margin-top: 80px; /* jarak dari navbar */
+  margin-top: 80px;
+  /* jarak dari navbar */
   display: flex;
   justify-content: center;
   align-items: flex-start;
   padding-top: 60px;
-  padding-bottom: 80px; /* ruang bawah ekstra */
+  padding-bottom: 80px;
+  /* ruang bawah ekstra */
   min-height: calc(100vh - 70px);
 }
 
@@ -50,8 +54,9 @@ body {
 .login-box {
   background-color: #fcf9ed;
   border: 3px solid black;
-  width: 500px;              /* 🔹 dari 340px jadi 380px */
-  padding: 40px; 
+  width: 500px;
+  /* 🔹 dari 340px jadi 380px */
+  padding: 40px;
   border-radius: 20px;
   transition: transform 0.2s ease, box-shadow 0.2s ease;
 }
@@ -67,8 +72,9 @@ input.form-control {
   border: 3px solid #FBAF99;
   border-radius: 6px;
   font-size: 14px;
-  height: 42px;             /* 🔹 dari 36px jadi 42px */
-  padding: 8px 12px;  
+  height: 42px;
+  /* 🔹 dari 36px jadi 42px */
+  padding: 8px 12px;
 }
 
 input.form-control:focus {
@@ -108,19 +114,20 @@ input.form-control:focus {
 }
 
 /* Account dropdown menu */
-:root{
-  --acc-bg:#fff;
-  --acc-text:#1f1f1f;
-  --acc-border:#ececec;
-  --acc-shadow:0 12px 28px rgba(0,0,0,.15);
-  --acc-brand:#FBAF99;
-  --acc-brand-600:#F99D84;
+:root {
+  --acc-bg: #fff;
+  --acc-text: #1f1f1f;
+  --acc-border: #ececec;
+  --acc-shadow: 0 12px 28px rgba(0, 0, 0, .15);
+  --acc-brand: #FBAF99;
+  --acc-brand-600: #F99D84;
 }
 
-.accmenu{
+.accmenu {
   position: fixed;
-  top: 0; left: 0;
-  transform: translate(-9999px,-9999px) scale(.98);
+  top: 0;
+  left: 0;
+  transform: translate(-9999px, -9999px) scale(.98);
   opacity: 0;
   pointer-events: none;
   background: var(--acc-bg);
@@ -133,24 +140,26 @@ input.form-control:focus {
   padding: 8px 8px 10px 8px;
 }
 
-.accmenu.show{
+.accmenu.show {
   opacity: 1;
   pointer-events: auto;
-  transform: translate(var(--acc-x,0), var(--acc-y,0)) scale(1);
+  transform: translate(var(--acc-x, 0), var(--acc-y, 0)) scale(1);
   transition: opacity .15s ease, transform .15s ease;
 }
 
-:root{
+:root {
   --acc-bg: #FFF6F0;
   --acc-text: #1f1f1f;
   --acc-border: #ead9d2;
-  --acc-shadow: 0 12px 28px rgba(0,0,0,.15);
+  --acc-shadow: 0 12px 28px rgba(0, 0, 0, .15);
 }
 
 .accmini {
   position: fixed;
-  top: 70px;          /* sesuaikan jarak dari atas navbar */
-  right: 30px;        /* jarak dari kanan */
+  top: 70px;
+  /* sesuaikan jarak dari atas navbar */
+  right: 30px;
+  /* jarak dari kanan */
   background: var(--acc-bg);
   border: 1px solid var(--acc-border);
   border-radius: 12px;
@@ -171,23 +180,31 @@ input.form-control:focus {
 
 
 /* caret */
-.accmini::before{
-  content:"";
-  position:absolute;
-  top:-7px; right:18px;
-  width:12px; height:12px;
+.accmini::before {
+  content: "";
+  position: absolute;
+  top: -7px;
+  right: 18px;
+  width: 12px;
+  height: 12px;
   background: var(--acc-bg);
-  border-left:1px solid var(--acc-border);
-  border-top:1px solid var(--acc-border);
+  border-left: 1px solid var(--acc-border);
+  border-top: 1px solid var(--acc-border);
   transform: rotate(45deg);
 }
 
-.accmini__row{
-  display:flex; align-items:center; gap:8px;
-  margin-bottom:10px;
+.accmini__row {
+  display: flex;
+  align-items: center;
+  gap: 8px;
+  margin-bottom: 10px;
 }
 
-.accmini__icon{ font-size:16px; opacity:.9; }
+.accmini__icon {
+  font-size: 16px;
+  opacity: .9;
+}
+
 .accmini__name {
   font-weight: 600;
   color: #1f1f1f;
@@ -197,7 +214,8 @@ input.form-control:focus {
 }
 
 .accmini__name:hover {
-  color: #f99d84; /* warna oranye pastel khas Minari */
+  color: #f99d84;
+  /* warna oranye pastel khas Minari */
 }
 
 /* Tombol Log in / Log out */
@@ -208,7 +226,8 @@ input.form-control:focus {
   width: 100%;
   height: 36px;
   background-color: #ffffff;
-  border: 1.5px solid #d9c8c1;      /* warna border lembut */
+  border: 1.5px solid #d9c8c1;
+  /* warna border lembut */
   border-radius: 10px;
   color: #1e1e1e;
   font-weight: 600;
@@ -220,8 +239,10 @@ input.form-control:focus {
 }
 
 .accmini__btn:hover {
-  background-color: #fff9f6;        /* putih sedikit krem */
-  border-color: #f0b8a2;            /* sesuai palet Minari */
+  background-color: #fff9f6;
+  /* putih sedikit krem */
+  border-color: #f0b8a2;
+  /* sesuai palet Minari */
   transform: translateY(-1px);
   box-shadow: 0 2px 5px rgba(0, 0, 0, 0.08);
 }
@@ -230,4 +251,17 @@ input.form-control:focus {
   transform: scale(0.98);
   background-color: #fff2ea;
   box-shadow: none;
+}
+
+/* Sign Up Link Styling */
+.login-box p a {
+  color: #0066cc;
+  text-decoration: none;
+  font-weight: 600;
+  transition: all 0.2s ease;
+}
+
+.login-box p a:hover {
+  color: #0052a3;
+  text-decoration: underline;
 }

@@ -111,6 +111,23 @@
             </div>
         </div>
 
+        <!-- Login Modal -->
+        <div class="modal fade" id="loginModal" tabindex="-1" aria-hidden="true">
+            <div class="modal-dialog modal-dialog-centered">
+                <div class="modal-content" style="border-radius: 12px; border: none;">
+                    <div class="modal-header border-0 justify-content-center pt-4">
+                        <h5 class="modal-title fw-bold">Please Log In</h5>
+                    </div>
+                    <div class="modal-body text-center pb-2">
+                        <p class="mb-0">Please log in to continue</p>
+                    </div>
+                    <div class="modal-footer border-0 justify-content-center pb-4">
+                        <a th:href="@{/login}" class="btn btn-dark px-5" style="border-radius: 8px;">Log In</a>
+                    </div>
+                </div>
+            </div>
+        </div>
+
         <!-- Scripts -->
         <script th:src="@{/js/cart.js}"></script>
         <script th:src="@{/js/category.js}"></script>
