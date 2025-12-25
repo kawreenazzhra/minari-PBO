@@ -13,10 +13,10 @@
         </div>
 
         <div class="table-custom">
-            <table class="table mb-0">
-                <thead>
+            <table class="table table-borderless align-middle header-only-table">
+                <thead style="border-bottom: 1px solid #f0f0f0;">
                     <tr>
-                        <th>Order ID</th>
+                        <th class="ps-4">Order ID</th>
                         <th>Customer</th>
                         <th>Items</th>
                         <th>Total</th>
@@ -28,21 +28,18 @@
                 <tbody>
                     <tr th:each="order : ${orders}"
                         th:onclick="'window.location=\'' + @{/admin/orders/{id}(id=${order.id})} + '\''"
-                        style="cursor: pointer;">
-                        <td><strong th:text="'#' + ${order.orderNumber}">#123</strong></td>
+                        style="cursor: pointer; border-bottom: 1px solid #fbfbfb;">
+                        <td class="ps-4"><strong th:text="'#' + ${order.orderNumber}">#MIN2025...</strong></td>
                         <td th:text="${order.customerName}">Customer</td>
                         <td>
-                            <!-- Items not populated in DTO by default, showing placeholder logic -->
                             <span th:if="${order.items != null and !order.items.empty}">
                                 <span th:text="${order.items[0].productName}">Item</span>
-                                <small th:if="${order.items.size() > 1}" class="text-muted"
-                                    th:text="'(+' + (${order.items.size() - 1}) + ' others)'">(+1 others)</small>
+                                <span th:if="${order.items.size() > 1}" class="text-muted"
+                                    th:text="'(+' + (${order.items.size() - 1}) + ' others)'">(+1 others)</span>
                             </span>
-                            <span th:if="${order.items == null or order.items.empty}" class="text-muted">Click to view
-                                details</span>
                         </td>
-                        <td th:text="'Rp ' + ${#numbers.formatDecimal(order.totalAmount, 0, 'COMMA', 0, 'POINT')}">Rp 0
-                        </td>
+                        <td th:text="'Rp ' + ${#numbers.formatDecimal(order.totalAmount, 0, 'POINT', 0, 'POINT')}">Rp
+                            240.000</td>
                         <td>
                             <span th:class="'badge-status badge-' + ${#strings.toLowerCase(order.paymentStatus)}"
                                 th:text="${#strings.capitalize(#strings.toLowerCase(order.paymentStatus))}">Paid</span>
@@ -51,7 +48,7 @@
                             <span th:class="'badge-status badge-' + ${#strings.toLowerCase(order.status)}"
                                 th:text="${#strings.capitalize(#strings.toLowerCase(order.status))}">Pending</span>
                         </td>
-                        <td th:text="${#temporals.format(order.orderDate, 'dd.MM.yyyy')}">01.01.2025</td>
+                        <td th:text="${#temporals.format(order.orderDate, 'dd.MM.yyyy')}">25.12.2025</td>
                     </tr>
                     <tr th:if="${orders == null or orders.empty}">
                         <td colspan="7" class="text-center py-4">No orders found.</td>

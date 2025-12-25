@@ -495,7 +495,7 @@ public class AdminController {
 
     @GetMapping("/orders/{id}")
     public String orderDetail(@PathVariable Long id, Model model) {
-        com.minari.ecommerce.entity.Order order = orderService.getOrderEntityById(id);
+        OrderDTO order = orderService.getOrderById(id);
         if (order == null) {
             return "redirect:/admin/orders";
         }
@@ -505,11 +505,11 @@ public class AdminController {
 
     @PostMapping("/orders/{id}/status")
     public String updateOrderStatus(@PathVariable Long id,
-            @RequestParam String orderStatus,
+            @RequestParam String status,
             @RequestParam(required = false) String trackingNumber,
             RedirectAttributes redirectAttributes) {
         try {
-            orderService.updateOrderDetails(id, orderStatus, trackingNumber);
+            orderService.updateOrderDetails(id, status, trackingNumber);
             redirectAttributes.addFlashAttribute("success", "Order status updated successfully!");
         } catch (Exception e) {
             redirectAttributes.addFlashAttribute("error", "Error updating order status: " + e.getMessage());

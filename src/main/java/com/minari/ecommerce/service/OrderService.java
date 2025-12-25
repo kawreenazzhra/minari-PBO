@@ -389,6 +389,11 @@ public class OrderService {
                 .taxAmount(order.getTaxAmount())
                 .shippingCost(order.getShippingCost())
                 .discountAmount(order.getDiscountAmount())
+                .shippingAddressStreet(order.getShippingAddress() != null ? order.getShippingAddress().getStreetAddress() : null)
+                .shippingAddressCity(order.getShippingAddress() != null ? order.getShippingAddress().getCity() : null)
+                .shippingAddressState(order.getShippingAddress() != null ? order.getShippingAddress().getState() : null)
+                .shippingAddressPostalCode(order.getShippingAddress() != null ? order.getShippingAddress().getZipcode() : null)
+                .shippingAddressCountry(order.getShippingAddress() != null ? order.getShippingAddress().getCountry() : null)
                 .paymentStatus(order.getPayment() != null ? order.getPayment().getStatus().toString() : "PENDING")
                 .paymentMethod(order.getPayment() != null ? order.getPayment().getPaymentMethod().toString() : null)
                 .orderDate(order.getOrderDate())
@@ -401,6 +406,8 @@ public class OrderService {
                         .quantity(item.getQuantity())
                         .unitPrice(item.getUnitPrice())
                         .totalPrice(item.getTotalPrice())
+                        .variantInfo(item.getVariantInfo())
+                        .imageUrl(item.getImageUrl())
                         .build()).collect(Collectors.toList()))
                 .build();
     }

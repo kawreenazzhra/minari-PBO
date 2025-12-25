@@ -51,9 +51,8 @@
                             </span>
                         </td>
                         <td class="action-icons">
-                            <a th:href="@{/admin/promotions/{id}/edit(id=${promo.id})}"
-                                class="text-decoration-none text-primary me-2">
-                                <i class="fas fa-edit" title="Edit"></i>
+                            <a th:href="@{/admin/promotions/{id}/edit(id=${promo.id})}" class="btn-icon btn-edit me-2">
+                                <i class="fas fa-edit"></i>
                             </a>
                             <button type="button" class="btn btn-link p-0 text-danger"
                                 th:attr="data-id=${promo.id},data-code=${promo.promoCode}"

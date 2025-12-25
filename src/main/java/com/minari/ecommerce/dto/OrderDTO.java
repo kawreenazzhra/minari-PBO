@@ -597,13 +597,15 @@ public class OrderDTO {
         private Integer quantity;
         private Double unitPrice;
         private Double totalPrice;
+        private String variantInfo;
+        private String imageUrl;
         private String notes;
 
         public OrderItemDTO() {
         }
 
         public OrderItemDTO(Long id, Long productId, String productName, String productSku, Integer quantity,
-                Double unitPrice, Double totalPrice, String notes) {
+                Double unitPrice, Double totalPrice, String variantInfo, String imageUrl, String notes) {
             this.id = id;
             this.productId = productId;
             this.productName = productName;
@@ -611,6 +613,8 @@ public class OrderDTO {
             this.quantity = quantity;
             this.unitPrice = unitPrice;
             this.totalPrice = totalPrice;
+            this.variantInfo = variantInfo;
+            this.imageUrl = imageUrl;
             this.notes = notes;
         }
 
@@ -670,6 +674,22 @@ public class OrderDTO {
             this.totalPrice = totalPrice;
         }
 
+        public String getVariantInfo() {
+            return variantInfo;
+        }
+
+        public void setVariantInfo(String variantInfo) {
+            this.variantInfo = variantInfo;
+        }
+
+        public String getImageUrl() {
+            return imageUrl;
+        }
+
+        public void setImageUrl(String imageUrl) {
+            this.imageUrl = imageUrl;
+        }
+
         public String getNotes() {
             return notes;
         }
@@ -690,6 +710,8 @@ public class OrderDTO {
             private Integer quantity;
             private Double unitPrice;
             private Double totalPrice;
+            private String variantInfo;
+            private String imageUrl;
             private String notes;
 
             OrderItemDTOBuilder() {
@@ -730,13 +752,23 @@ public class OrderDTO {
                 return this;
             }
 
+            public OrderItemDTOBuilder variantInfo(String variantInfo) {
+                this.variantInfo = variantInfo;
+                return this;
+            }
+
+            public OrderItemDTOBuilder imageUrl(String imageUrl) {
+                this.imageUrl = imageUrl;
+                return this;
+            }
+
             public OrderItemDTOBuilder notes(String notes) {
                 this.notes = notes;
                 return this;
             }
 
             public OrderItemDTO build() {
-                return new OrderItemDTO(id, productId, productName, productSku, quantity, unitPrice, totalPrice, notes);
+                return new OrderItemDTO(id, productId, productName, productSku, quantity, unitPrice, totalPrice, variantInfo, imageUrl, notes);
             }
         }
     }
