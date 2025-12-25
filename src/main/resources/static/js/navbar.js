@@ -20,7 +20,10 @@ function tplGuest() {
         </button>
         <a href="/wishlist"><img src="/images/whislist.png" alt="Favorite" width="24" height="24"></a>
         <a href="/search"><img src="/images/searchnav.png" alt="Search" width="24" height="24"></a>
-        <a href="/cart"><img src="/images/chart.png" alt="Cart" width="24" height="24"></a>
+        <a href="/cart" style="position: relative; display: inline-block;">
+          <img src="/images/chart.png" alt="Cart" width="24" height="24">
+          <span id="cartCounter" class="cart-counter" style="display: none; position: absolute; top: -8px; right: -8px; background: #E9967A; color: white; border-radius: 50%; width: 18px; height: 18px; font-size: 11px; font-weight: 600; display: flex; align-items: center; justify-content: center;">0</span>
+        </a>
         <a href="/menu"><img src="/images/menu.png" alt="Menu" width="24" height="24"></a>
       </div>
     </div>
@@ -80,7 +83,10 @@ function tplUser() {
         </button>
         <a href="/wishlist"><img src="/images/whislist.png" alt="Favorite" width="24" height="24"></a>
         <a href="/search"><img src="/images/searchnav.png" alt="Search" width="24" height="24"></a>
-        <a href="/cart"><img src="/images/chart.png" alt="Cart" width="24" height="24"></a>
+        <a href="/cart" style="position: relative; display: inline-block;">
+          <img src="/images/chart.png" alt="Cart" width="24" height="24">
+          <span id="cartCounter" class="cart-counter" style="display: none; position: absolute; top: -8px; right: -8px; background: #E9967A; color: white; border-radius: 50%; width: 18px; height: 18px; font-size: 11px; font-weight: 600; display: flex; align-items: center; justify-content: center;">0</span>
+        </a>
         <a href="/menu"><img src="/images/menu.png" alt="Menu" width="24" height="24"></a>
       </div>
     </div>
@@ -291,3 +297,44 @@ if (document.readyState === 'loading') {
 
 // Re-render on window load for safety
 window.addEventListener('load', renderNavbar);
+
+// ====== Cart Counter Functions ======
+
+// Update cart counter badge
+window.updateCartCounter = function (count) {
+  const counter = document.getElementById('cartCounter');
+  if (counter) {
+    if (count > 0) {
+      counter.textContent = count;
+      counter.style.display = 'flex';
+    } else {
+      counter.style.display = 'none';
+    }
+  }
+};
+
+// Fetch initial cart count
+async function fetchCartCount() {
+  try {
+    const response = await fetch('/api/cart/count', {
+      method: 'GET',
+      headers: {
+        'Accept': 'application/json'
+      }
+    });
+
+    if (response.ok) {
+      const data = await response.json();
+      window.updateCartCounter(data.count || 0);
+    }
+  } catch (error) {
+    console.error('Error fetching cart count:', error);
+  }
+}
+
+// Fetch cart count on page load
+if (document.readyState === 'loading') {
+  document.addEventListener('DOMContentLoaded', fetchCartCount);
+} else {
+  fetchCartCount();
+}

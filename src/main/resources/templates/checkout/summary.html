@@ -107,12 +107,13 @@
                 </div>
 
                 <!-- Payment Method Link -->
-                <a th:href="@{/checkout/payment(addressId=${addressId})}" class="summary-link-card"
+                <a th:href="@{/checkout/payment(addressId=${addressId}, paymentMethod=${selectedPaymentMethod})}"
+                    class="summary-link-card"
                     th:style="${selectedPaymentMethod == null ? 'border: 1px dashed #d68c78;' : ''}">
                     <div class="summary-label">Payment method</div>
                     <div class="summary-value">
                         <span class="main-text"
-                            th:text="${selectedPaymentMethod != null ? (selectedPaymentMethod == 'cod' ? 'Cash on Delivery' : (selectedPaymentMethod == 'bank_transfer' ? 'Bank Transfer' : (selectedPaymentMethod == 'e_wallet' ? 'E-Wallet' : 'Credit Card'))) : 'Select Payment Method'}">Virtual
+                            th:text="${selectedPaymentMethod != null ? (selectedPaymentMethod == 'cod' ? 'Cash on Delivery' : (selectedPaymentMethod == 'bank_transfer' ? 'Virtual Account Transfer' : (selectedPaymentMethod == 'e_wallet' ? 'E-Wallet' : 'Credit Card'))) : 'Select Payment Method'}">Virtual
                             Account Transfer</span>
                     </div>
                     <i class="fas fa-chevron-right ms-3 text-dark"></i>
@@ -166,19 +167,6 @@
                     </div>
                 </div>
 
-                <!-- Payment Method Link -->
-                <!-- Includes addressId so it persists when returning -->
-                <a th:href="@{/checkout/payment(addressId=${addressId}, paymentMethod=${selectedPaymentMethod})}"
-                    class="summary-link-card">
-                    <div class="summary-label">Payment method</div>
-                    <div class="summary-value" style="display: flex; align-items: center; gap: 10px;">
-                        <span class="main-text"
-                            th:text="${selectedPaymentMethod == 'bank_transfer' ? 'Virtual Account Transfer' : (selectedPaymentMethod == 'e_wallet' ? 'E-Wallet' : (selectedPaymentMethod == 'cod' ? 'Cash on Delivery' : 'Select Payment'))}">Select
-                            Payment</span>
-                    </div>
-                    <i class="fas fa-chevron-right ms-3 text-dark"></i>
-                </a>
-
                 <!-- Sticky Bottom Bar -->
                 <div class="bottom-bar"
                     style="position: fixed; bottom: 0; left: 0; right: 0; background: #f4c2b8; padding: 12px 30px; z-index: 1000;">
@@ -227,16 +215,16 @@
             console.log('Payment Method:', paymentMethod);
 
             if (!addressId || addressId === 'null' || addressId === '') {
-                alert('⚠️ Please select a shipping address first!\n\nClick on "Shipping to" to choose your address.');
+                alert('âš ï¸ Please select a shipping address first!\n\nClick on "Shipping to" to choose your address.');
                 return;
             }
 
             if (!paymentMethod || paymentMethod === 'null' || paymentMethod === '') {
-                alert('⚠️ Please select a payment method first!\n\nClick on "Payment method" to choose how you want to pay.');
+                alert('âš ï¸ Please select a payment method first!\n\nClick on "Payment method" to choose how you want to pay.');
                 return;
             }
 
-            console.log('✅ Validation passed, submitting form to:', form.action);
+            console.log('âœ… Validation passed, submitting form to:', form.action);
             form.submit();
         }
     </script>

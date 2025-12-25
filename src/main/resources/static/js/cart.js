@@ -251,13 +251,42 @@ window.addToCart = async function (productId, productName, price, image = '', qu
 
         const data = await response.json();
         if (data.success) {
-            // Redirect to cart immediately as requested
-            window.location.href = '/cart';
+            // Show toast notification
+            showToast('Item berhasil ditambahkan ke keranjang');
+            
+            // Update cart counter in navbar
+            if (typeof window.updateCartCounter === 'function') {
+                window.updateCartCounter(data.cart_count);
+            }
+            
             return true;
         }
     } catch (error) {
         console.error('Error adding to cart:', error);
+        showToast('Gagal menambahkan item ke keranjang', 'error');
     }
 
     return false;
+};
+
+// === Toast notification function
+window.showToast = function(message, type = 'success') {
+    const toastEl = document.getElementById('miniToast');
+    const toastMessage = document.getElementById('toastMessage');
+    
+    if (toastEl && toastMessage) {
+        toastMessage.textContent = message;
+        
+        // Add appropriate class for styling
+        toastEl.classList.remove('bg-success', 'bg-danger', 'text-white');
+        if (type === 'success') {
+            toastEl.classList.add('bg-success', 'text-white');
+        } else if (type === 'error') {
+            toastEl.classList.add('bg-danger', 'text-white');
+        }
+        
+        // Show toast using Bootstrap
+        const toast = new bootstrap.Toast(toastEl);
+        toast.show();
+    }
 };
