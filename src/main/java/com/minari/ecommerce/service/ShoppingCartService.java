@@ -102,8 +102,15 @@ public class ShoppingCartService {
     
     public void clearCart(String email) {
         ShoppingCart cart = getCartForUser(email);
-        cart.getItems().clear();
-        cartRepository.save(cart);
+        
+        // Delete all cart items explicitly
+        if (!cart.getItems().isEmpty()) {
+            cartItemRepository.deleteAll(cart.getItems());
+            cart.getItems().clear();
+            cartRepository.save(cart);
+        }
+        
+        System.out.println("Cart cleared for user: " + email);
     }
     
     private ShoppingCart createNewCart(User user) {

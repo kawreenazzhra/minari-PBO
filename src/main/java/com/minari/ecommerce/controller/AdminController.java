@@ -277,8 +277,13 @@ public class AdminController {
 
     @GetMapping("/products/add")
     public String showAddProductForm(Model model) {
-        List<ProductCategory> categories = catalogService.getAllCategories();
-        model.addAttribute("categories", categories);
+        try {
+            List<ProductCategory> categories = catalogService.getAllCategories();
+            model.addAttribute("categories", categories != null ? categories : new java.util.ArrayList<>());
+        } catch (Exception e) {
+            model.addAttribute("categories", new java.util.ArrayList<>());
+            model.addAttribute("error", "Error loading categories for product creation");
+        }
         return "admin/products/add";
     }
 
@@ -294,31 +299,22 @@ public class AdminController {
         return "admin/products/edit";
     }
 
-    @PostMapping("/products")
-    public String addProduct(@ModelAttribute Product product) {
-        // Set the category using CatalogService
-        if (product.getCategory() != null && product.getCategory().getId() != null) {
-            ProductCategory category = catalogService.getCategoryById(product.getCategory().getId());
-            product.setCategory(category);
-        }
-        productService.saveProduct(product);
-        return "redirect:/admin/products";
-    }
 
-    @PostMapping("/products/create")
-    public String createProduct(@RequestParam String name,
-            @RequestParam(required = false) String description,
-            @RequestParam Double price,
-            @RequestParam(required = false) Double discountPrice,
-            @RequestParam(required = false) Double compareAtPrice,
-            @RequestParam Integer stockQuantity,
-            @RequestParam Long categoryId,
-            @RequestParam(required = false) String brand,
-            @RequestParam(required = false) String sku,
-            @RequestParam(required = false) Boolean isFeatured,
-            @RequestParam(required = false) Boolean isActive,
-            @RequestParam(required = false) List<String> tags,
-            @RequestParam(required = false) MultipartFile image,
+
+    @PostMapping("/products")
+    public String createProduct(@RequestParam("name") String name,
+            @RequestParam(value = "description", required = false) String description,
+            @RequestParam("price") Double price,
+            @RequestParam(value = "discountPrice", required = false) Double discountPrice,
+            @RequestParam(value = "compareAtPrice", required = false) Double compareAtPrice,
+            @RequestParam("stockQuantity") Integer stockQuantity,
+            @RequestParam("categoryId") Long categoryId,
+            @RequestParam(value = "brand", required = false) String brand,
+            @RequestParam(value = "sku", required = false) String sku,
+            @RequestParam(value = "isFeatured", required = false) Boolean isFeatured,
+            @RequestParam(value = "isActive", required = false) Boolean isActive,
+            @RequestParam(value = "tags", required = false) List<String> tags,
+            @RequestParam(value = "image", required = false) MultipartFile image,
             RedirectAttributes redirectAttributes) {
         try {
             Product product = new Product();
@@ -365,21 +361,21 @@ public class AdminController {
         return "redirect:/admin/products";
     }
 
-    @PostMapping("/products/update")
-    public String updateProduct(@RequestParam Long id,
-            @RequestParam String name,
-            @RequestParam(required = false) String description,
-            @RequestParam Double price,
-            @RequestParam(required = false) Double discountPrice,
-            @RequestParam(required = false) Double compareAtPrice,
-            @RequestParam Integer stockQuantity,
-            @RequestParam Long categoryId,
-            @RequestParam(required = false) String brand,
-            @RequestParam(required = false) String sku,
-            @RequestParam(required = false) Boolean isFeatured,
-            @RequestParam(required = false) Boolean isActive,
-            @RequestParam(required = false) List<String> tags,
-            @RequestParam(required = false) MultipartFile image,
+    @PostMapping("/products/{productId}/update")
+    public String updateProduct(@PathVariable("productId") Long id,
+            @RequestParam("name") String name,
+            @RequestParam(value = "description", required = false) String description,
+            @RequestParam("price") Double price,
+            @RequestParam(value = "discountPrice", required = false) Double discountPrice,
+            @RequestParam(value = "compareAtPrice", required = false) Double compareAtPrice,
+            @RequestParam("stockQuantity") Integer stockQuantity,
+            @RequestParam("categoryId") Long categoryId,
+            @RequestParam(value = "brand", required = false) String brand,
+            @RequestParam(value = "sku", required = false) String sku,
+            @RequestParam(value = "isFeatured", required = false) Boolean isFeatured,
+            @RequestParam(value = "isActive", required = false) Boolean isActive,
+            @RequestParam(value = "tags", required = false) List<String> tags,
+            @RequestParam(value = "image", required = false) MultipartFile image,
             RedirectAttributes redirectAttributes) {
         try {
             Product product = productService.getProductById(id).orElse(null);
@@ -394,7 +390,6 @@ public class AdminController {
             product.setDiscountPrice(discountPrice);
             product.setCompareAtPrice(compareAtPrice);
             product.setStockQuantity(stockQuantity);
-            product.setBrand(brand);
             product.setBrand(brand);
             if (sku != null && sku.trim().isEmpty()) {
                 product.setSku(null);
@@ -414,7 +409,7 @@ public class AdminController {
             ProductCategory category = catalogService.getCategoryById(categoryId);
             if (category == null) {
                 redirectAttributes.addFlashAttribute("error", "Category not found");
-                return "redirect:/admin/products";
+                return "redirect:/admin/products/" + id + "/edit";
             }
             product.setCategory(category);
 

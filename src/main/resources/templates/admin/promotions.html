@@ -49,7 +49,8 @@
                                 <i class="fas fa-edit" title="Edit"></i>
                             </a>
                             <button type="button" class="btn btn-link p-0 text-danger"
-                                th:onclick="'confirmDelete(' + ${promo.id} + ', \'' + ${promo.code} + '\')'">
+                                th:attr="data-id=${promo.id},data-code=${promo.code}"
+                                onclick="confirmDelete(this.getAttribute('data-id'), this.getAttribute('data-code'))">
                                 <i class="fas fa-trash"></i>
                             </button>
                         </td>

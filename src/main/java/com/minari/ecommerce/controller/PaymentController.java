@@ -27,6 +27,8 @@ public class PaymentController {
 
     @GetMapping
     public String paymentPage(@RequestParam(name = "items", required = false) String items,
+                            @RequestParam(name = "addressId", required = false) Long addressId,
+                            @RequestParam(name = "paymentMethod", required = false) String paymentMethod,
                             Model model,
                             Principal principal) {
         
@@ -42,18 +44,52 @@ public class PaymentController {
             return "redirect:/products";
         }
 
-        // Add addresses
+        // Add selected address logic
         if (user instanceof Customer) {
-            model.addAttribute("addresses", ((Customer) user).getSavedAddresses());
+            List<com.minari.ecommerce.entity.Address> addresses = ((Customer) user).getSavedAddresses();
+            model.addAttribute("addresses", addresses);
+            
+            if (addressId != null) {
+                // Find selected
+                 model.addAttribute("selectedAddress", addresses.stream().filter(a -> a.getId().equals(addressId)).findFirst().orElse(null));
+            }
+            // Removed default selection to respect user choice
         } else {
             model.addAttribute("addresses", List.of());
         }
+        
+        // Pass addressId directly for link generation
+        model.addAttribute("addressId", addressId);
+        
+        // Selected Payment Method - NO DEFAULT
+        model.addAttribute("selectedPaymentMethod", paymentMethod);
 
-        // Cart summary (Logic could be refined to only show selected items if 'items' param is used)
+        // Cart summary
         model.addAttribute("cartItems", cart.getItems());
         model.addAttribute("subtotal", cart.getTotalAmount());
-        model.addAttribute("total", cart.getTotalAmount()); 
+        model.addAttribute("total", cart.getTotalAmount());
+        
+        return "checkout/summary"; 
+    }
 
+    @GetMapping("/view")
+    public String paymentViewPage(@RequestParam(name = "orderNumber", required = false) String orderNumber,
+                                  @RequestParam(name = "addressId", required = false) Long addressId,
+                                  @RequestParam(name = "paymentMethod", required = false) String paymentMethod,
+                                  Model model,
+                                  Principal principal) {
+        
+        if (principal == null) {
+            return "redirect:/login";
+        }
+
+        String email = principal.getName();
+        User user = userRepository.findByEmail(email).orElseThrow();
+        
+        model.addAttribute("orderNumber", orderNumber != null ? orderNumber : "Processing...");
+        model.addAttribute("addressId", addressId);
+        model.addAttribute("selectedPaymentMethod", paymentMethod);
+        
         return "payment/view"; 
     }
 }

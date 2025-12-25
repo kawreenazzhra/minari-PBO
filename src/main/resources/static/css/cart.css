@@ -93,7 +93,7 @@
 
 /* jarak antara navbar dan area cart */
 .container.mb-5 {
-  margin-top: 40px !important;
+  margin-top: 100px !important;
   /* geser isi ke bawah */
 }
 
@@ -125,6 +125,13 @@
   color: #555;
   line-height: 1.2;
   margin: 0;
+}
+
+/* Tweak: Lower the right actions (qty/delete) slightly on desktop */
+@media (min-width: 577px) {
+  .cart-item>div:last-child {
+    margin-top: 25px;
+  }
 }
 
 /* === Tampilan Modal Log In agar seperti contoh === */

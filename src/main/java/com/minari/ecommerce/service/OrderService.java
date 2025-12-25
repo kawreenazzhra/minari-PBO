@@ -16,7 +16,7 @@ import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 import jakarta.transaction.Transactional;
 
-import java.time.LocalDate;
+import java.time.LocalDateTime;
 import java.util.*;
 import java.util.stream.Collectors;
 
@@ -47,6 +47,9 @@ public class OrderService {
 
         ShoppingCart cart = cartService.getCartForUser(email);
 
+        System.out.println("[OrderService] Creating order from cart for user: " + email);
+        System.out.println("[OrderService] Cart has " + cart.getItems().size() + " items");
+        
         if (cart.getItems().isEmpty()) {
             throw new RuntimeException("Cart is empty");
         }
@@ -56,6 +59,8 @@ public class OrderService {
             }
         }
         Order order = new Order();
+        order.setOrderNumber("ORD-" + System.currentTimeMillis() + "-" + new Random().nextInt(1000));
+        order.setOrderDate(LocalDateTime.now());
         order.setUser(user);
         if (user instanceof com.minari.ecommerce.entity.Customer) {
             order.setCustomer((com.minari.ecommerce.entity.Customer) user);
@@ -65,8 +70,22 @@ public class OrderService {
              // We could log this event.
              log.warn("Order created by non-customer user: {}", user.getEmail());
         }
-        order.setShippingAddress(shippingAddress);
+        // Create a snapshot of the address for this specific order
+        // This ensures the order is saved correctly to the database by avoiding detached entity errors
+        Address orderAddress = new Address();
+        orderAddress.setRecipientName(shippingAddress.getRecipientName());
+        orderAddress.setPhoneNumber(shippingAddress.getPhoneNumber());
+        orderAddress.setStreetAddress(shippingAddress.getStreetAddress());
+        orderAddress.setCity(shippingAddress.getCity());
+        orderAddress.setProvince(shippingAddress.getProvince());
+        orderAddress.setState(shippingAddress.getState() != null ? shippingAddress.getState() : shippingAddress.getProvince()); // Fallback if state is null
+        orderAddress.setCountry(shippingAddress.getCountry() != null ? shippingAddress.getCountry() : "Indonesia"); // Default if null
+        orderAddress.setZipcode(shippingAddress.getZipcode());
+        // Do NOT set ID, let it generate a new unique ID for this order history record
+        
+        order.setShippingAddress(orderAddress);
         order.setTotalAmount(cart.getTotalAmount());
+        order.setSubtotalAmount(cart.getTotalAmount()); // Set subtotal to avoid null constraint error
 
         List<OrderItem> orderItems = cart.getItems().stream()
                 .map(cartItem -> {
@@ -95,13 +114,22 @@ public class OrderService {
         }
 
         // Save order
-        Order savedOrder = orderRepository.save(order);
+        System.out.println("[OrderService] Saving order...");
+        Order savedOrder = orderRepository.saveAndFlush(order); // Force flush to catch trigger/constraint errors immediately
+        System.out.println("[OrderService] Order saved successfully! Order ID: " + savedOrder.getId() + ", Order Number: " + savedOrder.getOrderNumber());
 
         // Clear cart
+        System.out.println("[OrderService] Clearing cart for user: " + email);
         cartService.clearCart(email);
+        System.out.println("[OrderService] Cart cleared successfully");
 
         // Send confirmation email
-        emailService.sendOrderConfirmation(user.getEmail(), savedOrder);
+        try {
+             emailService.sendOrderConfirmation(user.getEmail(), savedOrder);
+        } catch (Exception e) {
+             log.error("Failed to send order confirmation email", e);
+             // Don't rollback order for email failure
+        }
 
         return savedOrder;
     }
@@ -109,7 +137,7 @@ public class OrderService {
     public List<Order> getUserOrders(String email) {
         User user = userRepository.findByEmail(email)
                 .orElseThrow(() -> new RuntimeException("User not found"));
-        return orderRepository.findByCustomerIdOrderByOrderDateDesc(user.getId());
+        return orderRepository.findByUser_IdOrderByOrderDateDesc(user.getId());
     }
 
     private String generateTrackingNumber() {

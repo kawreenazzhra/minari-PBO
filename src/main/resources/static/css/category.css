@@ -185,6 +185,8 @@ body {
 .p-wish.active {
   border-color: #ffb5c3;
   background: #fff7fa;
+  color: #ff5978;
+  /* Make icon red */
 }
 
 /* hilangkan rounding dan gap antar-kartu benar2 nempel */

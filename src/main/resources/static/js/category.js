@@ -44,11 +44,17 @@ function addToWishlist(productId, buttonElement) {
   // Toggle active state visually
   if (buttonElement) {
     buttonElement.classList.toggle('active');
-    const img = buttonElement.querySelector('img');
-    if (img && buttonElement.classList.contains('active')) {
-      img.src = "/images/whislist-active.png";
-    } else if (img) {
-      img.src = "/images/whislist.png";
+    const icon = buttonElement.querySelector('i');
+    if (icon) {
+      if (buttonElement.classList.contains('active')) {
+        icon.classList.remove('far');
+        icon.classList.add('fas');
+        // If you want it red: icon.style.color = '#e74c3c';
+      } else {
+        icon.classList.remove('fas');
+        icon.classList.add('far');
+        // icon.style.color = '';
+      }
     }
   }
 
@@ -75,9 +81,12 @@ function addToWishlist(productId, buttonElement) {
           showToast(data.message || 'Failed to add to wishlist.', true);
           // Revert visual state
           if (buttonElement) {
-            buttonElement.classList.toggle('active');
-            const img = buttonElement.querySelector('img');
-            if (img) img.src = "/images/whislist.png";
+            buttonElement.classList.remove('active');
+            const icon = buttonElement.querySelector('i');
+            if (icon) {
+              icon.classList.remove('fas');
+              icon.classList.add('far');
+            }
           }
         }
       }
@@ -87,9 +96,12 @@ function addToWishlist(productId, buttonElement) {
       showToast('An error occurred. Please try again.', true);
       // Revert visual state
       if (buttonElement) {
-        buttonElement.classList.toggle('active');
-        const img = buttonElement.querySelector('img');
-        if (img) img.src = "/images/whislist.png";
+        buttonElement.classList.remove('active');
+        const icon = buttonElement.querySelector('i');
+        if (icon) {
+          icon.classList.remove('fas');
+          icon.classList.add('far');
+        }
       }
     });
 }
@@ -108,8 +120,11 @@ function removeFromWishlist(productId, buttonElement, productName) {
         showToast(`"${productName}" removed from wishlist.`);
         if (buttonElement) {
           buttonElement.classList.remove('active');
-          const img = buttonElement.querySelector('img');
-          if (img) img.src = "/images/whislist.png";
+          const icon = buttonElement.querySelector('i');
+          if (icon) {
+            icon.classList.remove('fas');
+            icon.classList.add('far');
+          }
         }
       }
     })
@@ -155,28 +170,20 @@ document.addEventListener('DOMContentLoaded', () => {
     });
   }
 
-  // Add hover effects for wishlist buttons
+  // Hover effects for wishlist heart handled via CSS primarily,
+  // but if we want JS hover for specific icon paths:
   const wishButtons = document.querySelectorAll('.p-wish');
   wishButtons.forEach(button => {
-    // Check initial state (if product is already in wishlist)
-    // This would require an API call to check - for simplicity, we'll assume not
-
     button.addEventListener('mouseenter', function () {
       if (!this.classList.contains('active')) {
-        const img = this.querySelector('img');
-        if (img) {
-          img.src = "/images/whislist-hover.png";
-        }
+        const icon = this.querySelector('i');
+        if (icon) icon.classList.add('fa-beat');
       }
     });
 
     button.addEventListener('mouseleave', function () {
-      if (!this.classList.contains('active')) {
-        const img = this.querySelector('img');
-        if (img) {
-          img.src = "/images/whislist.png";
-        }
-      }
+      const icon = this.querySelector('i');
+      if (icon) icon.classList.remove('fa-beat');
     });
   });
 

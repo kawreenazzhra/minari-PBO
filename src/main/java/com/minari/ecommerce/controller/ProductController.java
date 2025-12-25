@@ -42,8 +42,6 @@ public class ProductController {
 
         model.addAttribute("products", products);
         model.addAttribute("categories", productService.getAllCategories());
-        model.addAttribute("products", products);
-        model.addAttribute("categories", productService.getAllCategories());
 
         // Create simplified category objects for navbar to avoid JSON
         // recursion/overhead

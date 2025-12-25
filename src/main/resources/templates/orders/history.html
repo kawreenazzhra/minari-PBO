@@ -1,0 +1,261 @@
+<!DOCTYPE html>
+<html lang="en" xmlns:th="http://www.thymeleaf.org">
+
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>MINARI | Order History</title>
+
+    <link href="https://cdn.jsdelivr.net/npm/bootstrap@5.3.0/dist/css/bootstrap.min.css" rel="stylesheet">
+    <link
+        href="https://fonts.googleapis.com/css2?family=Playfair+Display:wght@600;700&family=Poppins:wght@300;400;500;600&display=swap"
+        rel="stylesheet">
+    <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.4.0/css/all.min.css">
+
+    <link rel="stylesheet" th:href="@{/css/navbar.css}">
+    <link rel="stylesheet" th:href="@{/css/landing.css}">
+
+    <style>
+        body {
+            background-color: #FFF6F0;
+            font-family: 'Poppins', sans-serif;
+            padding-top: 160px;
+        }
+
+        .page-title {
+            font-family: 'Playfair Display', serif;
+            font-size: 32px;
+            font-weight: 700;
+            color: #1E1E1E;
+            text-align: center;
+            margin: 60px 0;
+        }
+
+        .order-card {
+            background: white;
+            border-radius: 12px;
+            padding: 24px;
+            margin-bottom: 20px;
+            box-shadow: 0 2px 8px rgba(0, 0, 0, 0.08);
+        }
+
+        .order-header {
+            display: flex;
+            justify-content: space-between;
+            align-items: center;
+            margin-bottom: 20px;
+            padding-bottom: 16px;
+            border-bottom: 1px solid #f0f0f0;
+        }
+
+        .order-number {
+            font-weight: 600;
+            font-size: 16px;
+            color: #1E1E1E;
+        }
+
+        .order-date {
+            font-size: 14px;
+            color: #666;
+        }
+
+        .order-item {
+            display: flex;
+            gap: 16px;
+            margin-bottom: 16px;
+        }
+
+        .item-image {
+            width: 80px;
+            height: 80px;
+            object-fit: cover;
+            border-radius: 8px;
+        }
+
+        .item-details {
+            flex: 1;
+        }
+
+        .item-name {
+            font-weight: 600;
+            font-size: 15px;
+            color: #1E1E1E;
+            margin-bottom: 4px;
+        }
+
+        .item-qty {
+            font-size: 14px;
+            color: #666;
+            margin-bottom: 4px;
+        }
+
+        .item-price {
+            font-size: 14px;
+            color: #d68c78;
+            font-weight: 600;
+        }
+
+        .order-footer {
+            display: flex;
+            justify-content: space-between;
+            align-items: center;
+            padding-top: 16px;
+            border-top: 1px solid #f0f0f0;
+        }
+
+        .order-info {
+            display: flex;
+            flex-direction: column;
+            gap: 8px;
+        }
+
+        .info-row {
+            display: flex;
+            align-items: center;
+            gap: 8px;
+            font-size: 14px;
+            color: #666;
+        }
+
+        .info-label {
+            font-weight: 500;
+        }
+
+        .order-total {
+            font-size: 18px;
+            font-weight: 700;
+            color: #1E1E1E;
+        }
+
+        .btn-view-details {
+            background: white;
+            border: 2px solid #1E1E1E;
+            color: #1E1E1E;
+            padding: 10px 24px;
+            border-radius: 8px;
+            font-weight: 600;
+            font-size: 14px;
+            text-decoration: none;
+            transition: all 0.3s;
+        }
+
+        .btn-view-details:hover {
+            background: #1E1E1E;
+            color: white;
+        }
+
+        .empty-state {
+            text-align: center;
+            padding: 60px 20px;
+        }
+
+        .empty-state-icon {
+            font-size: 64px;
+            color: #d68c78;
+            margin-bottom: 20px;
+        }
+
+        .empty-state-title {
+            font-size: 24px;
+            font-weight: 600;
+            color: #1E1E1E;
+            margin-bottom: 12px;
+        }
+
+        .empty-state-text {
+            font-size: 16px;
+            color: #666;
+            margin-bottom: 24px;
+        }
+
+        .btn-shop-now {
+            background: #1E1E1E;
+            color: white;
+            padding: 12px 32px;
+            border-radius: 8px;
+            font-weight: 600;
+            text-decoration: none;
+            display: inline-block;
+        }
+
+        .btn-shop-now:hover {
+            background: #333;
+            color: white;
+        }
+    </style>
+</head>
+
+<body>
+    <script th:inline="javascript">
+        window.APP_ROLE = /*[[${#authorization.expression('isAuthenticated()') ? (#authorization.expression('hasRole(''ADMIN'')') ? 'admin' : 'user') : 'guest'}]]*/ 'guest';
+    </script>
+    <header id="navMount"></header>
+
+    <div class="container" style="max-width: 900px; margin-bottom: 60px;">
+        <h1 class="page-title">Order History</h1>
+
+        <!-- Empty State -->
+        <div th:if="${orders == null || orders.empty}" class="empty-state">
+            <div class="empty-state-icon">
+                <i class="fas fa-shopping-bag"></i>
+            </div>
+            <h2 class="empty-state-title">No Orders Yet</h2>
+            <p class="empty-state-text">You haven't placed any orders. Start shopping now!</p>
+            <a th:href="@{/}" class="btn-shop-now">Start Shopping</a>
+        </div>
+
+        <!-- Order List -->
+        <div th:if="${orders != null && !orders.empty}">
+            <div th:each="order : ${orders}" class="order-card">
+                <!-- Order Header -->
+                <div class="order-header">
+                    <div>
+                        <div class="order-number" th:text="'Order ' + ${order.orderNumber}">Order MIN20251222C4IAB</div>
+                        <div class="order-date" th:text="${#temporals.format(order.orderDate, 'dd MMM yyyy')}">22 Dec
+                            2025</div>
+                    </div>
+                </div>
+
+                <!-- Order Items -->
+                <div th:each="item : ${order.items}" class="order-item">
+                    <img th:src="@{${item.product.imageUrl}}" class="item-image" alt="Product"
+                        onerror="this.src='/images/default-product.jpg'">
+                    <div class="item-details">
+                        <div class="item-name" th:text="${item.product.name}">Blue sweater</div>
+                        <div class="item-qty" th:text="'Qty: ' + ${item.quantity}">Qty: 1</div>
+                        <div class="item-price"
+                            th:text="'Rp ' + ${#numbers.formatDecimal(item.unitPrice, 0, 'POINT', 0, 'COMMA')}">Rp
+                            189.000
+                        </div>
+                    </div>
+                </div>
+
+                <!-- Order Footer -->
+                <div class="order-footer">
+                    <div class="order-info">
+                        <div class="info-row">
+                            <i class="fas fa-map-marker-alt" style="color: #d68c78;"></i>
+                            <span class="info-label">Delivered to:</span>
+                            <span th:text="${order.shippingAddress.recipientName}">jalan melati</span>
+                        </div>
+                        <div class="info-row">
+                            <i class="fas fa-credit-card" style="color: #d68c78;"></i>
+                            <span class="info-label">Payment Method:</span>
+                            <span th:text="${order.payment.paymentMethod.name().replace('_', ' ')}">bank_transfer</span>
+                        </div>
+                        <div class="order-total"
+                            th:text="'Total: Rp ' + ${#numbers.formatDecimal(order.totalAmount, 0, 'POINT', 0, 'COMMA')}">
+                            Total: Rp 204.000
+                        </div>
+                    </div>
+                    <a th:href="@{/order-history/{id}(id=${order.id})}" class="btn-view-details">View Details</a>
+                </div>
+            </div>
+        </div>
+    </div>
+
+    <script src="https://cdn.jsdelivr.net/npm/bootstrap@5.3.0/dist/js/bootstrap.bundle.min.js"></script>
+    <script th:src="@{/js/navbar.js}"></script>
+</body>
+
+</html>

@@ -14,28 +14,32 @@
 </head>
 
 <body>
-    <div layout:fragment="content">
+    <div layout:fragment="content" class="py-5" style="margin-top: 60px;">
+        <!-- Shared Title -->
+        <div class="container mb-4">
+            <h1 class="wish-title">Wishlist</h1>
+        </div>
+
         <!-- Guest Gate: Shown if NOT authenticated -->
-        <!-- We can control visibility both via Thymeleaf and JS. 
-             Reference uses JS to flip display:none. We'll stick to that to match reference behavior exactly. -->
         <main id="gate" class="gate-wrap" style="display: none;">
             <div class="container">
                 <div class="gate-panel mx-auto">
-                    <h1 class="gate-title">
-                        You haven't logged in yet<br>
-                        Please log in to continue
-                    </h1>
-                    <a id="loginBtn" class="gate-btn" th:href="@{/login}">Log in</a>
+                    <h3 class="mb-2" style="font-weight: 600; font-size: 1.5rem; color: #333;">Your wishlist is empty
+                    </h3>
+                    <p class="text-muted mb-4">Log in to save your favorite items</p>
+                    <div class="d-flex gap-3 justify-content-center">
+                        <a th:href="@{/login}" class="btn btn-primary px-4"
+                            style="background-color: #0d6efd; border-color: #0d6efd; min-width: 100px;">Log In</a>
+                        <a th:href="@{/register}" class="btn btn-outline-primary px-4"
+                            style="color: #0d6efd; border-color: #0d6efd; min-width: 100px;">Sign Up</a>
+                    </div>
                 </div>
             </div>
         </main>
 
         <!-- Wishlist Content: Shown if authenticated (by JS) -->
-        <section id="wishContent" class="wish-wrap">
+        <section id="wishContent" class="wish-wrap pt-0">
             <div class="container">
-                <!-- Title -->
-                <h1 class="wish-title">Wishlist</h1>
-
                 <!-- Top meta line -->
                 <div class="wish-meta">
                     <div>

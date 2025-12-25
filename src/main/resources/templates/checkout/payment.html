@@ -1,0 +1,207 @@
+<!DOCTYPE html>
+<html lang="en" xmlns:th="http://www.thymeleaf.org">
+
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>MINARI | Payment Method</title>
+
+    <link href="https://cdn.jsdelivr.net/npm/bootstrap@5.3.0/dist/css/bootstrap.min.css" rel="stylesheet">
+    <link
+        href="https://fonts.googleapis.com/css2?family=Playfair+Display:wght@600;700&family=Poppins:wght@300;400;500;600&display=swap"
+        rel="stylesheet">
+    <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.4.0/css/all.min.css">
+
+    <link rel="stylesheet" th:href="@{/css/navbar.css}">
+    <link rel="stylesheet" th:href="@{/css/landing.css}">
+
+    <style>
+        body {
+            background-color: #FFF6F0;
+            font-family: 'Poppins', sans-serif;
+        }
+
+        .page-header {
+            padding: 20px 0;
+            border-bottom: 1px solid #ead9d2;
+            background: #FFF6F0;
+        }
+
+        .back-link {
+            color: #1E1E1E;
+            text-decoration: none;
+            font-size: 14px;
+            font-weight: 500;
+        }
+
+        .payment-option-card {
+            background: white;
+            border: 1px solid #1E1E1E;
+            /* Dark border as per design */
+            border-radius: 8px;
+            /* Slightly rounded */
+            padding: 15px 20px;
+            margin-bottom: 20px;
+            display: flex;
+            align-items: center;
+            cursor: pointer;
+            transition: all 0.2s;
+        }
+
+        .payment-option-card:hover {
+            background-color: #fcfcfc;
+        }
+
+        .payment-input {
+            display: none;
+        }
+
+        /* Custom Radio Button Style */
+        .custom-radio {
+            width: 24px;
+            height: 24px;
+            border: 1px solid #1E1E1E;
+            border-radius: 50%;
+            margin-right: 15px;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            background: #d9d9d9;
+        }
+
+        .selected-bg .custom-radio {
+            background: #d68c78;
+            /* Peach/Pink fill for selected */
+            border-color: #1E1E1E;
+        }
+
+        .custom-radio::after {
+            content: '';
+            width: 8px;
+            height: 8px;
+            background: #1E1E1E;
+            /* Black dot */
+            border-radius: 50%;
+            display: none;
+        }
+
+        .selected-bg .custom-radio::after {
+            display: block;
+        }
+
+
+
+        /* Wait, can't style parent based on child input easily without :has.
+           I'll wrap input OUTSIDE or put label as the wrapper. */
+
+        .payment-label {
+            width: 100%;
+            height: 100%;
+            margin: 0;
+            cursor: pointer;
+            display: flex;
+            /* Make label behave like the card */
+            align-items: center;
+        }
+
+        .payment-text {
+            font-weight: 500;
+            font-size: 16px;
+            color: #1E1E1E;
+            font-family: 'Playfair Display', serif;
+            /* Or Poppins? Screenshot looks serif-ish or just bold. Let's stick to Poppins for UI text usually. */
+            font-family: 'Poppins', sans-serif;
+        }
+
+        .selected-bg {
+            background-color: #FFF0EB;
+            /* Light pink bg for selected */
+            border: 1px solid #d68c78;
+            /* Pink border */
+        }
+    </style>
+</head>
+
+<body>
+    <!-- Header with Back Link -->
+    <div class="page-header">
+        <div class="container">
+            <a th:href="@{/payment(addressId=${addressId}, paymentMethod=${selectedPaymentMethod})}" class="back-link">
+                <i class="fas fa-arrow-left me-2"></i> Back to order
+            </a>
+        </div>
+    </div>
+
+    <script th:inline="javascript">
+        window.APP_ROLE = /*[[${#authorization.expression('isAuthenticated()') ? (#authorization.expression('hasRole(''ADMIN'')') ? 'admin' : 'user') : 'guest'}]]*/ 'guest';
+    </script>
+    <header id="navMount"></header>
+
+    <div class="container" style="max-width: 600px; margin-top: 40px;">
+
+        <!-- Payment Options List -->
+
+        <!-- Cash on Delivery -->
+        <a href="javascript:void(0)" onclick="selectAndRedirect('cod')" style="text-decoration: none; color: inherit;">
+            <div class="payment-option-card" th:classappend="${selectedPaymentMethod == 'cod'} ? 'selected-bg' : ''"
+                id="payment-cod">
+                <div class="custom-radio"></div>
+                <span class="payment-text">Cash on Delivery</span>
+            </div>
+        </a>
+
+        <!-- Virtual Account -->
+        <a href="javascript:void(0)" onclick="selectAndRedirect('bank_transfer')"
+            style="text-decoration: none; color: inherit;">
+            <div class="payment-option-card"
+                th:classappend="${selectedPaymentMethod == 'bank_transfer'} ? 'selected-bg' : ''"
+                id="payment-bank_transfer">
+                <div class="custom-radio"></div>
+                <span class="payment-text">Virtual account transfer</span>
+            </div>
+        </a>
+
+        <!-- E-Wallet -->
+        <a href="javascript:void(0)" onclick="selectAndRedirect('e_wallet')"
+            style="text-decoration: none; color: inherit;">
+            <div class="payment-option-card"
+                th:classappend="${selectedPaymentMethod == 'e_wallet'} ? 'selected-bg' : ''" id="payment-e_wallet">
+                <div class="custom-radio"></div>
+                <span class="payment-text">E-wallet</span>
+            </div>
+        </a>
+
+    </div>
+
+    <script src="https://cdn.jsdelivr.net/npm/bootstrap@5.3.0/dist/js/bootstrap.bundle.min.js"></script>
+    <script th:src="@{/js/navbar.js}"></script>
+    <script th:inline="javascript">
+        const addressId = /*[[${addressId}]]*/ null;
+
+        function selectAndRedirect(paymentMethod) {
+            // Remove selected class from all cards
+            document.querySelectorAll('.payment-option-card').forEach(card => {
+                card.classList.remove('selected-bg');
+            });
+
+            // Add selected class to clicked card for visual feedback
+            const selectedCard = document.getElementById('payment-' + paymentMethod);
+            if (selectedCard) {
+                selectedCard.classList.add('selected-bg');
+            }
+
+            // Build redirect URL
+            let redirectUrl = '/payment?paymentMethod=' + paymentMethod;
+            if (addressId && addressId !== 'null' && addressId !== '') {
+                redirectUrl += '&addressId=' + addressId;
+            }
+
+            // Redirect after 800ms delay (visual feedback time)
+            setTimeout(function () {
+                window.location.href = redirectUrl;
+            }, 800);
+        }
+    </script>
+</body>
+
+</html>

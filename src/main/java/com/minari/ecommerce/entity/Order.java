@@ -355,6 +355,7 @@ public class Order {
 
     public void createShipment(String trackingNumber, String shipmentMethod) {
         Shipment shipment = new Shipment(this.orderNumber, trackingNumber, shipmentMethod, this.shippingAddress);
+        shipment.setOrder(this); // Fix: Set the relationship so FK is populated
         this.shipment = shipment;
     }
 }

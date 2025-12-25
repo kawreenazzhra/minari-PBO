@@ -1,0 +1,80 @@
+<!DOCTYPE html>
+<html lang="en" xmlns:th="http://www.thymeleaf.org">
+
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>MINARI | Checkout</title>
+
+    <!-- CSRF Tokens -->
+    <meta name="_csrf" th:content="${_csrf.token}" />
+    <meta name="_csrf_header" th:content="${_csrf.headerName}" />
+    <meta name="csrf-token" th:content="${_csrf.token}" />
+
+    <!-- App Scripts Variables (Required for Navbar) -->
+    <script th:inline="javascript">
+        /*<![CDATA[*/
+        window.APP_ROLE = /*[[${#authorization.expression('isAuthenticated()') ? (#authorization.expression('hasRole(''ADMIN'')') ? 'admin' : 'user') : 'guest'}]]*/ 'guest';
+        window.APP_URL = /*[[@{/}]]*/ '/';
+        window.CSRF_TOKEN = /*[[${_csrf.token}]]*/ '';
+        /*]]>*/
+    </script>
+
+    <link href="https://cdn.jsdelivr.net/npm/bootstrap@5.3.0/dist/css/bootstrap.min.css" rel="stylesheet">
+    <link
+        href="https://fonts.googleapis.com/css2?family=Playfair+Display:wght@600;700&family=Poppins:wght@300;400;500;600&display=swap"
+        rel="stylesheet">
+    <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.4.0/css/all.min.css">
+
+    <!-- Core Styles -->
+    <link rel="stylesheet" th:href="@{/css/navbar.css}">
+    <link rel="stylesheet" th:href="@{/css/landing.css}">
+    <link rel="stylesheet" th:href="@{/css/payment.css}">
+</head>
+
+<body>
+    <!-- Navbar Mount Point -->
+    <header id="navMount"></header>
+
+    <!-- Main Content -->
+    <div class="content-wrapper">
+        <div class="container mb-5" style="margin-top: 100px;">
+            <h2 class="page-title text-center">Checkout</h2>
+
+            <form th:action="@{/checkout/place}" method="post" id="checkoutForm">
+
+                <!-- Product List Card (Fragment) -->
+                <div th:replace="~{checkout/summary :: summaryFragment}"></div>
+
+                <!-- Shipping Address Card (Fragment) -->
+                <div th:replace="~{checkout/address :: addressFragment}"></div>
+
+                <div th:replace="~{checkout/summary :: productList}"></div>
+                <div th:replace="~{checkout/address :: addressFragment}"></div>
+                <div th:replace="~{checkout/summary :: orderTotals}"></div>
+                <div th:replace="~{checkout/payment :: paymentFragment}"></div>
+
+                <!-- Sticky Bottom Bar -->
+                <div class="bottom-bar">
+                    <div class="container d-flex justify-content-between align-items-center">
+                        <div>
+                            <div class="total-label">Total:</div>
+                            <div class="total-val" th:with="shipping=15000, currentTotal=${total ?: 0}"
+                                th:text="'Rp ' + ${#numbers.formatDecimal(currentTotal + shipping, 0, 'POINT', 0, 'COMMA')}">
+                                Rp 0</div>
+                        </div>
+                        <button type="submit" class="btn-checkout">Check Out</button>
+                    </div>
+                </div>
+
+            </form>
+        </div>
+        <div style="height: 120px;"></div>
+    </div>
+
+    <!-- Scripts -->
+    <script src="https://cdn.jsdelivr.net/npm/bootstrap@5.3.0/dist/js/bootstrap.bundle.min.js"></script>
+    <script th:src="@{/js/navbar.js}"></script>
+</body>
+
+</html>

@@ -251,23 +251,8 @@ window.addToCart = async function (productId, productName, price, image = '', qu
 
         const data = await response.json();
         if (data.success) {
-            // alert('Item added to cart!'); // REPLACED WITH TOAST
-
-            const toastEl = document.getElementById('miniToast');
-            if (toastEl && window.bootstrap) {
-                const toastBody = document.getElementById('toastMessage');
-                if (toastBody) toastBody.innerText = 'Item has been added to your cart.';
-                const toast = window.bootstrap.Toast.getOrCreateInstance(toastEl);
-                toast.show();
-            } else {
-                // Fallback if toast not present
-                console.log('Item added to cart');
-            }
-
-            // Update cart count in navbar if available
-            if (window.NavbarRole?.updateCartCount) {
-                window.NavbarRole.updateCartCount(data.cart_count);
-            }
+            // Redirect to cart immediately as requested
+            window.location.href = '/cart';
             return true;
         }
     } catch (error) {

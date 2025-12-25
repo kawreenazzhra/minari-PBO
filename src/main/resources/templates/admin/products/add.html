@@ -20,7 +20,7 @@
         </div>
 
         <div class="form-container">
-            <form id="addProductForm" th:action="@{/admin/products/store}" method="POST" enctype="multipart/form-data">
+            <form id="addProductForm" th:action="@{/admin/products}" method="POST" enctype="multipart/form-data">
                 <!-- CSRF Token -->
                 <input type="hidden" th:name="${_csrf.parameterName}" th:value="${_csrf.token}" />
 

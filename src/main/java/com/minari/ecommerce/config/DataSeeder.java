@@ -4,6 +4,9 @@ import com.minari.ecommerce.entity.*;
 import com.minari.ecommerce.repository.UserRepository;
 import com.minari.ecommerce.repository.ProductRepository;
 import com.minari.ecommerce.repository.ProductCategoryRepository;
+import com.minari.ecommerce.repository.PromotionRepository;
+import java.time.LocalDateTime;
+
 import org.springframework.boot.CommandLineRunner;
 import org.springframework.security.crypto.password.PasswordEncoder;
 import org.springframework.stereotype.Component;
@@ -15,15 +18,18 @@ public class DataSeeder implements CommandLineRunner {
     private final UserRepository userRepository;
     private final ProductRepository productRepository;
     private final ProductCategoryRepository categoryRepository;
+    private final PromotionRepository promotionRepository;
     private final PasswordEncoder passwordEncoder;
 
     public DataSeeder(UserRepository userRepository,
             ProductRepository productRepository,
             ProductCategoryRepository categoryRepository,
+            PromotionRepository promotionRepository,
             PasswordEncoder passwordEncoder) {
         this.userRepository = userRepository;
         this.productRepository = productRepository;
         this.categoryRepository = categoryRepository;
+        this.promotionRepository = promotionRepository;
         this.passwordEncoder = passwordEncoder;
     }
 
@@ -32,8 +38,9 @@ public class DataSeeder implements CommandLineRunner {
     public void run(String... args) throws Exception {
         System.out.println("🌱 Starting data seeding...");
 
-        // Only create users - Categories will be created by Admin via UI
+        // Only create users - Categories and Promotions will be created by Admin via UI
         createUsers();
+        // createPromotions(); // REMOVED to ensure empty home page
 
         System.out.println("🎉 Data seeding completed successfully!");
         System.out.println("==========================================");
@@ -89,4 +96,6 @@ public class DataSeeder implements CommandLineRunner {
             throw new RuntimeException("Failed to seed data", e);
         }
     }
+
+    // private void createPromotions() { ... } (Removed)
 }

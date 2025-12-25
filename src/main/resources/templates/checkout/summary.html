@@ -1,0 +1,245 @@
+<!DOCTYPE html>
+<html lang="en" xmlns:th="http://www.thymeleaf.org">
+
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>MINARI | Checkout</title>
+
+    <!-- CSRF Tokens -->
+    <meta name="_csrf" th:content="${_csrf.token}" />
+    <meta name="_csrf_header" th:content="${_csrf.headerName}" />
+
+    <link href="https://cdn.jsdelivr.net/npm/bootstrap@5.3.0/dist/css/bootstrap.min.css" rel="stylesheet">
+    <link
+        href="https://fonts.googleapis.com/css2?family=Playfair+Display:wght@600;700&family=Poppins:wght@300;400;500;600&display=swap"
+        rel="stylesheet">
+    <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.4.0/css/all.min.css">
+
+    <!-- Core Styles -->
+    <link rel="stylesheet" th:href="@{/css/navbar.css}">
+    <link rel="stylesheet" th:href="@{/css/landing.css}">
+    <link rel="stylesheet" th:href="@{/css/payment.css}">
+    <style>
+        .summary-link-card {
+            background: #FFF6F0;
+            border: 1px solid #ead9d2;
+            /* Light border matching theme */
+            border-radius: 8px;
+            /* Slightly less rounded than others */
+            padding: 15px 20px;
+            margin-bottom: 24px;
+            display: flex;
+            justify-content: space-between;
+            align-items: center;
+            cursor: pointer;
+            text-decoration: none;
+            color: inherit;
+        }
+
+        .summary-link-card:hover {
+            border-color: #f99d84;
+            background: #fff;
+        }
+
+        .summary-label {
+            font-weight: 700;
+            font-size: 16px;
+            color: #1E1E1E;
+            font-family: 'Playfair Display', serif;
+        }
+
+        .summary-value {
+            text-align: right;
+            font-size: 14px;
+            color: #333;
+        }
+
+        .summary-value .main-text {
+            font-weight: 700;
+            display: block;
+        }
+
+        .summary-value .sub-text {
+            color: #666;
+            font-size: 12px;
+        }
+    </style>
+</head>
+
+<body>
+    <!-- Navbar Mount Point -->
+    <header id="navMount"></header>
+    <script th:inline="javascript">
+        /*<![CDATA[*/
+        window.APP_ROLE = /*[[${#authorization.expression('isAuthenticated()') ? (#authorization.expression('hasRole(''ADMIN'')') ? 'admin' : 'user') : 'guest'}]]*/ 'guest';
+        /*]]>*/
+    </script>
+
+    <!-- Main Content -->
+    <div class="content-wrapper">
+        <div class="container mb-5" style="margin-top: 100px;">
+            <h2 class="page-title text-center">Checkout</h2>
+
+            <form th:action="@{/checkout/place}" method="post" id="checkoutForm">
+                <input type="hidden" name="addressId" th:value="${selectedAddress != null ? selectedAddress.id : ''}">
+                <input type="hidden" name="payment_method" th:value="${selectedPaymentMethod ?: ''}">
+
+                <!-- Product List Card -->
+                <div class="checkout-card">
+                    <div th:each="item : ${cartItems}" class="item-row" th:if="${cartItems != null}">
+                        <img th:src="@{${(item.product?.imageUrl) ?: '/images/default-product.jpg'}}" class="item-thumb"
+                            onerror="this.src='/images/default-product.jpg'">
+                        <div class="item-info">
+                            <div class="item-name" th:text="${item.product?.name ?: 'Unknown Product'}">Product Name
+                            </div>
+                            <div>
+                                <span
+                                    th:text="${(item.quantity ?: 1) + ' x Rp ' + #numbers.formatDecimal((item.unitPrice ?: 0), 0, 'POINT', 0, 'COMMA')}">1
+                                    x Rp 189.000</span>
+                            </div>
+                        </div>
+                        <div class="ms-auto fw-bold"
+                            th:text="'Rp ' + ${#numbers.formatDecimal((item.subtotal ?: 0), 0, 'POINT', 0, 'COMMA')}">
+                            Rp 189.000
+                        </div>
+                    </div>
+                </div>
+
+                <!-- Payment Method Link -->
+                <a th:href="@{/checkout/payment(addressId=${addressId})}" class="summary-link-card"
+                    th:style="${selectedPaymentMethod == null ? 'border: 1px dashed #d68c78;' : ''}">
+                    <div class="summary-label">Payment method</div>
+                    <div class="summary-value">
+                        <span class="main-text"
+                            th:text="${selectedPaymentMethod != null ? (selectedPaymentMethod == 'cod' ? 'Cash on Delivery' : (selectedPaymentMethod == 'bank_transfer' ? 'Bank Transfer' : (selectedPaymentMethod == 'e_wallet' ? 'E-Wallet' : 'Credit Card'))) : 'Select Payment Method'}">Virtual
+                            Account Transfer</span>
+                    </div>
+                    <i class="fas fa-chevron-right ms-3 text-dark"></i>
+                </a>
+
+                <!-- Shipping Address Link -->
+                <!-- Includes paymentMethod so it persists when returning -->
+                <a th:href="@{/checkout/address(addressId=${addressId}, paymentMethod=${selectedPaymentMethod})}"
+                    class="summary-link-card">
+                    <div class="summary-label">Shipping to</div>
+                    <div class="summary-value">
+                        <!-- Format: Type (Name) - e.g., home (aya) -->
+                        <span class="main-text"
+                            th:text="${selectedAddress != null ? ((selectedAddress.addressType ?: 'Address') + ' (' + selectedAddress.recipientName + ')') : 'Select Address'}">home
+                            (aya)</span>
+                        <!-- Address Line -->
+                        <span class="sub-text"
+                            th:text="${selectedAddress != null ? (selectedAddress.streetAddress + ', ' + selectedAddress.city) : 'Please select address'}">jalan
+                            jalan, bandoeng</span>
+                    </div>
+                    <i class="fas fa-chevron-right ms-3 text-dark"></i>
+                </a>
+
+                <!-- Subtotal Card -->
+                <div class="checkout-card">
+                    <h5 class="mb-3"
+                        style="font-family: 'Playfair Display', serif; font-weight: 700; font-size: 18px; color: #1E1E1E;">
+                        Subtotal product</h5>
+
+                    <div class="summary-row">
+                        <span th:text="${cartItems != null ? #lists.size(cartItems) : 0} + ' Product(s)'">1
+                            Product(s)</span>
+                        <span th:text="'Rp ' + ${#numbers.formatDecimal((subtotal ?: 0), 0, 'POINT', 0, 'COMMA')}">Rp
+                            189.000</span>
+                    </div>
+
+                    <div class="summary-row">
+                        <span>Shipping fee</span>
+                        <span>Rp 15.000</span>
+                    </div>
+
+                    <hr style="border-top: 1px solid #ddd; margin: 15px 0;">
+
+                    <div class="summary-total" style="border: none; padding-top:0; margin-top:0;">
+                        <span
+                            style="color:#1E1E1E; font-family: 'Playfair Display', serif; font-weight: 700; font-size: 16px;">Total</span>
+                        <span style="font-weight: 700; color: #1E1E1E;"
+                            th:with="shipping=15000, currentTotal=${total ?: 0}"
+                            th:text="'Rp ' + ${#numbers.formatDecimal(currentTotal + shipping, 0, 'POINT', 0, 'COMMA')}">Rp
+                            204.000</span>
+                    </div>
+                </div>
+
+                <!-- Payment Method Link -->
+                <!-- Includes addressId so it persists when returning -->
+                <a th:href="@{/checkout/payment(addressId=${addressId}, paymentMethod=${selectedPaymentMethod})}"
+                    class="summary-link-card">
+                    <div class="summary-label">Payment method</div>
+                    <div class="summary-value" style="display: flex; align-items: center; gap: 10px;">
+                        <span class="main-text"
+                            th:text="${selectedPaymentMethod == 'bank_transfer' ? 'Virtual Account Transfer' : (selectedPaymentMethod == 'e_wallet' ? 'E-Wallet' : (selectedPaymentMethod == 'cod' ? 'Cash on Delivery' : 'Select Payment'))}">Select
+                            Payment</span>
+                    </div>
+                    <i class="fas fa-chevron-right ms-3 text-dark"></i>
+                </a>
+
+                <!-- Sticky Bottom Bar -->
+                <div class="bottom-bar"
+                    style="position: fixed; bottom: 0; left: 0; right: 0; background: #f4c2b8; padding: 12px 30px; z-index: 1000;">
+                    <div class="d-flex justify-content-between align-items-center">
+                        <div class="total-label" style="color: #4A3B34; font-size: 16px;">
+                            Total: <span style="font-weight: 700; font-size: 18px;"
+                                th:with="shipping=15000, currentTotal=${total ?: 0}"
+                                th:text="'Rp ' + ${#numbers.formatDecimal(currentTotal + shipping, 0, 'POINT', 0, 'COMMA')}">Rp
+                                204.000</span>
+                        </div>
+                        <button type="submit" class="btn-checkout"
+                            style="background: #FFF6F0; border: none; color: #d68c78; padding: 12px 32px; border-radius: 8px; font-weight: 600; font-size: 16px; cursor: pointer;">
+                            Check Out
+                        </button>
+                    </div>
+                </div>
+
+            </form>
+        </div>
+        <div style="height: 120px;"></div>
+    </div>
+
+    <!-- Scripts -->
+    <script src="https://cdn.jsdelivr.net/npm/bootstrap@5.3.0/dist/js/bootstrap.bundle.min.js"></script>
+    <script th:src="@{/js/navbar.js}"></script>
+    <script>
+        // Debug: Log payment method on page load
+        document.addEventListener('DOMContentLoaded', function () {
+            const form = document.getElementById('checkoutForm');
+            const addressIdInput = form.querySelector('input[name="addressId"]');
+            const paymentMethodInput = form.querySelector('input[name="payment_method"]');
+
+            console.log('=== CHECKOUT SUMMARY PAGE LOADED ===');
+            console.log('Address ID:', addressIdInput ? addressIdInput.value : 'NOT FOUND');
+            console.log('Payment Method:', paymentMethodInput ? paymentMethodInput.value : 'NOT FOUND');
+            console.log('URL:', window.location.href);
+        });
+
+        function submitCheckoutForm() {
+            const form = document.getElementById('checkoutForm');
+            const addressId = form.querySelector('input[name="addressId"]').value;
+            const paymentMethod = form.querySelector('input[name="payment_method"]').value;
+
+            console.log('=== CHECKOUT BUTTON CLICKED ===');
+            console.log('Address ID:', addressId);
+            console.log('Payment Method:', paymentMethod);
+
+            if (!addressId || addressId === 'null' || addressId === '') {
+                alert('⚠️ Please select a shipping address first!\n\nClick on "Shipping to" to choose your address.');
+                return;
+            }
+
+            if (!paymentMethod || paymentMethod === 'null' || paymentMethod === '') {
+                alert('⚠️ Please select a payment method first!\n\nClick on "Payment method" to choose how you want to pay.');
+                return;
+            }
+
+            console.log('✅ Validation passed, submitting form to:', form.action);
+            form.submit();
+        }
+    </script>
+</body>
+
+</html>

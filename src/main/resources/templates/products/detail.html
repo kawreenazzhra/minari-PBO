@@ -1,0 +1,337 @@
+<!DOCTYPE html>
+<html lang="en" xmlns:th="http://www.thymeleaf.org">
+
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <meta name="_csrf" th:content="${_csrf.token}" />
+    <meta name="_csrf_header" th:content="${_csrf.headerName}" />
+    <title th:text="${pageTitle}">Product Detail - MINARI</title>
+
+    <link href="https://cdn.jsdelivr.net/npm/bootstrap@5.3.0/dist/css/bootstrap.min.css" rel="stylesheet">
+    <link
+        href="https://fonts.googleapis.com/css2?family=Playfair+Display:wght@600;700&family=Poppins:wght@300;400;500;600&display=swap"
+        rel="stylesheet">
+    <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.4.0/css/all.min.css">
+
+    <link rel="stylesheet" th:href="@{/css/navbar.css}">
+    <link rel="stylesheet" th:href="@{/css/landing.css}">
+
+    <style>
+        body {
+            background-color: #FFF6F0;
+            font-family: 'Poppins', sans-serif;
+            padding-top: 140px;
+        }
+
+        .product-container {
+            max-width: 1200px;
+            margin: 80px auto;
+            padding: 0 20px;
+        }
+
+        .product-detail {
+            display: grid;
+            grid-template-columns: 1fr 1fr;
+            gap: 60px;
+            margin-bottom: 60px;
+        }
+
+        .product-image-container {
+            background: white;
+            border-radius: 12px;
+            padding: 40px;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+        }
+
+        .product-image {
+            max-width: 100%;
+            max-height: 500px;
+            object-fit: contain;
+        }
+
+        .product-info {
+            display: flex;
+            flex-direction: column;
+            gap: 20px;
+        }
+
+        .product-name {
+            font-family: 'Playfair Display', serif;
+            font-size: 32px;
+            font-weight: 700;
+            color: #1E1E1E;
+        }
+
+        .product-price {
+            font-size: 24px;
+            font-weight: 600;
+            color: #d68c78;
+        }
+
+        .product-description-section {
+            margin-top: 20px;
+        }
+
+        .section-title {
+            font-weight: 600;
+            font-size: 16px;
+            color: #1E1E1E;
+            margin-bottom: 12px;
+        }
+
+        .product-description {
+            font-size: 14px;
+            color: #666;
+            line-height: 1.6;
+        }
+
+        .product-category {
+            display: inline-block;
+            background: #f4c2b8;
+            color: #1E1E1E;
+            padding: 6px 16px;
+            border-radius: 20px;
+            font-size: 14px;
+            font-weight: 500;
+        }
+
+        .quantity-selector {
+            display: flex;
+            align-items: center;
+            gap: 12px;
+            margin-top: 20px;
+        }
+
+        .qty-btn {
+            width: 40px;
+            height: 40px;
+            border: 1px solid #1E1E1E;
+            background: white;
+            border-radius: 8px;
+            font-size: 18px;
+            cursor: pointer;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+        }
+
+        .qty-btn:hover {
+            background: #f0f0f0;
+        }
+
+        .qty-input {
+            width: 60px;
+            height: 40px;
+            text-align: center;
+            border: 1px solid #ddd;
+            border-radius: 8px;
+            font-size: 16px;
+        }
+
+        .btn-add-to-cart {
+            background: #1E1E1E;
+            color: white;
+            border: none;
+            padding: 14px 32px;
+            border-radius: 8px;
+            font-weight: 600;
+            font-size: 16px;
+            cursor: pointer;
+            margin-top: 20px;
+            width: 100%;
+            max-width: 300px;
+        }
+
+        .btn-add-to-cart:hover {
+            background: #333;
+        }
+
+        .reviews-section {
+            background: white;
+            border-radius: 12px;
+            padding: 30px;
+            margin-top: 40px;
+        }
+
+        .reviews-header {
+            font-size: 20px;
+            font-weight: 600;
+            margin-bottom: 24px;
+        }
+
+        .review-item {
+            border-bottom: 1px solid #f0f0f0;
+            padding: 20px 0;
+        }
+
+        .review-item:last-child {
+            border-bottom: none;
+        }
+
+        .review-author {
+            display: flex;
+            align-items: center;
+            gap: 12px;
+            margin-bottom: 8px;
+        }
+
+        .review-author-icon {
+            width: 32px;
+            height: 32px;
+            background: #f4c2b8;
+            border-radius: 50%;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+        }
+
+        .review-author-name {
+            font-weight: 600;
+            font-size: 14px;
+        }
+
+        .review-stars {
+            color: #ffc107;
+            font-size: 14px;
+        }
+
+        .review-text {
+            font-size: 14px;
+            color: #666;
+            line-height: 1.6;
+        }
+
+        @media (max-width: 768px) {
+            .product-detail {
+                grid-template-columns: 1fr;
+                gap: 30px;
+            }
+        }
+    </style>
+</head>
+
+<body>
+    <script th:inline="javascript">
+        window.APP_ROLE = /*[[${#authorization.expression('isAuthenticated()') ? (#authorization.expression('hasRole(''ADMIN'')') ? 'admin' : 'user') : 'guest'}]]*/ 'guest';
+    </script>
+    <header id="navMount"></header>
+
+    <div class="product-container">
+        <div class="product-detail">
+            <!-- Product Image -->
+            <div class="product-image-container">
+                <img th:src="@{${product.imageUrl}}" class="product-image" th:alt="${product.name}"
+                    onerror="this.src='/images/default-product.jpg'">
+            </div>
+
+            <!-- Product Info -->
+            <div class="product-info">
+                <h1 class="product-name" th:text="${product.name}">Yellow shirt</h1>
+                <div class="product-price"
+                    th:text="'Rp. ' + ${#numbers.formatDecimal(product.price, 0, 'POINT', 0, 'COMMA')}">Rp. 175.000
+                </div>
+
+                <!-- Description -->
+                <div class="product-description-section">
+                    <div class="section-title">Description</div>
+                    <p class="product-description" th:text="${product.description}">
+                        Yoon Shirt kotak dengan desain simpel ini merah yang cocok untuk
+                        berbagai acara. Terbuat dari bahan kurus yang lurus memberikan kenyamanan saat dipakai. Warna
+                        netral mudah dipadukan dengan berbagai bawahan untuk tampilan kasual maupun semi formal.
+                    </p>
+                </div>
+
+                <!-- Category -->
+                <div>
+                    <div class="section-title">Category</div>
+                    <span class="product-category" th:text="${product.category?.name ?: 'Uncategorized'}">Shirt and
+                        blouse</span>
+                </div>
+
+                <!-- Quantity Selector -->
+                <div class="quantity-selector">
+                    <button type="button" class="qty-btn" onclick="decreaseQty()">-</button>
+                    <input type="number" id="quantity" class="qty-input" value="1" min="1"
+                        th:max="${product.stockQuantity}">
+                    <button type="button" class="qty-btn" onclick="increaseQty()">+</button>
+                </div>
+
+                <!-- Add to Cart Button -->
+                <button class="btn-add-to-cart" onclick="addToCart()">Add to cart</button>
+            </div>
+        </div>
+
+        <!-- Reviews Section -->
+        <div class="reviews-section">
+            <div class="reviews-header">Review (0)</div>
+            <p class="text-muted" style="text-align: center; padding: 40px 0; color: #999;">No reviews yet. Be the first
+                to review this product!</p>
+        </div>
+    </div>
+
+    <script src="https://cdn.jsdelivr.net/npm/bootstrap@5.3.0/dist/js/bootstrap.bundle.min.js"></script>
+    <script th:src="@{/js/navbar.js}"></script>
+    <script th:inline="javascript">
+        const productId = /*[[${product.id}]]*/ 0;
+        const maxStock = /*[[${product.stockQuantity}]]*/ 100;
+
+        function decreaseQty() {
+            const qtyInput = document.getElementById('quantity');
+            const currentQty = parseInt(qtyInput.value);
+            if (currentQty > 1) {
+                qtyInput.value = currentQty - 1;
+            }
+        }
+
+        function increaseQty() {
+            const qtyInput = document.getElementById('quantity');
+            const currentQty = parseInt(qtyInput.value);
+            if (currentQty < maxStock) {
+                qtyInput.value = currentQty + 1;
+            }
+        }
+
+        function addToCart() {
+            const quantity = parseInt(document.getElementById('quantity').value);
+
+            // Create form and submit
+            const form = document.createElement('form');
+            form.method = 'POST';
+            form.action = '/cart/add';
+
+            // Add CSRF token
+            const csrfToken = document.querySelector('meta[name="_csrf"]');
+            const csrfHeader = document.querySelector('meta[name="_csrf_header"]');
+
+            if (csrfToken && csrfHeader) {
+                const csrfInput = document.createElement('input');
+                csrfInput.type = 'hidden';
+                csrfInput.name = '_csrf';
+                csrfInput.value = csrfToken.getAttribute('content');
+                form.appendChild(csrfInput);
+            }
+
+            // Add product ID
+            const productInput = document.createElement('input');
+            productInput.type = 'hidden';
+            productInput.name = 'productId';
+            productInput.value = productId;
+            form.appendChild(productInput);
+
+            // Add quantity
+            const qtyInput = document.createElement('input');
+            qtyInput.type = 'hidden';
+            qtyInput.name = 'quantity';
+            qtyInput.value = quantity;
+            form.appendChild(qtyInput);
+
+            document.body.appendChild(form);
+            form.submit();
+        }
+    </script>
+</body>
+
+</html>

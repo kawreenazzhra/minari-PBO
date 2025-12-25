@@ -213,11 +213,19 @@ public class Payment {
     public PaymentStatus processPayment() {
         try {
             System.out.println("Processing payment of $" + amount + " via " + paymentMethod);
-            this.status = PaymentStatus.PAID;
-            this.transactionId = generateTransactionId();
-            this.paymentDate = LocalDateTime.now();
-            System.out.println("Payment successful! Transaction ID: " + transactionId);
-            return PaymentStatus.PAID;
+            
+            // COD = PENDING, others = PAID
+            if (paymentMethod == PaymentMethod.COD) {
+                this.status = PaymentStatus.PENDING;
+                System.out.println("COD payment - Status set to PENDING");
+            } else {
+                this.status = PaymentStatus.PAID;
+                this.transactionId = generateTransactionId();
+                this.paymentDate = LocalDateTime.now();
+                System.out.println("Payment successful! Transaction ID: " + transactionId);
+            }
+            
+            return this.status;
         } catch (Exception e) {
             this.status = PaymentStatus.FAILED;
             System.out.println("Payment failed: " + e.getMessage());

@@ -21,8 +21,8 @@
 
         <div class="form-container">
             <!-- Note: Using POST for update, matching common Spring MVC pattern or use HiddenHttpMethodFilter for PUT -->
-            <form id="editProductForm" th:action="@{/admin/products/{id}/update(id=${product.id})}" method="POST"
-                enctype="multipart/form-data">
+            <form id="editProductForm" th:action="@{/admin/products/{productId}/update(productId=${product.id})}"
+                method="POST" enctype="multipart/form-data">
                 <input type="hidden" th:name="${_csrf.parameterName}" th:value="${_csrf.token}" />
 
                 <div class="row">

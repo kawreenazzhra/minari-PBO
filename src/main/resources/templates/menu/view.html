@@ -81,7 +81,7 @@
                           SearchController uses searchByName... 
                           Let's assume generic product listing for now.
                       -->
-                    <a th:href="@{/products(category=${category.name})}" class="card-item text-decoration-none">
+                    <a th:href="@{/products(category=${category.id})}" class="card-item text-decoration-none">
                         <img th:src="@{${category.imageUrl}}" th:alt="${category.name}"
                             onerror="this.src='/images/default-category.jpg'">
                         <h6 th:text="${category.name}">Category Name</h6>

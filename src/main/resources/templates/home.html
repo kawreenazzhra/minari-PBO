@@ -1,33 +1,12 @@
 <!DOCTYPE html>
-<html lang="en" xmlns:th="http://www.thymeleaf.org" xmlns:sec="http://www.thymeleaf.org/extras/spring-security">
+<html lang="en" xmlns:th="http://www.thymeleaf.org">
 
 <head>
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
     <title>MINARI - Your Everyday Fashion Boutique</title>
-
-    <!-- CSRF Tokens -->
-    <meta name="_csrf" th:content="${_csrf.token}" />
-    <meta name="_csrf_header" th:content="${_csrf.headerName}" />
-
-    <!-- App Scripts Variables -->
-    <script th:inline="javascript">
-        /*<![CDATA[*/
-        window.APP_ROLE = 'guest';
-        window.APP_URL = /*[[@{/}]]*/ '/';
-        window.CSRF_TOKEN = /*[[${_csrf.token}]]*/ '';
-        /*]]>*/
-    </script>
-    <script sec:authorize="isAuthenticated()" th:inline="javascript">
-        /*<![CDATA[*/
-        window.APP_ROLE = 'user';
-        /*]]>*/
-    </script>
-    <script sec:authorize="hasRole('ADMIN')" th:inline="javascript">
-        /*<![CDATA[*/
-        window.APP_ROLE = 'admin';
-        /*]]>*/
-    </script>
+    <!-- Simple partial inclusion if it existed, otherwise just keeping standard imports -->
+    <!-- Assuming navbar-scripts corresponds to necessary js/css or meta -->
 
     <link href="https://cdn.jsdelivr.net/npm/bootstrap@5.3.0/dist/css/bootstrap.min.css" rel="stylesheet">
     <link
@@ -39,57 +18,8 @@
 </head>
 
 <body class="landing-page">
-    <!-- Toast Notifications Fragment Inline -->
-    <div th:if="${success}" class="toast-notification success show">
-        <i class="fas fa-check-circle"></i>
-        <span th:text="${success}">Success message</span>
-    </div>
-    <div th:if="${error}" class="toast-notification error show">
-        <i class="fas fa-exclamation-circle"></i>
-        <span th:text="${error}">Error message</span>
-    </div>
-    <script>
-        document.addEventListener('DOMContentLoaded', function () {
-            const toasts = document.querySelectorAll('.toast-notification');
-            toasts.forEach(toast => {
-                setTimeout(() => { toast.classList.remove('show'); setTimeout(() => toast.remove(), 300); }, 3000);
-            });
-        });
-    </script>
-    <style>
-        .toast-notification {
-            position: fixed;
-            top: 20px;
-            right: 20px;
-            z-index: 99999;
-            background: white;
-            padding: 12px 20px;
-            border-radius: 10px;
-            box-shadow: 0 4px 12px rgba(0, 0, 0, 0.15);
-            display: flex;
-            align-items: center;
-            gap: 10px;
-            transform: translateX(150%);
-            transition: transform 0.4s;
-            font-size: 14px;
-            font-weight: 500;
-            max-width: 350px;
-        }
-
-        .toast-notification.show {
-            transform: translateX(0);
-        }
-
-        .toast-notification.success {
-            border-left: 4px solid #198754;
-            color: #0f5132;
-        }
-
-        .toast-notification.error {
-            border-left: 4px solid #dc3545;
-            color: #842029;
-        }
-    </style>
+    <!-- Toast Partial Placeholder - Thymeleaf equivalent would be an include if the file exists -->
+    <!-- Toast Notifications removed as partial is missing -->
 
     <header id="navMount"></header>
 
@@ -100,36 +30,49 @@
                     <div class="hero-content">
                         <h1>Discover Your Style with Us</h1>
                         <p>Explore the latest fashion trends, styles, and our collections</p>
+                        <!-- Optional Button if needed -->
+                        <!-- <a href="#categories" class="btn btn-dark rounded-pill px-4 py-2">Shop Now</a> -->
                     </div>
                 </div>
                 <div class="col-md-7 position-relative">
                     <div class="hero-images">
+                        <!-- Main Bag Object -->
                         <img th:src="@{/images/tes.png}" class="hero-obj hero-obj-main" alt="Fashion Bag">
+
+                        <!-- Floating Elements -->
                         <img th:src="@{/images/test1.png}" class="hero-obj hero-obj-1" alt="Fire Icon">
                         <img th:src="@{/images/test2.png}" class="hero-obj hero-obj-2" alt="Like Icon">
                         <img th:src="@{/images/test3.png}" class="hero-obj hero-obj-3" alt="Coin Icon">
+
+                        <!-- Optional: Selection Box Overlay (Static for design match) -->
+                        <!-- <div class="hero-obj-info">105 x 118</div> -->
                     </div>
                 </div>
             </div>
         </div>
     </section>
 
-    <!-- Promotions -->
-    <section th:if="${promotions != null and !promotions.empty}" class="promotion-section py-5 bg-white">
+    <!-- Promotions Section -->
+    <!-- Promotions Section -->
+    <section class="promotion-section py-5 bg-white">
         <div class="container">
             <h2 class="section-title text-center mb-5" style="font-family: 'Playfair Display', serif;">Special Offers
             </h2>
-            <div class="row g-4 justify-content-center">
+            <div class="text-center text-muted" th:if="${promotions == null or promotions.empty}">
+                <p>No special offers available at the moment.</p>
+            </div>
+            <div class="row g-4 justify-content-center" th:if="${promotions != null and !promotions.empty}">
                 <div th:each="promo : ${promotions}" class="col-md-4">
                     <div class="card border-0 shadow-sm h-100 promo-card"
                         style="border-radius: 15px; overflow: hidden; transition: transform 0.3s;">
                         <div class="card-body text-center p-4" style="background: #FFF6F0;">
                             <div class="badge bg-dark mb-3 px-3 py-2" style="font-weight: 500; letter-spacing: 1px;">
+                                <!-- Thymeleaf conditional logic for discount type -->
                                 <span
-                                    th:if="${promo.discountType == T(com.minari.ecommerce.entity.Promotion.DiscountType).PERCENTAGE}"
-                                    th:text="${promo.discountValue + '% OFF'}"></span>
+                                    th:if="${promo.discountType != null and promo.discountType.name() == 'PERCENTAGE'}"
+                                    th:text="${#numbers.formatDecimal(promo.discountValue, 1, 'POINT', 2, 'POINT') + '% OFF'}"></span>
                                 <span
-                                    th:unless="${promo.discountType == T(com.minari.ecommerce.entity.Promotion.DiscountType).PERCENTAGE}"
+                                    th:unless="${promo.discountType != null and promo.discountType.name() == 'PERCENTAGE'}"
                                     th:text="${'Rp ' + #numbers.formatDecimal(promo.discountValue, 0, 'COMMA', 0, 'POINT') + ' OFF'}"></span>
                             </div>
                             <h4 class="fw-bold mb-2" style="color: #333;" th:text="${promo.promoCode}">Code</h4>
@@ -138,8 +81,8 @@
                                 <i class="far fa-clock me-1"></i> Valid until <span
                                     th:text="${#temporals.format(promo.endDate, 'dd MMM yyyy')}">Date</span>
                             </div>
-                            <button class="btn btn-sm btn-outline-dark mt-3"
-                                th:onclick="'navigator.clipboard.writeText(\'' + ${promo.promoCode} + '\'); alert(\'Code copied!\')'">Copy
+                            <button class="btn btn-sm btn-outline-dark mt-3" th:data-code="${promo.promoCode}"
+                                onclick="navigator.clipboard.writeText(this.getAttribute('data-code')); alert('Code copied!')">Copy
                                 Code</button>
                         </div>
                     </div>
@@ -157,7 +100,8 @@
                     <div class="style-item" th:each="i : ${#numbers.sequence(1, 8)}">
                         <img th:src="@{'/images/g' + ${i} + '.png'}" th:alt="'Style ' + ${i}">
                     </div>
-                    <!-- Duplicate set for looping -->
+
+                    <!-- Duplicate set for seamless looping -->
                     <div class="style-item" th:each="i : ${#numbers.sequence(1, 8)}">
                         <img th:src="@{'/images/g' + ${i} + '.png'}" th:alt="'Style ' + ${i}">
                     </div>
@@ -172,15 +116,18 @@
             <div class="category-scroll-wrapper position-relative">
                 <button class="scroll-btn scroll-left" id="scrollLeftBtn"><i class="fas fa-chevron-left"></i></button>
                 <div class="category-scroll px-5" id="categoryScroll">
-                    <a th:each="category : ${categories}" th:href="@{/category/{slug}(slug=${category.id})}"
+                    <!-- Categories Loop -->
+                    <a th:each="category : ${categories}" th:href="@{/products(category=${category.id})}"
                         class="category-card text-decoration-none d-block">
                         <div class="category-image">
-                            <img th:src="@{${category.imageUrl}}" th:alt="${category.name}">
+                            <!-- Use image_url equivalent -->
+                            <img th:src="${category.imageUrl}" th:alt="${category.name}">
                         </div>
                         <h3 th:text="${category.name}">Category Name</h3>
                     </a>
 
-                    <div th:if="${categories.empty}" class="text-center w-100 p-5">
+                    <!-- Empty State -->
+                    <div class="text-center w-100 p-5" th:if="${categories == null or categories.empty}">
                         <p class="text-muted">No categories available at the moment.</p>
                     </div>
                 </div>
@@ -201,7 +148,7 @@
         <div class="container">
             <h2>Our Customers Say</h2>
             <div class="row g-4">
-                <!-- Hardcoded Testimonials as they were in Blade -->
+                <!-- Hardcoded Testimonials as per design input -->
                 <div class="col-md-4">
                     <div class="testimonial-card">
                         <p>"Kualitas bahan pakaian Minari sangat bagus dan nyaman dipakai seharian. Desainnya juga
@@ -258,6 +205,7 @@
                     <p>Give us suggestions for future progress</p>
                     <div class="footer-form">
                         <form th:action="@{/suggestion/store}" method="POST">
+                            <!-- CSRF hidden field should be handled by Spring Security automatically or via th:action -->
                             <input type="text" name="message" placeholder="your message . . .">
                             <button type="submit">Send</button>
                         </form>
@@ -266,7 +214,8 @@
             </div>
             <div class="footer-divider"></div>
             <div class="copyright">
-                © 2025 MINARI. All Rights Reserved.
+                &copy; <span th:text="${#dates.format(#dates.createNow(), 'yyyy')}">2025</span> MINARI. All Rights
+                Reserved.
             </div>
         </div>
     </footer>
@@ -274,13 +223,9 @@
     <script src="https://cdn.jsdelivr.net/npm/bootstrap@5.3.0/dist/js/bootstrap.bundle.min.js"></script>
 
     <script th:inline="javascript">
-        window.APP_ROLE = 'guest';
-    </script>
-    <script sec:authorize="isAuthenticated()" th:inline="javascript">
-        window.APP_ROLE = 'user';
-    </script>
-    <script sec:authorize="hasRole('ADMIN')" th:inline="javascript">
-        window.APP_ROLE = 'admin';
+        /*<![CDATA[*/
+        window.APP_ROLE = /*[[${#authorization.expression('isAuthenticated()') ? (#authorization.expression('hasRole(''ADMIN'')') ? 'admin' : 'user') : 'guest'}]]*/ 'guest';
+        /*]]>*/
     </script>
 
     <script th:src="@{/js/navbar.js}"></script>

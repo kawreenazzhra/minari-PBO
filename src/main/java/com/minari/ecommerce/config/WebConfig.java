@@ -14,8 +14,14 @@ public class WebConfig implements WebMvcConfigurer {
     
     @Override
     public void addResourceHandlers(@org.springframework.lang.NonNull ResourceHandlerRegistry registry) {
-        registry.addResourceHandler("/static/**")
-                .addResourceLocations("classpath:/static/");
+        // We use an absolute path with triple slash for Windows compatibility
+        String uploadPath = "file:///" + System.getProperty("user.dir").replace("\\", "/") + "/uploads/";
+        registry.addResourceHandler("/uploads/**")
+                .addResourceLocations(uploadPath);
+
+        // Ensure static images are explicitly handled if default root mapping is obstructed
+        registry.addResourceHandler("/images/**")
+                .addResourceLocations("classpath:/static/images/");
     }
     
     @Override
