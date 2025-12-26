@@ -1,6 +1,6 @@
 #FileLock
-#Mon Dec 22 04:29:17 WIB 2025
+#Thu Dec 25 16:01:33 WIB 2025
 hostName=LAPTOP-KHG4K64U
-id=19b42d10c407cac160cf1bdb40f73ae2720b5454652
+id=19b54bdecd27f0f844f8dcd66c5319557a53b0741e5
 method=file
-server=192.168.1.13\:50165
+server=192.168.1.7\:53451
