@@ -149,7 +149,7 @@ public class OrderService {
     }
 
     private String generateTrackingNumber() {
-        return "JNT" + System.currentTimeMillis();
+        return "JNT" + System.currentTimeMillis() + (int)(Math.random() * 1000);
     }
 
     /**
@@ -408,6 +408,8 @@ public class OrderService {
                 .paymentMethod(order.getPayment() != null ? order.getPayment().getPaymentMethod().toString() : null)
                 .orderDate(order.getOrderDate())
                 .updatedAt(order.getUpdatedAt())
+                .shipmentStatus(order.getShipment() != null && order.getShipment().getCurrentStatus() != null ? order.getShipment().getCurrentStatus().toString() : null)
+                .trackingNumber(order.getShipment() != null ? order.getShipment().getTrackingNumber() : null)
                 .items(order.getItems().stream().map(item -> OrderDTO.OrderItemDTO.builder()
                         .id(item.getId())
                         .productId(item.getProduct() != null ? item.getProduct().getId() : null)
@@ -444,11 +446,29 @@ public class OrderService {
         }
 
         // Update Tracking
+        boolean isShippedOrDelivered = order.getStatus() == com.minari.ecommerce.entity.OrderStatus.SHIPPED || 
+                                       order.getStatus() == com.minari.ecommerce.entity.OrderStatus.DELIVERED;
+                                       
+        if (isShippedOrDelivered) {
+             // Only auto-generate if input is empty AND current shipment doesn't have one
+             boolean hasExistingTracking = order.getShipment() != null && 
+                                           order.getShipment().getTrackingNumber() != null && 
+                                           !order.getShipment().getTrackingNumber().isEmpty();
+                                           
+             if ((trackingNumber == null || trackingNumber.trim().isEmpty()) && !hasExistingTracking) {
+                 trackingNumber = generateTrackingNumber();
+             }
+        }
+
         if (trackingNumber != null && !trackingNumber.trim().isEmpty()) {
             if (order.getShipment() == null) {
                 order.createShipment(trackingNumber, "Standard");
             } else {
                 order.getShipment().setTrackingNumber(trackingNumber);
+            }
+            // Auto update shipment status to IN_TRANSIT if we have tracking
+             if (order.getShipment() != null && order.getShipment().getCurrentStatus() == com.minari.ecommerce.entity.ShipmentStatus.AWAITING_PICKUP) {
+                order.getShipment().setCurrentStatus(com.minari.ecommerce.entity.ShipmentStatus.IN_TRANSIT);
             }
         }
 
