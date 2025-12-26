@@ -3,13 +3,63 @@
     layout:decorate="~{layouts/admin}">
 
 <head>
-    <title>Page Under Construction</title>
+    <title>Reviews Management</title>
 </head>
 
 <body>
     <div layout:fragment="content">
-        <div class="alert alert-info">This page is under construction.</div>
-        <a href="javascript:history.back()" class="btn btn-secondary">Go Back</a>
+        <div
+            class="d-flex justify-content-between flex-wrap flex-md-nowrap align-items-center pt-3 pb-2 mb-3 border-bottom">
+            <h1 class="h2">Reviews</h1>
+        </div>
+
+        <div class="card border-0 shadow-sm">
+            <div class="card-body">
+                <div class="table-responsive">
+                    <table class="table table-hover align-middle">
+                        <thead>
+                            <tr>
+                                <th>Product</th>
+                                <th>Customer</th>
+                                <th>Rating</th>
+                                <th>Review</th>
+                                <th>Date</th>
+                            </tr>
+                        </thead>
+                        <tbody>
+                            <tr th:each="review : ${reviews}">
+                                <td>
+                                    <div class="d-flex align-items-center">
+                                        <img th:src="@{${review.product.imageUrl}}" class="rounded me-2" width="40"
+                                            height="40" style="object-fit: cover"
+                                            onerror="this.src='/images/placeholder.jpg'">
+                                        <span th:text="${review.product.name}">Product Name</span>
+                                    </div>
+                                </td>
+                                <td th:text="${review.customer.fullName}">Customer Name</td>
+                                <td>
+                                    <div class="text-warning">
+                                        <i class="fas fa-star" th:each="i : ${#numbers.sequence(1, review.rating)}"></i>
+                                        <i class="far fa-star" th:if="${review.rating < 5}"
+                                            th:each="i : ${#numbers.sequence(review.rating + 1, 5)}"></i>
+                                    </div>
+                                </td>
+                                <td>
+                                    <p class="mb-0 text-muted small" th:text="${review.reviewText}">Review content...
+                                    </p>
+                                </td>
+                                <td th:text="${#temporals.format(review.reviewDate, 'dd MMM yyyy')}">Date</td>
+                            </tr>
+                            <tr th:if="${reviews.empty}">
+                                <td colspan="5" class="text-center py-4 text-muted">
+                                    No reviews found.
+                                </td>
+                            </tr>
+                        </tbody>
+                    </table>
+                </div>
+            </div>
+        </div>
     </div>
 </body>
 

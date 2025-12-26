@@ -245,6 +245,7 @@ public class AdminController {
         try {
             java.util.Map<String, Object> stats = orderService.getOrderStatistics();
             if (stats != null) {
+                stats.put("totalProducts", productService.getTotalProducts());
                 model.addAttribute("stats", stats);
             }
 

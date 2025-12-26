@@ -214,45 +214,152 @@
                         <div class="order-date" th:text="${#temporals.format(order.orderDate, 'dd MMM yyyy')}">22 Dec
                             2025</div>
                     </div>
-                </div>
-
-                <!-- Order Items -->
-                <div th:each="item : ${order.items}" class="order-item">
-                    <img th:src="@{${item.product.imageUrl}}" class="item-image" alt="Product"
-                        onerror="this.src='/images/default-product.jpg'">
-                    <div class="item-details">
-                        <div class="item-name" th:text="${item.product.name}">Blue sweater</div>
-                        <div class="item-qty" th:text="'Qty: ' + ${item.quantity}">Qty: 1</div>
-                        <div class="item-price"
-                            th:text="'Rp ' + ${#numbers.formatDecimal(item.unitPrice, 0, 'POINT', 0, 'COMMA')}">Rp
-                            189.000
-                        </div>
+                    <!-- Status Badge -->
+                    <div>
+                        <span class="badge" th:classappend="${order.status.name() == 'DELIVERED' ? 'bg-success' : 
+                                              (order.status.name() == 'PENDING' ? 'bg-warning text-dark' : 
+                                              (order.status.name() == 'CANCELLED' ? 'bg-danger' : 'bg-primary'))}">
+                            <i class="fas fa-check-circle me-1" th:if="${order.status.name() == 'DELIVERED'}"></i>
+                            <span
+                                th:text="${order.status.name().charAt(0) + order.status.name().substring(1).toLowerCase()}">Delivered</span>
+                        </span>
                     </div>
                 </div>
 
-                <!-- Order Footer -->
-                <div class="order-footer">
-                    <div class="order-info">
-                        <div class="info-row">
-                            <i class="fas fa-map-marker-alt" style="color: #d68c78;"></i>
-                            <span class="info-label">Delivered to:</span>
-                            <span th:text="${order.shippingAddress.recipientName}">jalan melati</span>
-                        </div>
-                        <div class="info-row">
-                            <i class="fas fa-credit-card" style="color: #d68c78;"></i>
-                            <span class="info-label">Payment Method:</span>
-                            <span th:text="${order.payment.paymentMethod.name().replace('_', ' ')}">bank_transfer</span>
-                        </div>
-                        <div class="order-total"
-                            th:text="'Total: Rp ' + ${#numbers.formatDecimal(order.totalAmount, 0, 'POINT', 0, 'COMMA')}">
-                            Total: Rp 204.000
+                <div class="row">
+                    <!-- Left Column: Order Items -->
+                    <div class="col-md-7 border-end pe-4">
+                        <div th:each="item : ${order.items}" class="d-flex mb-4">
+                            <img th:src="@{${item.product.imageUrl}}" class="rounded"
+                                style="width: 80px; height: 100px; object-fit: cover;" alt="Product"
+                                onerror="this.src='/images/default-product.jpg'">
+                            <div class="ms-3">
+                                <h6 class="mb-1 fw-bold" th:text="${item.product.name}" style="color: #1E1E1E;">Choco
+                                    blouse</h6>
+                                <div class="text-muted small mb-1" th:text="'Qty: ' + ${item.quantity}">Qty: 1</div>
+                                <div class="fw-bold" style="color: #d68c78;"
+                                    th:text="'Rp ' + ${#numbers.formatDecimal(item.unitPrice, 0, 'POINT', 0, 'COMMA')}">
+                                    Rp 175.000
+                                </div>
+                            </div>
                         </div>
                     </div>
-                    <a th:href="@{/order/{id}(id=${order.id})}" class="btn-view-details">View Details</a>
+
+                    <!-- Right Column: Delivery & Payment Info -->
+                    <div class="col-md-5 ps-4 d-flex flex-column justify-content-between">
+                        <div>
+                            <div class="mb-3">
+                                <div class="d-flex align-items-start">
+                                    <i class="fas fa-map-marker-alt mt-1 me-2" style="color: #666;"></i>
+                                    <div>
+                                        <div class="small text-muted fw-bold">Delivered to:</div>
+                                        <div class="small text-dark"
+                                            th:text="${order.shippingAddress.recipientName} + ', ' + ${order.shippingAddress.city}">
+                                            Jalan Cempaka No.3, Lembang
+                                        </div>
+                                    </div>
+                                </div>
+                            </div>
+
+                            <div class="mb-3">
+                                <div class="d-flex align-items-start">
+                                    <i class="fas fa-wallet mt-1 me-2" style="color: #666;"></i>
+                                    <div>
+                                        <div class="small text-muted fw-bold">Payment Method:</div>
+                                        <div class="small text-dark"
+                                            th:text="${order.payment.paymentMethod.name().toLowerCase().replace('_', ' ')}">
+                                            e_wallet
+                                        </div>
+                                    </div>
+                                </div>
+                            </div>
+
+                            <div class="mt-4">
+                                <div class="fw-bold fs-5"
+                                    style="color: #1E1E1E; font-family: 'Playfair Display', serif;"
+                                    th:text="'Total: Rp ' + ${#numbers.formatDecimal(order.totalAmount, 0, 'POINT', 0, 'COMMA')}">
+                                    Total: Rp 412.500
+                                </div>
+                            </div>
+                        </div>
+
+                        <!-- Buttons -->
+                        <div class="d-flex justify-content-end gap-2 mt-4">
+                            <a th:href="@{/order/{id}(id=${order.id})}"
+                                class="btn btn-outline-dark rounded-pill px-4">View Details</a>
+
+                            <!-- "Rate Product" only if Delivered -->
+                            <a th:if="${order.status.name() == 'DELIVERED'}"
+                                th:href="@{/reviews/rate/{orderNumber}(orderNumber=${order.orderNumber})}"
+                                class="btn text-white rounded-pill px-4 btn-rate"
+                                style="background-color: #d68c78; border: none;">
+                                Rate Product
+                            </a>
+                        </div>
+                    </div>
                 </div>
             </div>
         </div>
     </div>
+
+    <!-- Review Modal -->
+    <div class="modal fade" id="reviewModal" tabindex="-1" aria-hidden="true">
+        <div class="modal-dialog">
+            <div class="modal-content">
+                <form th:action="@{/reviews/add}" method="post">
+                    <input type="hidden" name="productId" id="reviewProductId">
+                    <div class="modal-header">
+                        <h5 class="modal-title">Write a Review</h5>
+                        <button type="button" class="btn-close" data-bs-dismiss="modal" aria-label="Close"></button>
+                    </div>
+                    <div class="modal-body">
+                        <h6 id="reviewProductName" class="mb-3">Product Name</h6>
+
+                        <div class="mb-3">
+                            <label class="form-label">Rating</label>
+                            <div class="rating-input">
+                                <select name="rating" class="form-select" required>
+                                    <option value="5">⭐⭐⭐⭐⭐ (5 - Excellent)</option>
+                                    <option value="4">⭐⭐⭐⭐ (4 - Good)</option>
+                                    <option value="3">⭐⭐⭐ (3 - Average)</option>
+                                    <option value="2">⭐⭐ (2 - Poor)</option>
+                                    <option value="1">⭐ (1 - Terrible)</option>
+                                </select>
+                            </div>
+                        </div>
+
+                        <div class="mb-3">
+                            <label class="form-label">Review</label>
+                            <textarea name="reviewText" class="form-control" rows="4" required
+                                placeholder="Share your experience..."></textarea>
+                        </div>
+                    </div>
+                    <div class="modal-footer">
+                        <button type="button" class="btn btn-secondary" data-bs-dismiss="modal">Close</button>
+                        <button type="submit" class="btn btn-primary">Submit Review</button>
+                    </div>
+                </form>
+            </div>
+        </div>
+    </div>
+
+    <script>
+        // Handle Modal Data Passing
+        var reviewModal = document.getElementById('reviewModal')
+        if (reviewModal) {
+            reviewModal.addEventListener('show.bs.modal', function (event) {
+                var button = event.relatedTarget
+                var productId = button.getAttribute('data-product-id')
+                var productName = button.getAttribute('data-product-name')
+
+                var modalTitle = reviewModal.querySelector('#reviewProductName')
+                var modalInput = reviewModal.querySelector('#reviewProductId')
+
+                modalTitle.textContent = 'Review for: ' + productName
+                modalInput.value = productId
+            })
+        }
+    </script>
 
     <script src="https://cdn.jsdelivr.net/npm/bootstrap@5.3.0/dist/js/bootstrap.bundle.min.js"></script>
     <script th:src="@{/js/navbar.js}"></script>

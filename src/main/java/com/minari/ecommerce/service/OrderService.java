@@ -32,13 +32,15 @@ public class OrderService {
     private final ShoppingCartService cartService;
     private final UserRepository userRepository;
     private final EmailService emailService;
+    private final ProductService productService;
 
     public OrderService(OrderRepository orderRepository, ShoppingCartService cartService, UserRepository userRepository,
-            EmailService emailService) {
+            EmailService emailService, ProductService productService) {
         this.orderRepository = orderRepository;
         this.cartService = cartService;
         this.userRepository = userRepository;
         this.emailService = emailService;
+        this.productService = productService;
     }
 
     public Order createOrderFromCart(String email, Address shippingAddress, PaymentMethod paymentMethod) {
@@ -53,10 +55,18 @@ public class OrderService {
         if (cart.getItems().isEmpty()) {
             throw new RuntimeException("Cart is empty");
         }
+        
+        // Validate stock and deduct
         for (CartItem item : cart.getItems()) {
-            if (!item.getProduct().canFulfillOrder(item.getQuantity())) {
-                throw new RuntimeException("Not enough stock for: " + item.getProduct().getName());
+            com.minari.ecommerce.entity.Product product = item.getProduct();
+            if (!product.canFulfillOrder(item.getQuantity())) {
+                throw new RuntimeException("Not enough stock for: " + product.getName());
             }
+            // Deduct stock
+            int newStock = product.getStockQuantity() - item.getQuantity();
+            product.setStockQuantity(newStock);
+            productService.saveProduct(product);
+            log.info("Stock deducted for product: {} new stock: {}", product.getName(), newStock);
         }
         Order order = new Order();
         order.setOrderNumber("MIN" + System.currentTimeMillis() + new Random().nextInt(100));
