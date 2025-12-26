@@ -104,27 +104,27 @@
                     </div>
                 </div>
 
-                <!-- Applicable Products Section -->
+                <!-- Applicable Categories Section -->
                 <div class="row mt-4">
                     <div class="col-12">
                         <div class="form-group">
-                            <label class="form-label">Applicable Products</label>
-                            <div class="products-selection"
+                            <label class="form-label">Applicable Categories</label>
+                            <div class="categories-selection"
                                 style="max-height: 300px; overflow-y: auto; border: 1px solid #ddd; border-radius: 8px; padding: 15px; background: #f9f9f9;">
                                 <div class="form-check mb-3"
                                     style="border-bottom: 1px solid #ddd; padding-bottom: 10px;">
-                                    <input class="form-check-input" type="checkbox" id="selectAllProducts"
-                                        onchange="toggleAllProducts(this)">
-                                    <label class="form-check-label fw-bold" for="selectAllProducts">
-                                        All Products
+                                    <input class="form-check-input" type="checkbox" id="selectAllCategories"
+                                        onchange="toggleAllCategories(this)">
+                                    <label class="form-check-label fw-bold" for="selectAllCategories">
+                                        All Categories
                                     </label>
                                 </div>
-                                <div th:each="product : ${products}" class="form-check">
-                                    <input class="form-check-input product-checkbox" type="checkbox" name="productIds"
-                                        th:value="${product.id}" th:id="'product-' + ${product.id}">
-                                    <label class="form-check-label" th:for="'product-' + ${product.id}"
-                                        th:text="${product.name}">
-                                        Product Name
+                                <div th:each="category : ${categories}" class="form-check">
+                                    <input class="form-check-input category-checkbox" type="checkbox" name="categoryIds"
+                                        th:value="${category.id}" th:id="'category-' + ${category.id}">
+                                    <label class="form-check-label" th:for="'category-' + ${category.id}"
+                                        th:text="${category.name}">
+                                        Category Name
                                     </label>
                                 </div>
                             </div>

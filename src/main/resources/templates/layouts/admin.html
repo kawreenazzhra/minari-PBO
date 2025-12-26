@@ -29,14 +29,28 @@
                 <div class="navbar-icons d-flex align-items-center gap-3">
                     <!-- Search Bar (Simplified Logic for MVP) -->
                     <!-- We default to product search as generic fallback -->
-                    <form class="d-flex align-items-center" role="search" th:action="@{/admin/products}" method="GET">
+                    <!-- Search Bar (Dynamic Logic) -->
+                    <form class="d-flex align-items-center" role="search"
+                        th:with="searchAction=${currentUri != null ? 
+                                     (currentUri.contains('orders') ? '/admin/orders' : 
+                                     (currentUri.contains('products') ? '/admin/products' : 
+                                     (currentUri.contains('categories') ? '/admin/categories' : 
+                                     (currentUri.contains('reviews') ? '/admin/reviews' : 
+                                     (currentUri.contains('promotions') ? '/admin/promotions' : '/admin/products'))))) : '/admin/products'},
+                                   searchPlaceholder=${currentUri != null ? 
+                                     (currentUri.contains('orders') ? 'Search orders...' : 
+                                     (currentUri.contains('products') ? 'Search products...' : 
+                                     (currentUri.contains('categories') ? 'Search categories...' : 
+                                     (currentUri.contains('reviews') ? 'Search reviews...' : 
+                                     (currentUri.contains('promotions') ? 'Search promotions...' : 'Search...'))))) : 'Search...'}" th:action="@{${searchAction}}"
+                        method="GET">
                         <div class="input-group input-group-sm" style="width: 220px;">
                             <span class="input-group-text bg-white border-end-0"
                                 style="border-radius: 20px 0 0 20px; border-color: #eee; padding-left: 12px;">
                                 <img th:src="@{/images/searchnav.png}" width="16" height="16">
                             </span>
                             <input class="form-control border-start-0 ps-2 text-muted" type="search" name="keyword"
-                                placeholder="Search..." aria-label="Search"
+                                th:placeholder="${searchPlaceholder}" aria-label="Search"
                                 style="border-radius: 0 20px 20px 0; border-color: #eee; font-size: 13px; height: 32px;"
                                 th:value="${keyword}">
                         </div>

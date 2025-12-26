@@ -20,6 +20,7 @@ public class PromotionService {
         return promotionRepository.save(promotion);
     }
 
+    @org.springframework.scheduling.annotation.Scheduled(fixedRate = 60000)
     public void updateExpiredPromotions() {
         java.util.List<Promotion> activePromotions = promotionRepository.findByIsActive(true);
         java.time.LocalDateTime now = java.time.LocalDateTime.now();

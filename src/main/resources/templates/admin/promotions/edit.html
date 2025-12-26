@@ -3,13 +3,162 @@
     layout:decorate="~{layouts/admin}">
 
 <head>
-    <title>Page Under Construction</title>
+    <title>Edit Promotion</title>
 </head>
 
 <body>
     <div layout:fragment="content">
-        <div class="alert alert-info">This page is under construction.</div>
-        <a href="javascript:history.back()" class="btn btn-secondary">Go Back</a>
+        <div class="d-flex justify-content-between align-items-center mb-4">
+            <h2 class="page-title">Edit Promotion</h2>
+            <a th:href="@{/admin/promotions}" class="btn-cancel">
+                <i class="fas fa-arrow-left"></i> Back to Promotions
+            </a>
+        </div>
+
+        <div th:if="${error}" class="alert alert-danger">
+            <span th:text="${error}">Error</span>
+        </div>
+
+        <div class="form-container">
+            <form id="promotionForm" th:action="@{/admin/promotions/update/{id}(id=${promotion.id})}" method="POST">
+                <!-- CSRF Token -->
+                <input type="hidden" th:name="${_csrf.parameterName}" th:value="${_csrf.token}" />
+
+                <!-- Hidden name field (mirrors promo code) -->
+                <input type="hidden" name="name" id="promoName" th:value="${promotion.name}">
+
+                <div class="row">
+                    <!-- Left Column -->
+                    <div class="col-md-6">
+                        <div class="form-group">
+                            <label class="form-label">Promo Code <span class="text-danger">*</span></label>
+                            <div class="input-group">
+                                <input type="text" name="code" id="promoCode" class="form-control"
+                                    placeholder="Enter promo code" th:value="${promotion.promoCode}" required>
+                                <button type="button" class="btn btn-secondary" id="generateBtn"
+                                    onclick="generatePromoCode()">
+                                    Generate
+                                </button>
+                            </div>
+                        </div>
+
+                        <div class="form-group">
+                            <label class="form-label">Discount Value <span class="text-danger">*</span></label>
+                            <input type="number" name="discountValue" id="discountValue" class="form-control"
+                                placeholder="Enter discount value" step="0.01" min="0"
+                                th:value="${promotion.discountValue}" required>
+                        </div>
+
+                        <div class="form-group">
+                            <label class="form-label">Minimum Purchase</label>
+                            <input type="number" name="minPurchaseAmount" class="form-control"
+                                placeholder="Enter minimum purchase amount" step="0.01" min="0"
+                                th:value="${promotion.minPurchaseAmount}">
+                        </div>
+
+                        <div class="form-group">
+                            <label class="form-label">Usage Limit</label>
+                            <input type="number" name="usageLimit" id="usageLimit" class="form-control"
+                                placeholder="Enter usage limit" min="1" th:value="${promotion.usageLimit}">
+                        </div>
+                    </div>
+
+                    <!-- Right Column -->
+                    <div class="col-md-6">
+                        <div class="form-group">
+                            <label class="form-label">Discount Type <span class="text-danger">*</span></label>
+                            <!-- Disable changing discount type on edit as it might break historical data logic, or allow it but be careful. Assuming simple edit here -->
+                            <!-- Actually user might want to change it. -->
+                            <select name="discountType" id="discountType" class="form-select" disabled>
+                                <option th:value="${promotion.discountType}" th:text="${promotion.discountType}"
+                                    selected></option>
+                            </select>
+                            <small class="text-muted">Discount type cannot be changed once created.</small>
+                            <!-- We need to pass it back even if disabled -->
+                            <input type="hidden" name="discountType" th:value="${promotion.discountType}">
+                        </div>
+
+                        <div class="form-group">
+                            <label class="form-label">Description <span class="text-danger">*</span></label>
+                            <textarea name="description" class="form-control" rows="4"
+                                placeholder="Enter promotion description" th:text="${promotion.description}"
+                                required></textarea>
+                        </div>
+
+                        <div class="form-group">
+                            <label class="form-label">Status <span class="text-danger">*</span></label>
+                            <select name="isActive" class="form-select" required>
+                                <option value="true" th:selected="${promotion.isActive == true}">Active</option>
+                                <option value="false" th:selected="${promotion.isActive == false}">Inactive</option>
+                            </select>
+                        </div>
+                    </div>
+                </div>
+
+                <!-- Date Range Row -->
+                <div class="row mt-3">
+                    <div class="col-md-6">
+                        <div class="form-group">
+                            <label class="form-label">Start Date <span class="text-danger">*</span></label>
+                            <input type="date" name="startDate" id="startDate" class="form-control"
+                                th:value="${#temporals.format(promotion.startDate, 'yyyy-MM-dd')}" required>
+                        </div>
+                    </div>
+                    <div class="col-md-6">
+                        <div class="form-group">
+                            <label class="form-label">End Date <span class="text-danger">*</span></label>
+                            <input type="date" name="endDate" id="endDate" class="form-control"
+                                th:value="${#temporals.format(promotion.endDate, 'yyyy-MM-dd')}" required>
+                        </div>
+                    </div>
+                </div>
+
+                <!-- Applicable Categories Section -->
+                <div class="row mt-4">
+                    <div class="col-12">
+                        <div class="form-group">
+                            <label class="form-label">Applicable Categories</label>
+                            <div class="categories-selection"
+                                style="max-height: 300px; overflow-y: auto; border: 1px solid #ddd; border-radius: 8px; padding: 15px; background: #f9f9f9;">
+                                <div class="form-check mb-3"
+                                    style="border-bottom: 1px solid #ddd; padding-bottom: 10px;">
+                                    <input class="form-check-input" type="checkbox" id="selectAllCategories"
+                                        onchange="toggleAllCategories(this)">
+                                    <label class="form-check-label fw-bold" for="selectAllCategories">
+                                        All Categories
+                                    </label>
+                                </div>
+                                <div th:each="category : ${categories}" class="form-check">
+                                    <input class="form-check-input category-checkbox" type="checkbox" name="categoryIds"
+                                        th:value="${category.id}" th:id="'category-' + ${category.id}"
+                                        th:checked="${selectedCategoryIds != null and #lists.contains(selectedCategoryIds, category.id)}">
+                                    <label class="form-check-label" th:for="'category-' + ${category.id}"
+                                        th:text="${category.name}">
+                                        Category Name
+                                    </label>
+                                </div>
+                            </div>
+                        </div>
+                    </div>
+                </div>
+
+                <!-- Action Buttons -->
+                <div class="row mt-4">
+                    <div class="col-12">
+                        <div class="d-flex gap-3 justify-content-end">
+                            <button type="button" class="btn-cancel" onclick="window.location.href='/admin/promotions'">
+                                Cancel
+                            </button>
+                            <button type="submit" class="btn-submit">
+                                <i class="fas fa-save"></i> Save Changes
+                            </button>
+                        </div>
+                    </div>
+                </div>
+            </form>
+        </div>
+
+        <script th:src="@{/js/addpromotionadmin.js}"></script>
     </div>
 </body>
 

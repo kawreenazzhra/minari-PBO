@@ -20,6 +20,8 @@ import org.springframework.web.servlet.mvc.support.RedirectAttributes;
 
 import java.io.IOException;
 import java.util.List;
+import java.util.ArrayList;
+import com.minari.ecommerce.entity.Promotion;
 
 import org.springframework.format.annotation.DateTimeFormat;
 
@@ -158,19 +160,35 @@ public class AdminController {
 
     @GetMapping("/promotions/{id}/edit")
     public String showEditPromotionForm(@PathVariable Long id, Model model) {
-        com.minari.ecommerce.entity.Promotion promotion = promotionRepository.findById(id).orElse(null);
-        if (promotion == null) {
-            return "redirect:/admin/promotions";
-        }
+        Promotion promotion = promotionRepository.findById(id)
+                .orElseThrow(() -> new IllegalArgumentException("Invalid promotion Id:" + id));
         model.addAttribute("promotion", promotion);
         model.addAttribute("categories", catalogService.getAllCategories());
-        // Simple logic to pass selected IDs if needed, though Thymeleaf handles
-        // iteration
+        model.addAttribute("products", productService.getAllProducts());
+
+        // Parse applicable categories JSON/String to List<Long>
+        List<Long> selectedCategoryIds = new ArrayList<>();
+        String applicableCats = promotion.getApplicableCategories();
+        if (applicableCats != null && !applicableCats.isEmpty() && !applicableCats.equals("[]")) {
+            String clean = applicableCats.replace("[", "").replace("]", "").replace(" ", "");
+            if (!clean.isEmpty()) {
+                for (String s : clean.split(",")) {
+                    try {
+                        selectedCategoryIds.add(Long.parseLong(s));
+                    } catch (NumberFormatException e) {
+                        // ignore
+                    }
+                }
+            }
+        }
+        model.addAttribute("selectedCategoryIds", selectedCategoryIds);
+        
         return "admin/promotions/edit";
     }
 
     @PostMapping("/promotions/update/{id}")
     public String updatePromotion(@PathVariable Long id,
+            @RequestParam String name,
             @RequestParam String code,
             @RequestParam String description,
             @RequestParam Double discountValue,
@@ -180,10 +198,12 @@ public class AdminController {
             @RequestParam(required = false) Integer usageLimit,
             @RequestParam(required = false) Double minPurchaseAmount,
             @RequestParam(required = false) List<Long> categoryIds,
+            @RequestParam(required = false) List<Long> productIds,
             RedirectAttributes redirectAttributes) {
         try {
             com.minari.ecommerce.entity.Promotion promo = promotionRepository.findById(id).orElse(null);
             if (promo != null) {
+                promo.setName(name);
                 promo.setPromoCode(code);
                 promo.setDescription(description);
                 promo.setDiscountValue(discountValue);
@@ -197,6 +217,12 @@ public class AdminController {
                     promo.setApplicableCategories(categoryIds.toString());
                 } else {
                     promo.setApplicableCategories(null);
+                }
+                
+                if (productIds != null && !productIds.isEmpty()) {
+                    promo.setExcludedProducts(productIds.toString());
+                } else {
+                    promo.setExcludedProducts(null);
                 }
 
                 promotionRepository.save(promo);

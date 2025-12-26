@@ -34,13 +34,16 @@ public class OrderService {
     private final EmailService emailService;
     private final ProductService productService;
 
+    private final com.minari.ecommerce.service.PromotionService promotionService;
+
     public OrderService(OrderRepository orderRepository, ShoppingCartService cartService, UserRepository userRepository,
-            EmailService emailService, ProductService productService) {
+            EmailService emailService, ProductService productService, com.minari.ecommerce.service.PromotionService promotionService) {
         this.orderRepository = orderRepository;
         this.cartService = cartService;
         this.userRepository = userRepository;
         this.emailService = emailService;
         this.productService = productService;
+        this.promotionService = promotionService;
     }
 
     public Order createOrderFromCart(String email, Address shippingAddress, PaymentMethod paymentMethod) {
@@ -95,12 +98,90 @@ public class OrderService {
         
         order.setShippingAddress(orderAddress);
     
-    double productsSubtotal = cart.getTotalAmount();
-    double shippingFee = 15000.0;
-    
-    order.setSubtotalAmount(productsSubtotal);
-    order.setShippingCost(shippingFee);
-    order.setTotalAmount(productsSubtotal + shippingFee);
+        double productsSubtotal = cart.getTotalAmount();
+        double shippingFee = 15000.0;
+        
+        // --- Auto-Apply Best Promotion Logic ---
+        double bestDiscountAmount = 0.0;
+        com.minari.ecommerce.entity.Promotion appliedPromotion = null;
+        
+        List<com.minari.ecommerce.entity.Promotion> activePromotions = promotionService.getActivePromotions();
+        
+        for (com.minari.ecommerce.entity.Promotion promo : activePromotions) {
+            // Check basic constraints
+            if (promo.getMinPurchaseAmount() != null && productsSubtotal < promo.getMinPurchaseAmount()) {
+                continue;
+            }
+            if (promo.getUsageLimit() != null && promo.getUsedCount() >= promo.getUsageLimit()) {
+                continue;
+            }
+            
+            // Check Category Applicability
+            // Parse applicable categories
+            List<Long> applicableCategoryIds = new ArrayList<>();
+            String catParams = promo.getApplicableCategories();
+            if (catParams != null && !catParams.isEmpty() && !catParams.equals("[]")) {
+                 String clean = catParams.replace("[", "").replace("]", "").replace(" ", "");
+                 for (String s : clean.split(",")) {
+                     try {
+                         applicableCategoryIds.add(Long.parseLong(s));
+                     } catch(NumberFormatException e) {}
+                 }
+            }
+            
+            // Calculate eligible subtotal
+            double eligibleSubtotal = 0.0;
+            if (applicableCategoryIds.isEmpty()) {
+                // If no categories specified, assume applicable to all? 
+                // Alternatively, if strict mode, requires categories. Let's assume strict or all if empty. 
+                // Based on UI allowing empty, empty might mean "All". Let's assume Empty = All for now or checking logic.
+                // Re-reading user request: "promotions ini berdasarkan categories". 
+                // So if categories ARE set, we filter. If NOT set, maybe applies to everything?
+                // Let's implement: Empty = All Products.
+                eligibleSubtotal = productsSubtotal;
+            } else {
+                for (CartItem item : cart.getItems()) {
+                    if (item.getProduct().getCategory() != null && 
+                        applicableCategoryIds.contains(item.getProduct().getCategory().getId())) {
+                        eligibleSubtotal += item.getSubtotal();
+                    }
+                }
+            }
+            
+            if (eligibleSubtotal > 0) {
+                double discount = 0.0;
+                if (promo.getDiscountType() == com.minari.ecommerce.entity.Promotion.DiscountType.PERCENTAGE) {
+                    discount = eligibleSubtotal * (promo.getDiscountValue() / 100.0);
+                } else if (promo.getDiscountType() == com.minari.ecommerce.entity.Promotion.DiscountType.FIXED_AMOUNT) {
+                    // Fixed amount applies if at least one item matches, but capped at eligible subtotal?
+                    // Or fixed amount off entire order? Usually fixed amount off entire order if condition met.
+                    // Let's assume fixed amount off eligible subtotal (capped).
+                    discount = Math.min(eligibleSubtotal, promo.getDiscountValue());
+                }
+                
+                if (discount > bestDiscountAmount) {
+                    bestDiscountAmount = discount;
+                    appliedPromotion = promo;
+                }
+            }
+        }
+        
+        // Apply discount
+        if (appliedPromotion != null) {
+            log.info("Applying promotion: {} with discount: {}", appliedPromotion.getName(), bestDiscountAmount);
+            // Update usage count
+            appliedPromotion.setUsedCount(appliedPromotion.getUsedCount() + 1);
+            promotionService.savePromotion(appliedPromotion);
+            
+            // Link promotion to order
+            order.setPromotionId(appliedPromotion.getId());
+            order.setPromoCode(appliedPromotion.getPromoCode());
+        }
+        
+        order.setSubtotalAmount(productsSubtotal);
+        order.setDiscountAmount(bestDiscountAmount);
+        order.setShippingCost(shippingFee);
+        order.setTotalAmount(Math.max(0, (productsSubtotal - bestDiscountAmount) + shippingFee));
 
         List<OrderItem> orderItems = cart.getItems().stream()
                 .map(cartItem -> new OrderItem(order, cartItem.getProduct(), cartItem))
