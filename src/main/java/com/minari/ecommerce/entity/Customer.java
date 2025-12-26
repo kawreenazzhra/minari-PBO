@@ -31,11 +31,10 @@ public abstract class Customer extends User {
     @OneToMany(mappedBy = "customer", cascade = CascadeType.ALL, orphanRemoval = true)
     private List<Address> savedAddresses = new ArrayList<>();
 
-    // Constructors
     public Customer() {}
 
-    public Customer(Long id, String email, String password, String fullName, String phone, UserRole role, Address shippingAddress, String avatarUrl, Boolean isActive, Boolean emailVerified, LocalDateTime createdAt, LocalDateTime updatedAt, LocalDateTime lastLogin, Integer loyaltyPoints, Boolean newsletterSubscribed, LocalDateTime memberSince, ShoppingCart shoppingCart, List<Order> orders, List<ProductReview> reviews, List<Address> savedAddresses) {
-        super(id, email, password, fullName, phone, role, shippingAddress, avatarUrl, isActive, emailVerified, createdAt, updatedAt, lastLogin);
+    public Customer(Long id, String email, String username, String password, String fullName, String phone, UserRole role, Address shippingAddress, String avatarUrl, Boolean isActive, Boolean emailVerified, LocalDateTime createdAt, LocalDateTime updatedAt, LocalDateTime lastLogin, Integer loyaltyPoints, Boolean newsletterSubscribed, LocalDateTime memberSince, ShoppingCart shoppingCart, List<Order> orders, List<ProductReview> reviews, List<Address> savedAddresses) {
+        super(id, email, username, password, fullName, phone, role, shippingAddress, avatarUrl, isActive, emailVerified, createdAt, updatedAt, lastLogin);
         this.loyaltyPoints = loyaltyPoints;
         this.newsletterSubscribed = newsletterSubscribed;
         this.memberSince = memberSince;

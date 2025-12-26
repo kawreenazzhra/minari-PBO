@@ -1,7 +1,9 @@
 package com.minari.ecommerce.controller;
 
+import com.minari.ecommerce.dto.DiscountCalculation;
 import com.minari.ecommerce.entity.User;
 import com.minari.ecommerce.entity.Customer;
+import com.minari.ecommerce.service.PromotionService;
 import com.minari.ecommerce.service.ShoppingCartService;
 import com.minari.ecommerce.repository.UserRepository;
 import org.springframework.stereotype.Controller;
@@ -19,10 +21,12 @@ public class PaymentController {
 
     private final ShoppingCartService cartService;
     private final UserRepository userRepository;
+    private final PromotionService promotionService;
 
-    public PaymentController(ShoppingCartService cartService, UserRepository userRepository) {
+    public PaymentController(ShoppingCartService cartService, UserRepository userRepository, PromotionService promotionService) {
         this.cartService = cartService;
         this.userRepository = userRepository;
+        this.promotionService = promotionService;
     }
 
     @GetMapping
@@ -64,10 +68,19 @@ public class PaymentController {
         // Selected Payment Method - NO DEFAULT
         model.addAttribute("selectedPaymentMethod", paymentMethod);
 
+        // Calculate discount
+        DiscountCalculation discountCalc = promotionService.calculateBestDiscount(cart);
+        double subtotal = cart.getTotalAmount();
+        double discountAmount = discountCalc.getDiscountAmount();
+        double shippingFee = 15000.0;
+        double finalTotal = Math.max(0, (subtotal - discountAmount) + shippingFee);
+
         // Cart summary
         model.addAttribute("cartItems", cart.getItems());
-        model.addAttribute("subtotal", cart.getTotalAmount());
-        model.addAttribute("total", cart.getTotalAmount());
+        model.addAttribute("subtotal", subtotal);
+        model.addAttribute("discountAmount", discountAmount);
+        model.addAttribute("appliedPromotion", discountCalc.getAppliedPromotion());
+        model.addAttribute("total", finalTotal);
         
         return "checkout/summary"; 
     }

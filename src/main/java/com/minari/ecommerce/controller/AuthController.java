@@ -71,6 +71,13 @@ public class AuthController {
             return "redirect:/register";
         }
 
+        // Check if username exists
+        if (customer.getUsername() != null && userRepository.existsByUsername(customer.getUsername())) {
+            bindingResult.rejectValue("username", "error.customer", "Username already exists");
+            redirectAttributes.addFlashAttribute("error", "Username already exists");
+            return "redirect:/register";
+        }
+
         // Check password match
         if (!customer.getPassword().equals(confirmPassword)) {
             bindingResult.rejectValue("password", "error.customer", "Passwords do not match");

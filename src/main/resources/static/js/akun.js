@@ -9,7 +9,6 @@ document.addEventListener('DOMContentLoaded', function () {
   const fieldName = document.getElementById('fieldName');
   const fieldPhone = document.getElementById('fieldPhone');
   const fieldEmail = document.getElementById('fieldEmail');
-  const fieldBirth = document.getElementById('fieldBirth');
   const fieldAddress = document.getElementById('fieldAddress');
   const addAddressLink = document.getElementById('addAddressLink');
   const primaryAction = document.getElementById('primaryAction');
@@ -35,7 +34,6 @@ document.addEventListener('DOMContentLoaded', function () {
     if (fieldName) fieldName.textContent = data.name || '-';
     if (fieldPhone) fieldPhone.textContent = data.phone || '-';
     if (fieldEmail) fieldEmail.textContent = data.email || '-';
-    if (fieldBirth) fieldBirth.textContent = data.birth_date || '-';
     if (fieldAddress) fieldAddress.textContent = data.address || '-';
     if (userEmoji) {
       userEmoji.textContent = data.role === 'admin' ? '🛠️' : '👩‍🦰';

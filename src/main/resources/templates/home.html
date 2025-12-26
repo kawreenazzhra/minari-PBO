@@ -79,6 +79,35 @@
                             </div>
                             <h4 class="fw-bold mb-2" style="color: #333;" th:text="${promo.promoCode}">Code</h4>
                             <p class="text-muted mb-3 small" th:text="${promo.description}">Description</p>
+
+                            <!-- Category Information -->
+                            <div class="category-tags mb-3">
+                                <div th:if="${promo.categoryNames != null and !promo.categoryNames.isEmpty()}">
+                                    <small class="text-muted d-block mb-1">Applicable to:</small>
+                                    <div class="d-flex flex-wrap gap-1 justify-content-center">
+                                        <span th:each="categoryName : ${promo.categoryNames}" class="badge bg-secondary"
+                                            style="font-size: 10px; font-weight: 500; padding: 4px 8px;">
+                                            <i class="fas fa-tag me-1"></i>
+                                            <span th:text="${categoryName}">Category</span>
+                                        </span>
+                                    </div>
+                                </div>
+                                <div th:if="${promo.categoryNames == null or promo.categoryNames.isEmpty()}">
+                                    <span class="badge bg-success"
+                                        style="font-size: 10px; font-weight: 500; padding: 4px 8px;">
+                                        <i class="fas fa-check-circle me-1"></i> All Categories
+                                    </span>
+                                </div>
+                            </div>
+
+                            <!-- Minimum Purchase Information -->
+                            <div class="min-purchase text-muted small mb-2"
+                                th:if="${promo.minPurchaseAmount != null and promo.minPurchaseAmount > 0}">
+                                <i class="fas fa-shopping-cart me-1"></i>
+                                Min. Purchase: <span class="fw-bold"
+                                    th:text="${'Rp ' + #numbers.formatDecimal(promo.minPurchaseAmount, 0, 'COMMA', 0, 'POINT')}">Rp
+                                    0</span>
+                            </div>
                             <div class="expiry-date text-danger small">
                                 <i class="far fa-clock me-1"></i> Valid until <span
                                     th:text="${#temporals.format(promo.endDate, 'dd MMM yyyy')}">Date</span>
@@ -205,10 +234,25 @@
                 </div>
                 <div class="col-md-6 text-end input-end">
                     <p>Give us suggestions for future progress</p>
+
+                    <!-- Success/Error Messages -->
+                    <div th:if="${suggestionSuccess}" class="alert alert-success alert-dismissible fade show mb-2"
+                        role="alert" style="font-size: 14px;">
+                        <span th:text="${suggestionSuccess}">Success!</span>
+                        <button type="button" class="btn-close" data-bs-dismiss="alert" aria-label="Close"></button>
+                    </div>
+                    <div th:if="${suggestionError}" class="alert alert-danger alert-dismissible fade show mb-2"
+                        role="alert" style="font-size: 14px;">
+                        <span th:text="${suggestionError}">Error!</span>
+                        <button type="button" class="btn-close" data-bs-dismiss="alert" aria-label="Close"></button>
+                    </div>
+
                     <div class="footer-form">
                         <form th:action="@{/suggestion/store}" method="POST">
-                            <!-- CSRF hidden field should be handled by Spring Security automatically or via th:action -->
-                            <input type="text" name="message" placeholder="your message . . .">
+                            <!-- CSRF Token -->
+                            <input type="hidden" th:name="${_csrf.parameterName}" th:value="${_csrf.token}" />
+                            <input type="text" name="message" placeholder="your message . . ." required minlength="10"
+                                maxlength="500">
                             <button type="submit">Send</button>
                         </form>
                     </div>

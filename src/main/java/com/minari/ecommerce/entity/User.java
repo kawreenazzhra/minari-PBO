@@ -15,6 +15,9 @@ public abstract class User {
     @Column(unique = true, nullable = false)
     private String email;
     
+    @Column(unique = true)
+    private String username;
+    
     @Column(nullable = false)
     private String password;
     
@@ -52,9 +55,10 @@ public abstract class User {
     // Constructors
     public User() {}
 
-    public User(Long id, String email, String password, String fullName, String phone, UserRole role, Address shippingAddress, String avatarUrl, Boolean isActive, Boolean emailVerified, LocalDateTime createdAt, LocalDateTime updatedAt, LocalDateTime lastLogin) {
+    public User(Long id, String email, String username, String password, String fullName, String phone, UserRole role, Address shippingAddress, String avatarUrl, Boolean isActive, Boolean emailVerified, LocalDateTime createdAt, LocalDateTime updatedAt, LocalDateTime lastLogin) {
         this.id = id;
         this.email = email;
+        this.username = username;
         this.password = password;
         this.fullName = fullName;
         this.phone = phone;
@@ -83,6 +87,14 @@ public abstract class User {
 
     public void setEmail(String email) {
         this.email = email;
+    }
+
+    public String getUsername() {
+        return username;
+    }
+
+    public void setUsername(String username) {
+        this.username = username;
     }
 
     public String getPassword() {

@@ -83,9 +83,15 @@
                     </div>
 
                     <!-- Suggestions / Email -->
-                    <a href="#" class="nav-icon d-flex align-items-center justify-content-center"
+                    <a href="/admin/suggestions"
+                        class="nav-icon d-flex align-items-center justify-content-center position-relative"
                         title="Customer Suggestions" style="width: 32px; height: 32px;">
                         <img th:src="@{/images/email.png}" alt="Messages" width="20" height="20">
+                        <span th:if="${unreadSuggestionCount != null and unreadSuggestionCount > 0}"
+                            class="position-absolute top-0 start-100 translate-middle badge rounded-pill bg-danger"
+                            style="font-size: 10px; padding: 2px 5px;">
+                            <span th:text="${unreadSuggestionCount}">0</span>
+                        </span>
                     </a>
 
                     <!-- Logout -->

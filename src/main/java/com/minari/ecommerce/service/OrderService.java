@@ -102,69 +102,9 @@ public class OrderService {
         double shippingFee = 15000.0;
         
         // --- Auto-Apply Best Promotion Logic ---
-        double bestDiscountAmount = 0.0;
-        com.minari.ecommerce.entity.Promotion appliedPromotion = null;
-        
-        List<com.minari.ecommerce.entity.Promotion> activePromotions = promotionService.getActivePromotions();
-        
-        for (com.minari.ecommerce.entity.Promotion promo : activePromotions) {
-            // Check basic constraints
-            if (promo.getMinPurchaseAmount() != null && productsSubtotal < promo.getMinPurchaseAmount()) {
-                continue;
-            }
-            if (promo.getUsageLimit() != null && promo.getUsedCount() >= promo.getUsageLimit()) {
-                continue;
-            }
-            
-            // Check Category Applicability
-            // Parse applicable categories
-            List<Long> applicableCategoryIds = new ArrayList<>();
-            String catParams = promo.getApplicableCategories();
-            if (catParams != null && !catParams.isEmpty() && !catParams.equals("[]")) {
-                 String clean = catParams.replace("[", "").replace("]", "").replace(" ", "");
-                 for (String s : clean.split(",")) {
-                     try {
-                         applicableCategoryIds.add(Long.parseLong(s));
-                     } catch(NumberFormatException e) {}
-                 }
-            }
-            
-            // Calculate eligible subtotal
-            double eligibleSubtotal = 0.0;
-            if (applicableCategoryIds.isEmpty()) {
-                // If no categories specified, assume applicable to all? 
-                // Alternatively, if strict mode, requires categories. Let's assume strict or all if empty. 
-                // Based on UI allowing empty, empty might mean "All". Let's assume Empty = All for now or checking logic.
-                // Re-reading user request: "promotions ini berdasarkan categories". 
-                // So if categories ARE set, we filter. If NOT set, maybe applies to everything?
-                // Let's implement: Empty = All Products.
-                eligibleSubtotal = productsSubtotal;
-            } else {
-                for (CartItem item : cart.getItems()) {
-                    if (item.getProduct().getCategory() != null && 
-                        applicableCategoryIds.contains(item.getProduct().getCategory().getId())) {
-                        eligibleSubtotal += item.getSubtotal();
-                    }
-                }
-            }
-            
-            if (eligibleSubtotal > 0) {
-                double discount = 0.0;
-                if (promo.getDiscountType() == com.minari.ecommerce.entity.Promotion.DiscountType.PERCENTAGE) {
-                    discount = eligibleSubtotal * (promo.getDiscountValue() / 100.0);
-                } else if (promo.getDiscountType() == com.minari.ecommerce.entity.Promotion.DiscountType.FIXED_AMOUNT) {
-                    // Fixed amount applies if at least one item matches, but capped at eligible subtotal?
-                    // Or fixed amount off entire order? Usually fixed amount off entire order if condition met.
-                    // Let's assume fixed amount off eligible subtotal (capped).
-                    discount = Math.min(eligibleSubtotal, promo.getDiscountValue());
-                }
-                
-                if (discount > bestDiscountAmount) {
-                    bestDiscountAmount = discount;
-                    appliedPromotion = promo;
-                }
-            }
-        }
+        com.minari.ecommerce.dto.DiscountCalculation discountCalc = promotionService.calculateBestDiscount(cart);
+        double bestDiscountAmount = discountCalc.getDiscountAmount();
+        com.minari.ecommerce.entity.Promotion appliedPromotion = discountCalc.getAppliedPromotion();
         
         // Apply discount
         if (appliedPromotion != null) {

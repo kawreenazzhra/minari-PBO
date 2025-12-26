@@ -38,6 +38,7 @@ public class AdminController {
     private final com.minari.ecommerce.repository.ProductReviewRepository reviewRepository;
     private final com.minari.ecommerce.repository.PromotionRepository promotionRepository;
     private final com.minari.ecommerce.service.PromotionService promotionService;
+    private final com.minari.ecommerce.service.SuggestionService suggestionService;
 
     public AdminController(DashboardService dashboardService,
             ProductService productService,
@@ -47,7 +48,8 @@ public class AdminController {
             FileUploadService fileUploadService,
             com.minari.ecommerce.repository.ProductReviewRepository reviewRepository,
             com.minari.ecommerce.repository.PromotionRepository promotionRepository,
-            com.minari.ecommerce.service.PromotionService promotionService) {
+            com.minari.ecommerce.service.PromotionService promotionService,
+            com.minari.ecommerce.service.SuggestionService suggestionService) {
         this.dashboardService = dashboardService;
         this.productService = productService;
         this.orderService = orderService;
@@ -57,11 +59,19 @@ public class AdminController {
         this.reviewRepository = reviewRepository;
         this.promotionRepository = promotionRepository;
         this.promotionService = promotionService;
+        this.suggestionService = suggestionService;
     }
 
     @ModelAttribute
     public void addAttributes(Model model, jakarta.servlet.http.HttpServletRequest request) {
         model.addAttribute("currentUri", request.getRequestURI());
+        // Add unread suggestion count for admin navbar
+        try {
+            Long unreadCount = suggestionService.getUnreadCount();
+            model.addAttribute("unreadSuggestionCount", unreadCount != null ? unreadCount : 0L);
+        } catch (Exception e) {
+            model.addAttribute("unreadSuggestionCount", 0L);
+        }
     }
 
     // ... (rest of existing methods, but keeping them as is, only showing

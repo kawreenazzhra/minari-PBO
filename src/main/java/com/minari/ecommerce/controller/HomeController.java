@@ -60,9 +60,55 @@ public class HomeController {
                 .collect(Collectors.toList());
         model.addAttribute("navCategories", navCategoryMaps);
         
-        // Add active promotions
+        // Add active promotions with enriched category information
         promotionService.updateExpiredPromotions();
-        model.addAttribute("promotions", promotionService.getActivePromotions());
+        List<com.minari.ecommerce.entity.Promotion> promotions = promotionService.getActivePromotions();
+        
+        // Enrich promotions with category names
+        List<java.util.Map<String, Object>> enrichedPromotions = promotions.stream()
+                .map(promo -> {
+                    java.util.Map<String, Object> promoMap = new java.util.HashMap<>();
+                    promoMap.put("id", promo.getId());
+                    promoMap.put("name", promo.getName());
+                    promoMap.put("description", promo.getDescription());
+                    promoMap.put("promoCode", promo.getPromoCode());
+                    promoMap.put("discountType", promo.getDiscountType());
+                    promoMap.put("discountValue", promo.getDiscountValue());
+                    promoMap.put("minPurchaseAmount", promo.getMinPurchaseAmount());
+                    promoMap.put("endDate", promo.getEndDate());
+                    
+                    // Parse applicable categories and get category names
+                    List<String> categoryNames = new java.util.ArrayList<>();
+                    if (promo.getApplicableCategories() != null && !promo.getApplicableCategories().trim().isEmpty()) {
+                        try {
+                            // Parse JSON array of category IDs
+                            String categoriesJson = promo.getApplicableCategories().trim();
+                            if (categoriesJson.startsWith("[") && categoriesJson.endsWith("]")) {
+                                categoriesJson = categoriesJson.substring(1, categoriesJson.length() - 1);
+                                String[] categoryIds = categoriesJson.split(",");
+                                for (String idStr : categoryIds) {
+                                    try {
+                                        Long categoryId = Long.parseLong(idStr.trim().replace("\"", ""));
+                                        productService.getAllCategories().stream()
+                                                .filter(cat -> cat.getId().equals(categoryId))
+                                                .findFirst()
+                                                .ifPresent(cat -> categoryNames.add(cat.getName()));
+                                    } catch (NumberFormatException e) {
+                                        // Skip invalid IDs
+                                    }
+                                }
+                            }
+                        } catch (Exception e) {
+                            // If parsing fails, leave categoryNames empty
+                        }
+                    }
+                    promoMap.put("categoryNames", categoryNames);
+                    
+                    return promoMap;
+                })
+                .collect(Collectors.toList());
+        
+        model.addAttribute("promotions", enrichedPromotions);
 
         model.addAttribute("pageTitle", "MINARI - Fashion E-Commerce");
 

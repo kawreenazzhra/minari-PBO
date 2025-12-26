@@ -16,9 +16,20 @@ public interface UserRepository extends JpaRepository<User, Long> {
     // Find by email
     Optional<User> findByEmail(String email);
     
+    // Find by username
+    Optional<User> findByUsername(String username);
+    
+    // Find by email or username (for login)
+    @Query("SELECT u FROM User u WHERE u.email = :identifier OR u.username = :identifier")
+    Optional<User> findByEmailOrUsername(@Param("identifier") String identifier);
+    
     // Check if email exists
     @Query("SELECT CASE WHEN COUNT(u) > 0 THEN true ELSE false END FROM User u WHERE u.email = :email")
     boolean existsByEmail(@Param("email") String email);
+    
+    // Check if username exists
+    @Query("SELECT CASE WHEN COUNT(u) > 0 THEN true ELSE false END FROM User u WHERE u.username = :username")
+    boolean existsByUsername(@Param("username") String username);
     
     // Find by role
     List<User> findByRole(UserRole role);

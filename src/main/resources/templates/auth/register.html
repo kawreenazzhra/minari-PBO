@@ -37,6 +37,14 @@
                 </div>
 
                 <div class="mb-3">
+                    <label for="username" class="form-label">Username</label>
+                    <input type="text" class="form-control" id="username" name="username" th:field="*{username}"
+                        required minlength="3" maxlength="20" pattern="[a-zA-Z0-9_]+"
+                        title="Username must be 3-20 characters and can only contain letters, numbers, and underscores">
+                    <small class="text-muted">3-20 characters, letters, numbers, and underscores only</small>
+                </div>
+
+                <div class="mb-3">
                     <label for="email" class="form-label">Email</label>
                     <input type="email" class="form-control" id="email" name="email" th:field="*{email}" required>
                 </div>
