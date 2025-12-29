@@ -230,6 +230,16 @@
             <!-- Product Info -->
             <div class="product-info">
                 <h1 class="product-name" th:text="${product.name}">Yellow shirt</h1>
+
+                <div class="d-flex align-items-center mb-3" th:if="${product.averageRating > 0}">
+                    <span class="text-warning me-2">
+                        <i class="fas fa-star"></i>
+                        <span th:text="${product.averageRating}" class="fw-bold text-dark">4.5</span>
+                    </span>
+                    <span class="text-muted small" th:text="'(' + ${product.reviewCount} + ' reviews)'">(10
+                        reviews)</span>
+                </div>
+
                 <div class="product-price"
                     th:text="'Rp. ' + ${#numbers.formatDecimal(product.price, 0, 'POINT', 0, 'COMMA')}">Rp. 175.000
                 </div>

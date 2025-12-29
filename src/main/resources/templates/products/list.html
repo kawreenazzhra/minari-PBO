@@ -44,10 +44,17 @@
                                         <div class="p-text">
                                             <h6 class="p-name" th:text="${product.name}">Product Name</h6>
                                             <div class="p-meta">
-                                                <div class="p-price">
+                                                <div
+                                                    class="p-price d-flex align-items-center justify-content-between w-100">
                                                     <span class="current-price"
                                                         th:text="'Rp ' + ${#numbers.formatDecimal(product.price, 0, 'POINT', 0, 'COMMA')}">Rp
                                                         0</span>
+                                                    <span class="product-rating small"
+                                                        th:if="${product.averageRating > 0}">
+                                                        <i class="fas fa-star text-warning"></i>
+                                                        <span th:text="${product.averageRating}"
+                                                            class="text-dark fw-semibold ms-1">4.5</span>
+                                                    </span>
                                                 </div>
                                             </div>
                                             <small class="out-of-stock-text" th:if="${product.stockQuantity <= 0}">
