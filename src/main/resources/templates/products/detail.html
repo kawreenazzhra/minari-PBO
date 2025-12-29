@@ -291,7 +291,8 @@
                         </div>
                         <div>
                             <div class="review-author-name"
-                                th:text="${review.customer.firstName + ' ' + review.customer.lastName}">user</div>
+                                th:text="${review.customer.fullName != null ? review.customer.fullName : 'User'}">user
+                            </div>
                             <div class="review-stars">
                                 <span th:each="i : ${#numbers.sequence(1, 5)}">
                                     <i th:class="${i <= review.rating} ? 'fas fa-star' : 'far fa-star'"></i>
