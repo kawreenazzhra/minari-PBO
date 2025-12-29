@@ -107,6 +107,71 @@ public class CartController {
         return "redirect:/cart";
     }
 
+    @PostMapping("/add/ajax")
+    @ResponseBody
+    public org.springframework.http.ResponseEntity<java.util.Map<String, Object>> addToCartAjax(
+            @RequestParam Long productId,
+            @RequestParam(defaultValue = "1") int quantity,
+            Principal principal,
+            HttpSession session) {
+        
+        java.util.Map<String, Object> response = new java.util.HashMap<>();
+        int cartCount = 0;
+
+        try {
+            if (principal != null) {
+                // Authenticated user
+                cartService.addToCart(principal.getName(), productId, quantity);
+                com.minari.ecommerce.entity.ShoppingCart userCart = cartService.getCartForUser(principal.getName());
+                cartCount = userCart != null && userCart.getItems() != null ? userCart.getItems().size() : 0;
+            } else {
+                // Guest user
+                Optional<Product> product = productService.getProductById(productId);
+                if (product.isPresent()) {
+                    Product p = product.get();
+                    CartSessionItem item = new CartSessionItem(
+                            p.getId(),
+                            p.getName(),
+                            p.getPrice(),
+                            "One Size", 
+                            "Default", 
+                            quantity,
+                            p.getImageUrl());
+
+                    List<CartSessionItem> guestCart = (List<CartSessionItem>) session.getAttribute(GUEST_CART_SESSION_KEY);
+                    if (guestCart == null) {
+                        guestCart = new ArrayList<>();
+                        session.setAttribute(GUEST_CART_SESSION_KEY, guestCart);
+                    }
+
+                    boolean found = false;
+                    for (CartSessionItem cartItem : guestCart) {
+                        if (cartItem.getProductId().equals(productId)) {
+                            cartItem.setQuantity(cartItem.getQuantity() + quantity);
+                            found = true;
+                            break;
+                        }
+                    }
+
+                    if (!found) {
+                        guestCart.add(item);
+                    }
+                    cartCount = guestCart.size();
+                }
+            }
+            
+            response.put("success", true);
+            response.put("message", "Product added to cart successfully");
+            response.put("cartCount", cartCount);
+            return org.springframework.http.ResponseEntity.ok(response);
+            
+        } catch (Exception e) {
+            response.put("success", false);
+            response.put("message", e.getMessage());
+            return org.springframework.http.ResponseEntity.badRequest().body(response);
+        }
+    }
+
     @PostMapping("/remove")
     public String removeFromCart(@RequestParam Long productId,
             Principal principal,
