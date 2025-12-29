@@ -27,7 +27,7 @@ public class Promotion {
     @Column(name = "discount_value", nullable = false)
     private Double discountValue;
 
-    @Column(name = "min_purchase_amount", nullable = false, columnDefinition = "DOUBLE DEFAULT 0")
+    @Column(name = "min_purchase_amount", nullable = false, columnDefinition = "DOUBLE PRECISION DEFAULT 0")
     private Double minPurchaseAmount = 0.0;
 
     @Column(name = "max_discount_amount")

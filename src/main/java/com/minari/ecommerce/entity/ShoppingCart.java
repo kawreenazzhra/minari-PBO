@@ -23,7 +23,7 @@ public class ShoppingCart {
     @Column(name = "session_id")
     private String sessionId;
     
-    @Column(name = "total_amount", nullable = false, columnDefinition = "DOUBLE DEFAULT 0")
+    @Column(name = "total_amount", nullable = false, columnDefinition = "DOUBLE PRECISION DEFAULT 0")
     private Double totalAmount = 0.0;
     
     @Column(name = "item_count", nullable = false, columnDefinition = "INT DEFAULT 0")

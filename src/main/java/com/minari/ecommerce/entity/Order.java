@@ -37,13 +37,13 @@ public class Order {
     @Column(name = "subtotal_amount", nullable = false)
     private Double subtotalAmount;
     
-    @Column(name = "tax_amount", nullable = false, columnDefinition = "DOUBLE DEFAULT 0")
+    @Column(name = "tax_amount", nullable = false, columnDefinition = "DOUBLE PRECISION DEFAULT 0")
     private Double taxAmount = 0.0;
     
-    @Column(name = "shipping_cost", nullable = false, columnDefinition = "DOUBLE DEFAULT 0")
+    @Column(name = "shipping_cost", nullable = false, columnDefinition = "DOUBLE PRECISION DEFAULT 0")
     private Double shippingCost = 0.0;
     
-    @Column(name = "discount_amount", nullable = false, columnDefinition = "DOUBLE DEFAULT 0")
+    @Column(name = "discount_amount", nullable = false, columnDefinition = "DOUBLE PRECISION DEFAULT 0")
     private Double discountAmount = 0.0;
     
     @OneToOne(cascade = CascadeType.ALL)

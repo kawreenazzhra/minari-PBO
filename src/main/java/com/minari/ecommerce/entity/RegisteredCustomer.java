@@ -20,7 +20,7 @@ public class RegisteredCustomer extends Customer {
     @Column(name = "total_orders", nullable = false, columnDefinition = "INT DEFAULT 0")
     private Integer totalOrders = 0;
 
-    @Column(name = "total_spent", nullable = false, columnDefinition = "DOUBLE DEFAULT 0")
+    @Column(name = "total_spent", nullable = false, columnDefinition = "DOUBLE PRECISION DEFAULT 0")
     private Double totalSpent = 0.0;
 
     @Override

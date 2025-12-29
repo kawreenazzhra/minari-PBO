@@ -68,7 +68,7 @@ public class Product {
     @OneToMany(mappedBy = "product", cascade = CascadeType.ALL, orphanRemoval = true, fetch = FetchType.LAZY)
     private List<ProductVariant> variants = new ArrayList<>();
 
-    @Column(name = "average_rating", nullable = false, columnDefinition = "DOUBLE DEFAULT 0")
+    @Column(name = "average_rating", nullable = false, columnDefinition = "DOUBLE PRECISION DEFAULT 0")
     private Double averageRating = 0.0;
 
     @Column(name = "review_count", nullable = false, columnDefinition = "INT DEFAULT 0")
