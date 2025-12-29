@@ -14,10 +14,11 @@ import java.util.Optional;
 @RequestMapping("/products")
 public class ProductController {
 
-    private final ProductService productService;
+    private final com.minari.ecommerce.repository.ProductReviewRepository reviewRepository;
 
-    public ProductController(ProductService productService) {
+    public ProductController(ProductService productService, com.minari.ecommerce.repository.ProductReviewRepository reviewRepository) {
         this.productService = productService;
+        this.reviewRepository = reviewRepository;
     }
 
     @GetMapping
@@ -70,8 +71,21 @@ public class ProductController {
             return "redirect:/products";
         }
 
-        model.addAttribute("product", product.get());
-        model.addAttribute("pageTitle", product.get().getName() + " - Minari");
+        Product p = product.get();
+        model.addAttribute("product", p);
+        model.addAttribute("pageTitle", p.getName() + " - Minari");
+
+        // Fetch reviews
+        List<com.minari.ecommerce.entity.ProductReview> reviews = reviewRepository.findByProductId(p.getId());
+        model.addAttribute("reviews", reviews);
+
+        // Calculate average rating if needed or let frontend handle it
+        double avgRating = reviews.stream()
+                .mapToInt(com.minari.ecommerce.entity.ProductReview::getRating)
+                .average()
+                .orElse(0.0);
+        model.addAttribute("averageRating", avgRating);
+        model.addAttribute("reviewCount", reviews.size());
 
         return "products/detail";
     }

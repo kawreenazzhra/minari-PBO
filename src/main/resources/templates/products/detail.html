@@ -266,9 +266,38 @@
 
         <!-- Reviews Section -->
         <div class="reviews-section">
-            <div class="reviews-header">Review (0)</div>
-            <p class="text-muted" style="text-align: center; padding: 40px 0; color: #999;">No reviews yet. Be the first
-                to review this product!</p>
+            <div class="reviews-header" th:text="'Review (' + ${reviewCount} + ')'">Review (0)</div>
+
+            <div th:if="${reviews.empty}">
+                <p class="text-muted" style="text-align: center; padding: 40px 0; color: #999;">No reviews yet. Be the
+                    first to review this product!</p>
+            </div>
+
+            <div th:unless="${reviews.empty}">
+                <div th:each="review : ${reviews}" class="review-item">
+                    <div class="review-author">
+                        <div class="review-author-icon">
+                            <i class="fas fa-user" style="color: #d68c78;"></i>
+                        </div>
+                        <div>
+                            <div class="review-author-name"
+                                th:text="${review.customer.firstName + ' ' + review.customer.lastName}">user</div>
+                            <div class="review-stars">
+                                <span th:each="i : ${#numbers.sequence(1, 5)}">
+                                    <i th:class="${i <= review.rating} ? 'fas fa-star' : 'far fa-star'"></i>
+                                </span>
+                            </div>
+                        </div>
+                        <div class="ms-auto text-muted small"
+                            th:text="${#temporals.format(review.reviewDate, 'dd-MM-yyyy')}">Date</div>
+                    </div>
+                    <div class="review-text mt-2">
+                        <strong th:if="${review.reviewTitle}" th:text="${review.reviewTitle}"
+                            class="d-block mb-1"></strong>
+                        <span th:text="${review.reviewText}">Nice product</span>
+                    </div>
+                </div>
+            </div>
         </div>
     </div>
 
