@@ -102,36 +102,7 @@ function tplGuest() {
     <a id="loginLink" class="accmini__btn" href="/login" onclick="window.location.href='/login'; return false;" style="display: inline-flex; align-items: center; justify-content: center; width: 100%; height: 36px; background-color: #ffffff; border: 1.5px solid #d9c8c1; border-radius: 10px; color: #1e1e1e; font-weight: 600; text-decoration: none; font-size: 14px; cursor: pointer !important; transition: all 0.25s ease; margin-top: 8px; position: relative; z-index: 10000; pointer-events: auto;">Log in</a>
   </div>
 
-  <div id="searchOverlay" style="display: none; position: fixed; top: 0; left: 0; width: 100vw; height: 100vh; background: #FFF6F0; z-index: 20000; overflow-y: auto;">
-    <div class="container pt-4">
-        <div class="d-flex align-items-center mb-4">
-            <button id="closeSearchBtn" style="background: none; border: none; font-size: 24px; cursor: pointer; color: #5a4b45;" class="me-3">
-                <i class="bi bi-arrow-left"></i>
-            </button>
-            <form action="/search" method="GET" style="flex-grow: 1;">
-                <input type="text" name="q" placeholder="keywords" style="width: 100%; border: none; border-bottom: 1px solid #ccc; padding: 10px; font-size: 18px; background: transparent; outline: none;">
-            </form>
-        </div>
-        
-        <div class="mt-4">
-            <h6 class="fw-bold mb-3" style="color: #5a4b45;">Trending</h6>
-            <div class="d-flex flex-wrap gap-2">
-                <a href="/search?q=Celana Barrel" class="btn btn-sm btn-outline-secondary rounded-pill" style="border-color: #ddd;">Celana Barrel</a>
-                <a href="/search?q=Koleksi Jeans" class="btn btn-sm btn-outline-secondary rounded-pill" style="border-color: #ddd;">Koleksi Jeans</a>
-                <a href="/search?q=Koleksi Flannel" class="btn btn-sm btn-outline-secondary rounded-pill" style="border-color: #ddd;">Koleksi Flannel</a>
-                <a href="/search?q=Winter Travel" class="btn btn-sm btn-outline-secondary rounded-pill" style="border-color: #ddd;">Winter Travel</a>
-                <a href="/search?q=Kaos Kaki HEATTECH" class="btn btn-sm btn-outline-secondary rounded-pill" style="border-color: #ddd;">Kaos Kaki HEATTECH</a>
-                <a href="/search?q=Limited Offer" class="btn btn-sm btn-outline-secondary rounded-pill" style="border-color: #ddd;">Limited Offer</a>
-                <a href="/search?q=Sale" class="btn btn-sm btn-outline-secondary rounded-pill" style="border-color: #ddd;">Sale</a>
-            </div>
-        </div>
-
-        <div class="mt-5">
-            <h6 class="fw-bold mb-3" style="color: #5a4b45;">Riwayat pencarian</h6>
-            <p class="text-muted small">Anda dapat melihat riwayat pencarian Anda di sini.</p>
-        </div>
-    </div>
-  </div>`;
+  `;
 }
 
 function tplUser() {
@@ -172,36 +143,7 @@ function tplUser() {
     <button id="logoutBtn" class="accmini__btn" style="display: inline-flex; align-items: center; justify-content: center; width: 100%; height: 36px; background-color: #ffffff; border: 1.5px solid #d9c8c1; border-radius: 10px; color: #1e1e1e; font-weight: 600; text-decoration: none; font-size: 14px; cursor: pointer; transition: all 0.25s ease; margin-top: 8px;">Log out</button>
   </div>
 
-  <div id="searchOverlay" style="display: none; position: fixed; top: 0; left: 0; width: 100vw; height: 100vh; background: #FFF6F0; z-index: 20000; overflow-y: auto;">
-    <div class="container pt-4">
-        <div class="d-flex align-items-center mb-4">
-            <button id="closeSearchBtn" style="background: none; border: none; font-size: 24px; cursor: pointer; color: #5a4b45;" class="me-3">
-                <i class="bi bi-arrow-left"></i>
-            </button>
-            <form action="/search" method="GET" style="flex-grow: 1;">
-                <input type="text" name="q" placeholder="keywords" style="width: 100%; border: none; border-bottom: 1px solid #ccc; padding: 10px; font-size: 18px; background: transparent; outline: none;">
-            </form>
-        </div>
-        
-        <div class="mt-4">
-            <h6 class="fw-bold mb-3" style="color: #5a4b45;">Trending</h6>
-            <div class="d-flex flex-wrap gap-2">
-                <a href="/search?q=Celana Barrel" class="btn btn-sm btn-outline-secondary rounded-pill" style="border-color: #ddd;">Celana Barrel</a>
-                <a href="/search?q=Koleksi Jeans" class="btn btn-sm btn-outline-secondary rounded-pill" style="border-color: #ddd;">Koleksi Jeans</a>
-                <a href="/search?q=Koleksi Flannel" class="btn btn-sm btn-outline-secondary rounded-pill" style="border-color: #ddd;">Koleksi Flannel</a>
-                <a href="/search?q=Winter Travel" class="btn btn-sm btn-outline-secondary rounded-pill" style="border-color: #ddd;">Winter Travel</a>
-                <a href="/search?q=Kaos Kaki HEATTECH" class="btn btn-sm btn-outline-secondary rounded-pill" style="border-color: #ddd;">Kaos Kaki HEATTECH</a>
-                <a href="/search?q=Limited Offer" class="btn btn-sm btn-outline-secondary rounded-pill" style="border-color: #ddd;">Limited Offer</a>
-                <a href="/search?q=Sale" class="btn btn-sm btn-outline-secondary rounded-pill" style="border-color: #ddd;">Sale</a>
-            </div>
-        </div>
-
-        <div class="mt-5">
-            <h6 class="fw-bold mb-3" style="color: #5a4b45;">Riwayat pencarian</h6>
-            <p class="text-muted small">Anda dapat melihat riwayat pencarian Anda di sini.</p>
-        </div>
-    </div>
-  </div>`;
+  `;
 }
 
 // Scroll Effect - Background hilang saat scroll (tanpa blur)
@@ -381,21 +323,8 @@ function attachEventListeners() {
     console.log('Event listeners attached successfully');
   }
 
-  // Handle search overlay
-  const searchBtn = document.querySelector('a[href="/search"]');
-  const searchOverlay = document.getElementById('searchOverlay');
-  const closeSearchBtn = document.getElementById('closeSearchBtn');
-
-  if (searchBtn && searchOverlay && closeSearchBtn) {
-    searchBtn.addEventListener('click', function (e) {
-      e.preventDefault();
-      searchOverlay.style.display = 'block';
-    });
-
-    closeSearchBtn.addEventListener('click', function () {
-      searchOverlay.style.display = 'none';
-    });
-  }
+  // Search icon now directly navigates to /search page
+  // No overlay needed
 }
 
 // Initialize
