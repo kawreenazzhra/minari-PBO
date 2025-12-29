@@ -48,13 +48,17 @@ public class SecurityConfig {
                                                                 "/register", "/login", "/products", "/products/**",
                                                                 "/cart", "/cart/**", "/api/**", "/error",
                                                                 "/wishlist/**", "/search", "/search/**", "/menu",
-                                                                "/menu/**")
+                                                                "/menu/**", "/h2-console/**")
                                                 .permitAll()
                                                 .requestMatchers("/checkout/**", "/orders/**", "/account/**",
                                                                 "/profile/**")
                                                 .authenticated()
                                                 .requestMatchers("/admin/**").hasRole("ADMIN")
                                                 .anyRequest().authenticated())
+                                .csrf(csrf -> csrf
+                                                .ignoringRequestMatchers("/h2-console/**"))
+                                .headers(headers -> headers
+                                                .frameOptions(frameOptions -> frameOptions.disable()))
                                 .formLogin(form -> form
                                                 .loginPage("/login")
                                                 .loginProcessingUrl("/login")

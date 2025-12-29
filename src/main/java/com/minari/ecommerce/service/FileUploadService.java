@@ -1,90 +1,102 @@
 package com.minari.ecommerce.service;
 
-import org.springframework.beans.factory.annotation.Value;
+import com.cloudinary.Cloudinary;
+import com.cloudinary.utils.ObjectUtils;
+import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Service;
 import org.springframework.web.multipart.MultipartFile;
 
 import java.io.IOException;
-import java.nio.file.Files;
-import java.nio.file.Path;
-import java.nio.file.Paths;
+import java.util.Map;
 import java.util.UUID;
 
 @Service
 public class FileUploadService {
 
-    @Value("${app.upload.dir}")
-    private String uploadDir;
+    private final Cloudinary cloudinary;
 
-    @Value("${app.upload.allowed-types}")
-    private String allowedTypes;
+    @Autowired
+    public FileUploadService(Cloudinary cloudinary) {
+        this.cloudinary = cloudinary;
+    }
 
-    // Max file size in bytes (10MB = 10485760 bytes)
-    private static final long MAX_FILE_SIZE = 10 * 1024 * 1024;
+    // Max file size handled by controller/servlet config, but we can double check here or just let Cloudinary handle it.
+    // Cloudinary free tier has limits too, but usually generous for individual images (10MB is fine).
 
     public String uploadProductImage(MultipartFile file) throws IOException {
-        return uploadFile(file, "products");
+        return uploadFile(file, "minari/products");
     }
 
     public String uploadCategoryImage(MultipartFile file) throws IOException {
-        return uploadFile(file, "categories");
+        return uploadFile(file, "minari/categories");
     }
 
     public String uploadUserImage(MultipartFile file) throws IOException {
-        return uploadFile(file, "users");
+        return uploadFile(file, "minari/users");
     }
 
-    private String uploadFile(MultipartFile file, String subdirectory) throws IOException {
+    private String uploadFile(MultipartFile file, String folder) throws IOException {
         if (file == null || file.isEmpty()) {
             throw new IllegalArgumentException("File is empty");
         }
 
-        // Validate file type
-        String contentType = file.getContentType();
-        if (contentType == null || !allowedTypes.contains(contentType)) {
-            throw new IllegalArgumentException("File type not allowed. Allowed types: " + allowedTypes);
-        }
+        // Upload to Cloudinary
+        @SuppressWarnings("unchecked")
+        Map<String, Object> uploadResult = cloudinary.uploader().upload(file.getBytes(), 
+                ObjectUtils.asMap(
+                    "folder", folder,
+                    "public_id", UUID.randomUUID().toString(),
+                    "resource_type", "auto"
+                ));
 
-        // Validate file size
-        if (file.getSize() > MAX_FILE_SIZE) {
-            throw new IllegalArgumentException("File size exceeds maximum limit of " + MAX_FILE_SIZE + " bytes");
-        }
-
-        // Generate unique filename
-        String originalFilename = file.getOriginalFilename();
-        String fileExtension = getFileExtension(originalFilename);
-        String uniqueFilename = UUID.randomUUID().toString() + "." + fileExtension;
-
-        // Create directory path
-        Path uploadPath = Paths.get(uploadDir, subdirectory).toAbsolutePath();
-        Files.createDirectories(uploadPath);
-
-        // Save file
-        Path filePath = uploadPath.resolve(uniqueFilename);
-        Files.write(filePath, file.getBytes());
-
-        // Return relative path for storing in database
-        return "/uploads/" + subdirectory + "/" + uniqueFilename;
+        // Return the secure URL
+        return (String) uploadResult.get("secure_url");
     }
 
-    public void deleteFile(String filePath) throws IOException {
-        if (filePath == null || filePath.isEmpty()) {
+    public void deleteFile(String fileUrl) throws IOException {
+        if (fileUrl == null || fileUrl.isEmpty()) {
             return;
         }
 
-        // Remove /uploads/ prefix to get relative path
-        String relativePath = filePath.replace("/uploads/", "");
-        Path fullPath = Paths.get(uploadDir, relativePath).toAbsolutePath();
-
-        if (Files.exists(fullPath)) {
-            Files.delete(fullPath);
+        try {
+            // Extract public ID from URL
+            // URL format example: https://res.cloudinary.com/demo/image/upload/v1/minari/products/filename.jpg
+            // We need: minari/products/filename
+            
+            String publicId = extractPublicIdFromUrl(fileUrl);
+            if (publicId != null) {
+                cloudinary.uploader().destroy(publicId, ObjectUtils.emptyMap());
+            }
+        } catch (Exception e) {
+            // Log error but don't stop execution
+            System.err.println("Error deleting file from Cloudinary: " + e.getMessage());
         }
     }
-
-    private String getFileExtension(String filename) {
-        if (filename == null || filename.lastIndexOf(".") == -1) {
-            return "jpg";
+    
+    private String extractPublicIdFromUrl(String url) {
+        try {
+            int uploadIndex = url.indexOf("/upload/");
+            if (uploadIndex == -1) {
+                return null;
+            }
+            
+            // Get part after /upload/ and version number (e.g., v123456789/)
+            String path = url.substring(uploadIndex + 8);
+            
+            // Skip version number if present (starts with v followed by digits and /)
+            if (path.matches("^v\\d+/.*")) {
+                path = path.substring(path.indexOf('/') + 1);
+            }
+            
+            // Remove extension
+            int dotIndex = path.lastIndexOf('.');
+            if (dotIndex != -1) {
+                path = path.substring(0, dotIndex);
+            }
+            
+            return path;
+        } catch (Exception e) {
+            return null;
         }
-        return filename.substring(filename.lastIndexOf(".") + 1).toLowerCase();
     }
 }
