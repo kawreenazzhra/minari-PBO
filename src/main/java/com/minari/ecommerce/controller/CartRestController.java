@@ -59,7 +59,7 @@ public class CartRestController {
     }
 
     // Update Quantity
-    @PatchMapping({"/cart/{productId}", "/guest-cart/{productId}"})
+    @PatchMapping({"/cart/{productId}", "/guest/cart/{productId}"})
     public ResponseEntity<?> updateQuantity(@PathVariable Long productId, @RequestBody Map<String, Object> payload, Principal principal, HttpSession session) {
         try {
             int quantity = Integer.parseInt(payload.get("quantity").toString());
@@ -77,7 +77,7 @@ public class CartRestController {
     }
 
     // Remove Item
-    @DeleteMapping({"/cart/{productId}", "/guest-cart/{productId}"})
+    @DeleteMapping({"/cart/{productId}", "/guest/cart/{productId}"})
     public ResponseEntity<?> removeItem(@PathVariable Long productId, Principal principal, HttpSession session) {
         try {
             if (principal != null) {
@@ -144,7 +144,8 @@ public class CartRestController {
 
     private int getCartCount(Principal principal, HttpSession session) {
         if (principal != null) {
-             return cartService.getCartForUser(principal.getName()).getItems().size();
+             com.minari.ecommerce.entity.ShoppingCart userCart = cartService.getCartForUser(principal.getName());
+             return (userCart != null && userCart.getItems() != null) ? userCart.getItems().size() : 0;
         } else {
              List<CartSessionItem> cart = (List<CartSessionItem>) session.getAttribute(GUEST_CART_SESSION_KEY);
              return cart != null ? cart.size() : 0;
