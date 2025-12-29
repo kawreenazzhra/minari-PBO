@@ -14,6 +14,7 @@ import java.util.Optional;
 @RequestMapping("/products")
 public class ProductController {
 
+    private final ProductService productService;
     private final com.minari.ecommerce.repository.ProductReviewRepository reviewRepository;
 
     public ProductController(ProductService productService, com.minari.ecommerce.repository.ProductReviewRepository reviewRepository) {
