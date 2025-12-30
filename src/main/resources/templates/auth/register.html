@@ -12,6 +12,8 @@
     <!-- CSS -->
     <link rel="stylesheet" th:href="@{/css/login.css}">
     <link rel="stylesheet" th:href="@{/css/navbar.css}">
+    <!-- Font Awesome -->
+    <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.4.0/css/all.min.css">
 </head>
 
 <body>
@@ -62,14 +64,25 @@
 
                 <div class="mb-3">
                     <label for="password" class="form-label">Password</label>
-                    <input type="password" class="form-control" id="password" name="password" th:field="*{password}"
-                        required minlength="6">
+                    <div class="position-relative">
+                        <input type="password" class="form-control" id="password" name="password" th:field="*{password}"
+                            required minlength="6" style="padding-right: 40px;">
+                        <i class="fa fa-eye position-absolute top-50 end-0 translate-middle-y me-3" id="togglePassword"
+                            style="cursor: pointer; color: #6c757d;"
+                            onclick="togglePasswordVisibility('password', 'togglePassword')"></i>
+                    </div>
                     <small class="text-muted">Minimum 6 characters</small>
                 </div>
 
                 <div class="mb-3">
                     <label for="confirmPassword" class="form-label">Confirm Password</label>
-                    <input type="password" class="form-control" id="confirmPassword" name="confirmPassword" required>
+                    <div class="position-relative">
+                        <input type="password" class="form-control" id="confirmPassword" name="confirmPassword" required
+                            style="padding-right: 40px;">
+                        <i class="fa fa-eye position-absolute top-50 end-0 translate-middle-y me-3"
+                            id="toggleConfirmPassword" style="cursor: pointer; color: #6c757d;"
+                            onclick="togglePasswordVisibility('confirmPassword', 'toggleConfirmPassword')"></i>
+                    </div>
                 </div>
 
                 <button type="submit" class="btn btn-dark w-100">
@@ -93,6 +106,21 @@
         /*<![CDATA[*/
         window.APP_ROLE = /*[[${#authorization.expression('isAuthenticated()') ? (#authorization.expression('hasRole(''ADMIN'')') ? 'admin' : 'user') : 'guest'}]]*/ 'guest';
         /*]]>*/
+
+        function togglePasswordVisibility(inputId, iconId) {
+            const input = document.getElementById(inputId);
+            const icon = document.getElementById(iconId);
+
+            if (input.type === "password") {
+                input.type = "text";
+                icon.classList.remove("fa-eye");
+                icon.classList.add("fa-eye-slash");
+            } else {
+                input.type = "password";
+                icon.classList.remove("fa-eye-slash");
+                icon.classList.add("fa-eye");
+            }
+        }
     </script>
     <script th:src="@{/js/navbar.js}"></script>
 </body>

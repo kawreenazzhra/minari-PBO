@@ -54,7 +54,7 @@ if (document.readyState === 'loading') {
   document.addEventListener('DOMContentLoaded', function () {
     const urlParams = new URLSearchParams(window.location.search);
     if (urlParams.get('logout') === 'success') {
-      showToast('Logout berhasil!', 'success');
+      showToast('Logout successful!', 'success');
       // Clean URL without reloading
       window.history.replaceState({}, document.title, window.location.pathname);
     }
@@ -62,7 +62,7 @@ if (document.readyState === 'loading') {
 } else {
   const urlParams = new URLSearchParams(window.location.search);
   if (urlParams.get('logout') === 'success') {
-    showToast('Logout berhasil!', 'success');
+    showToast('Logout successful!', 'success');
     window.history.replaceState({}, document.title, window.location.pathname);
   }
 }

@@ -252,7 +252,7 @@ window.addToCart = async function (productId, productName, price, image = '', qu
         const data = await response.json();
         if (data.success) {
             // Show toast notification
-            showToast('Item berhasil ditambahkan ke keranjang');
+            showToast('Item added to cart successfully');
 
             // Update cart counter in navbar
             if (typeof window.updateCartCounter === 'function') {
@@ -263,7 +263,7 @@ window.addToCart = async function (productId, productName, price, image = '', qu
         }
     } catch (error) {
         console.error('Error adding to cart:', error);
-        showToast('Gagal menambahkan item ke keranjang', 'error');
+        showToast('Failed to add item to cart', 'error');
     }
 
     return false;
