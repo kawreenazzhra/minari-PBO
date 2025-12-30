@@ -152,8 +152,7 @@ public class WebOrderController {
             method = PaymentMethod.BANK_TRANSFER;
         else if ("e_wallet".equalsIgnoreCase(paymentMethodStr))
             method = PaymentMethod.E_WALLET;
-        else if ("credit_card".equalsIgnoreCase(paymentMethodStr))
-            method = PaymentMethod.CREDIT_CARD;
+
 
         try {
             System.out.println("Creating order for user: " + email);

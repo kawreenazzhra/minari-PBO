@@ -21,6 +21,10 @@ public class ProductService {
     @jakarta.persistence.PersistenceContext
     private jakarta.persistence.EntityManager entityManager;
 
+    public ProductService(ProductRepository productRepository, 
+            ProductCategoryRepository categoryRepository,
+            com.minari.ecommerce.repository.OrderItemRepository orderItemRepository,
+            com.minari.ecommerce.repository.CartItemRepository cartItemRepository,
             com.minari.ecommerce.repository.ProductReviewRepository productReviewRepository) {
         this.productRepository = productRepository;
         this.categoryRepository = categoryRepository;
@@ -80,7 +84,7 @@ public class ProductService {
             // safer)
             cartItemRepository.deleteAll(cartItemRepository.findByProductId(product.getId()));
             productReviewRepository.deleteAll(productReviewRepository.findByProductId(product.getId()));
-            productVariantRepository.deleteAll(productVariantRepository.findByProductId(product.getId()));
+
 
             // 4. Delete the Product (Native Query to bypass JPA Caching/Managed State)
             productRepository.deleteNative(id);
