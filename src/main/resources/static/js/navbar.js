@@ -191,7 +191,12 @@ function renderNavbar() {
   initializeScrollEffect();
 
   // Setup event listeners
+  // Setup event listeners
   setTimeout(attachEventListeners, 100);
+
+  // Fetch counts after rendering
+  fetchCartCount();
+  fetchWishlistCount();
 }
 
 function attachEventListeners() {
@@ -199,8 +204,6 @@ function attachEventListeners() {
 
   const accBtn = document.getElementById('accBtn');
   const accMini = document.getElementById('accMini');
-
-  console.log('Found elements:', { accBtn, accMini });
 
   if (accBtn && accMini) {
     // Remove any existing event listeners
@@ -215,22 +218,16 @@ function attachEventListeners() {
     currentAccBtn.addEventListener('click', function (e) {
       e.preventDefault();
       e.stopPropagation();
-      console.log('Account button clicked!');
 
-      // Get position of button
       const rect = currentAccBtn.getBoundingClientRect();
-      console.log('Button position:', rect);
 
-      // Toggle dropdown
-      if (currentAccMini.style.display === 'block' || currentAccMini.style.display === '') {
+      if (currentAccMini.style.display === 'block') {
         currentAccMini.style.display = 'none';
         currentAccMini.style.pointerEvents = 'none';
       } else {
-        // Position dropdown below button (Centered)
         currentAccMini.style.position = 'fixed';
         currentAccMini.style.top = (rect.bottom + 10) + 'px';
 
-        // Center alignment
         const popupWidth = 220;
         const buttonCenter = rect.left + (rect.width / 2);
         const leftPos = buttonCenter - (popupWidth / 2);
@@ -239,7 +236,7 @@ function attachEventListeners() {
         currentAccMini.style.right = 'auto';
         currentAccMini.style.display = 'block';
         currentAccMini.style.opacity = '1';
-        currentAccMini.style.pointerEvents = 'auto'; // Enable clicks
+        currentAccMini.style.pointerEvents = 'auto';
       }
     });
 
@@ -253,8 +250,6 @@ function attachEventListeners() {
       }
     });
 
-
-
     // Handle logout button
     const logoutBtn = document.getElementById('logoutBtn');
     if (logoutBtn) {
@@ -262,16 +257,12 @@ function attachEventListeners() {
         e.preventDefault();
         e.stopPropagation();
 
-        // Close the dropdown
         if (currentAccMini) {
           currentAccMini.style.display = 'none';
           currentAccMini.style.pointerEvents = 'none';
         }
 
-        // Create and submit logout form
         const csrfToken = document.querySelector('meta[name="_csrf"]')?.content;
-        const csrfHeader = document.querySelector('meta[name="_csrf_header"]')?.content;
-
         const form = document.createElement('form');
         form.method = 'POST';
         form.action = '/logout';
@@ -290,41 +281,28 @@ function attachEventListeners() {
       });
     }
 
-    // Handle login link (fix for unclickable issue)
+    // Handle login link
     const loginLink = document.getElementById('loginLink');
     if (loginLink) {
       loginLink.addEventListener('click', function (e) {
         e.preventDefault();
-        e.stopPropagation(); // Stop it from closing the dropdown immediately
-        console.log('Login link clicked - Forcing navigation');
+        e.stopPropagation();
         window.location.href = '/login';
       });
     }
 
-    // Handle standard navbar links to ensure navigation works
+    // Handle standard navbar links
     const navLinks = document.querySelectorAll('a[href="/menu"], a[href="/cart"], a[href="/wishlist"], a[href="/admin/dashboard"]');
     navLinks.forEach(link => {
       link.addEventListener('click', function (e) {
-        // e.preventDefault(); // Don't prevent default unless necessary, but...
-        // If there's some global handler blocking it, we force it.
-        // For now, let's just log and ensure propagation.
         e.stopPropagation();
-        console.log('Nav link clicked:', this.href);
-        // Force navigation if it doesn't happen naturally
-        // window.location.href = this.href; 
       });
-      // Safety net: if for some reason expected behavior fails, force it on click
       link.onclick = function () {
         window.location.href = this.href;
         return true;
       };
     });
-
-    console.log('Event listeners attached successfully');
   }
-
-  // Search icon now directly navigates to /search page
-  // No overlay needed
 }
 
 // Initialize
@@ -333,9 +311,6 @@ if (document.readyState === 'loading') {
 } else {
   renderNavbar();
 }
-
-// Re-render on window load for safety
-window.addEventListener('load', renderNavbar);
 
 // ====== Cart Counter Functions ======
 
@@ -357,9 +332,7 @@ async function fetchCartCount() {
   try {
     const response = await fetch('/api/cart/count', {
       method: 'GET',
-      headers: {
-        'Accept': 'application/json'
-      }
+      headers: { 'Accept': 'application/json' }
     });
 
     if (response.ok) {
@@ -369,13 +342,6 @@ async function fetchCartCount() {
   } catch (error) {
     console.error('Error fetching cart count:', error);
   }
-}
-
-// Fetch cart count on page load
-if (document.readyState === 'loading') {
-  document.addEventListener('DOMContentLoaded', fetchCartCount);
-} else {
-  fetchCartCount();
 }
 
 // ====== Wishlist Counter Functions ======
@@ -398,9 +364,7 @@ async function fetchWishlistCount() {
   try {
     const response = await fetch('/api/wishlist/count', {
       method: 'GET',
-      headers: {
-        'Accept': 'application/json'
-      }
+      headers: { 'Accept': 'application/json' }
     });
 
     if (response.ok) {
@@ -410,11 +374,4 @@ async function fetchWishlistCount() {
   } catch (error) {
     console.error('Error fetching wishlist count:', error);
   }
-}
-
-// Fetch wishlist count on page load
-if (document.readyState === 'loading') {
-  document.addEventListener('DOMContentLoaded', fetchWishlistCount);
-} else {
-  fetchWishlistCount();
 }
