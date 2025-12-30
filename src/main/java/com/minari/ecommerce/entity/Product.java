@@ -65,8 +65,6 @@ public class Product {
     @OneToMany(mappedBy = "product", cascade = CascadeType.ALL, orphanRemoval = true)
     private List<ProductReview> reviews = new ArrayList<>();
 
-    @OneToMany(mappedBy = "product", cascade = CascadeType.ALL, orphanRemoval = true, fetch = FetchType.LAZY)
-    private List<ProductVariant> variants = new ArrayList<>();
 
     @Column(name = "average_rating", nullable = false, columnDefinition = "DOUBLE PRECISION DEFAULT 0")
     private Double averageRating = 0.0;
@@ -258,13 +256,6 @@ public class Product {
         this.reviews = reviews;
     }
 
-    public List<ProductVariant> getVariants() {
-        return variants;
-    }
-
-    public void setVariants(List<ProductVariant> variants) {
-        this.variants = variants;
-    }
 
     public Double getAverageRating() {
         return averageRating;

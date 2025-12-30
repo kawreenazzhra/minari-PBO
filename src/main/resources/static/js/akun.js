@@ -35,11 +35,25 @@ document.addEventListener('DOMContentLoaded', function () {
     if (fieldPhone) fieldPhone.textContent = data.phone || '-';
     if (fieldEmail) fieldEmail.textContent = data.email || '-';
     if (fieldAddress) fieldAddress.textContent = data.address || '-';
+
+    // Populate loyalty points
+    const fieldLoyaltyPoints = document.getElementById('fieldLoyaltyPoints');
+    if (fieldLoyaltyPoints) {
+      const pointsValue = data.loyaltyPoints || 0;
+      fieldLoyaltyPoints.querySelector('span:last-child').textContent = pointsValue;
+    }
+
     if (userEmoji) {
       userEmoji.textContent = data.role === 'admin' ? '🛠️' : '👩‍🦰';
     }
     if (roleBadge) {
       roleBadge.textContent = data.role === 'admin' ? 'Admin' : 'User';
+    }
+
+    // Populate birth date
+    const fieldBirthDate = document.getElementById('fieldBirthDate');
+    if (fieldBirthDate) {
+      fieldBirthDate.textContent = data.birth_date || '-';
     }
   }
 

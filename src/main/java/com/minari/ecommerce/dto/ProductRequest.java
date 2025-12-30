@@ -50,8 +50,6 @@ public class ProductRequest {
     private Boolean isFeatured = false;
     private Boolean isActive = true;
 
-    // Variants
-    private List<ProductVariantRequest> variants;
 
     // Getters and Setters
     public String getName() {
@@ -174,77 +172,4 @@ public class ProductRequest {
         isActive = active;
     }
 
-    public List<ProductVariantRequest> getVariants() {
-        return variants;
-    }
-
-    public void setVariants(List<ProductVariantRequest> variants) {
-        this.variants = variants;
-    }
-
-    public static class ProductVariantRequest {
-        @NotBlank(message = "Variant name is required")
-        private String name;
-
-        @NotBlank(message = "Variant value is required")
-        private String value;
-
-        @DecimalMin(value = "0.00", message = "Additional price cannot be negative")
-        private BigDecimal additionalPrice;
-
-        @Min(value = 0, message = "Stock cannot be negative")
-        private Integer stockQuantity;
-
-        private String sku;
-        private MultipartFile image;
-
-        // Getters and Setters
-        public String getName() {
-            return name;
-        }
-
-        public void setName(String name) {
-            this.name = name;
-        }
-
-        public String getValue() {
-            return value;
-        }
-
-        public void setValue(String value) {
-            this.value = value;
-        }
-
-        public BigDecimal getAdditionalPrice() {
-            return additionalPrice;
-        }
-
-        public void setAdditionalPrice(BigDecimal additionalPrice) {
-            this.additionalPrice = additionalPrice;
-        }
-
-        public Integer getStockQuantity() {
-            return stockQuantity;
-        }
-
-        public void setStockQuantity(Integer stockQuantity) {
-            this.stockQuantity = stockQuantity;
-        }
-
-        public String getSku() {
-            return sku;
-        }
-
-        public void setSku(String sku) {
-            this.sku = sku;
-        }
-
-        public MultipartFile getImage() {
-            return image;
-        }
-
-        public void setImage(MultipartFile image) {
-            this.image = image;
-        }
-    }
 }

@@ -18,22 +18,15 @@ public class ProductService {
     private final com.minari.ecommerce.repository.OrderItemRepository orderItemRepository;
     private final com.minari.ecommerce.repository.CartItemRepository cartItemRepository;
     private final com.minari.ecommerce.repository.ProductReviewRepository productReviewRepository;
-    private final com.minari.ecommerce.repository.ProductVariantRepository productVariantRepository;
     @jakarta.persistence.PersistenceContext
     private jakarta.persistence.EntityManager entityManager;
 
-    public ProductService(ProductRepository productRepository,
-            ProductCategoryRepository categoryRepository,
-            com.minari.ecommerce.repository.OrderItemRepository orderItemRepository,
-            com.minari.ecommerce.repository.CartItemRepository cartItemRepository,
-            com.minari.ecommerce.repository.ProductReviewRepository productReviewRepository,
-            com.minari.ecommerce.repository.ProductVariantRepository productVariantRepository) {
+            com.minari.ecommerce.repository.ProductReviewRepository productReviewRepository) {
         this.productRepository = productRepository;
         this.categoryRepository = categoryRepository;
         this.orderItemRepository = orderItemRepository;
         this.cartItemRepository = cartItemRepository;
         this.productReviewRepository = productReviewRepository;
-        this.productVariantRepository = productVariantRepository;
     }
 
     public List<Product> getAllProducts() {

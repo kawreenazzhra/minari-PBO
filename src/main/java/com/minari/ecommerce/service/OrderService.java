@@ -35,15 +35,19 @@ public class OrderService {
     private final ProductService productService;
 
     private final com.minari.ecommerce.service.PromotionService promotionService;
+    private final com.minari.ecommerce.service.CustomerService customerService;
 
     public OrderService(OrderRepository orderRepository, ShoppingCartService cartService, UserRepository userRepository,
-            EmailService emailService, ProductService productService, com.minari.ecommerce.service.PromotionService promotionService) {
+            EmailService emailService, ProductService productService, 
+            com.minari.ecommerce.service.PromotionService promotionService,
+            com.minari.ecommerce.service.CustomerService customerService) {
         this.orderRepository = orderRepository;
         this.cartService = cartService;
         this.userRepository = userRepository;
         this.emailService = emailService;
         this.productService = productService;
         this.promotionService = promotionService;
+        this.customerService = customerService;
     }
 
     public Order createOrderFromCart(String email, Address shippingAddress, PaymentMethod paymentMethod) {
@@ -447,6 +451,9 @@ public class OrderService {
 
     public void updateOrderDetails(Long id, String statusStr, String trackingNumber) {
         Order order = orderRepository.findById(id).orElseThrow(() -> new RuntimeException("Order not found"));
+        
+        // Track old status to detect status change
+        com.minari.ecommerce.entity.OrderStatus oldStatus = order.getStatus();
 
         // Update Status
         try {
@@ -461,6 +468,12 @@ public class OrderService {
                 
                 order.getPayment().setStatus(PaymentStatus.PAID);
                 order.getPayment().setPaymentDate(LocalDateTime.now());
+            }
+            
+            // Award loyalty points when order is delivered (only if status changed to DELIVERED)
+            if (newStatus == com.minari.ecommerce.entity.OrderStatus.DELIVERED && 
+                oldStatus != com.minari.ecommerce.entity.OrderStatus.DELIVERED) {
+                awardLoyaltyPoints(order);
             }
         } catch (IllegalArgumentException e) {
             // Ignore invalid status or handle error
@@ -494,5 +507,30 @@ public class OrderService {
         }
 
         orderRepository.save(order);
+    }
+
+    /**
+     * Award loyalty points to customer when order is delivered
+     * Formula: Every Rp 10,000 spent = 1 loyalty point
+     */
+    private void awardLoyaltyPoints(Order order) {
+        try {
+            if (order.getCustomer() == null) {
+                log.warn("Cannot award loyalty points - order has no customer: {}", order.getOrderNumber());
+                return;
+            }
+
+            // Calculate points: Rp 10,000 = 1 point
+            int pointsToAward = (int) (order.getTotalAmount() / 10000);
+            
+            if (pointsToAward > 0) {
+                customerService.addLoyaltyPoints(order.getCustomer().getId(), pointsToAward);
+                log.info("Awarded {} loyalty points to customer {} for order {}", 
+                    pointsToAward, order.getCustomer().getId(), order.getOrderNumber());
+            }
+        } catch (Exception e) {
+            log.error("Failed to award loyalty points for order: {}", order.getOrderNumber(), e);
+            // Don't throw exception - loyalty points failure shouldn't break order update
+        }
     }
 }

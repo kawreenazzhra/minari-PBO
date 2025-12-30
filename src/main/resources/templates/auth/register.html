@@ -55,6 +55,12 @@
                 </div>
 
                 <div class="mb-3">
+                    <label for="birthDate" class="form-label">Date of Birth (Optional)</label>
+                    <input type="date" class="form-control" id="birthDate" name="birthDate" th:field="*{birthDate}">
+                    <small class="text-muted">Optional - helps us personalize your experience</small>
+                </div>
+
+                <div class="mb-3">
                     <label for="password" class="form-label">Password</label>
                     <input type="password" class="form-control" id="password" name="password" th:field="*{password}"
                         required minlength="6">

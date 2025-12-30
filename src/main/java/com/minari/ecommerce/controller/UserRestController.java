@@ -84,6 +84,15 @@ public class UserRestController {
             userData.put("address", "-");
         }
 
+        // Get loyalty points if user is Customer
+        if (user instanceof Customer) {
+            Customer customer = (Customer) user;
+            Integer loyaltyPoints = customer.getLoyaltyPoints();
+            userData.put("loyaltyPoints", loyaltyPoints != null ? loyaltyPoints : 0);
+        } else {
+            userData.put("loyaltyPoints", 0);
+        }
+
         // Determine role
         String role = "user";
         if (user.getRole() != null) {
