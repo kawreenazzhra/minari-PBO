@@ -285,12 +285,9 @@ public class AdminController {
                 model.addAttribute("stats", stats);
             }
 
-            // Recent orders (fetch 5 most recent)
-            List<OrderDTO> allOrders = orderService.getAllOrders(null, null);
-            if (allOrders != null) {
-                int limit = Math.min(allOrders.size(), 5);
-                model.addAttribute("recentOrders", allOrders.subList(0, limit));
-            }
+            // Recent orders (Optimized)
+            List<OrderDTO> recentOrders = orderService.getRecentOrders(5);
+            model.addAttribute("recentOrders", recentOrders != null ? recentOrders : java.util.Collections.emptyList());
 
             // Top products
             try {
@@ -299,11 +296,9 @@ public class AdminController {
                 // Keep default empty list
             }
 
-            // Recent Reviews
+            // Recent Reviews (Optimized)
             try {
-                List<java.util.Map<String, Object>> recentReviews = reviewRepository.findAll().stream()
-                        .sorted((a, b) -> b.getReviewDate().compareTo(a.getReviewDate()))
-                        .limit(3)
+                List<java.util.Map<String, Object>> recentReviews = reviewRepository.findTop3ByOrderByReviewDateDesc().stream()
                         .map(r -> {
                             java.util.Map<String, Object> map = new java.util.HashMap<>();
                             map.put("customerName",

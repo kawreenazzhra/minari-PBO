@@ -269,21 +269,24 @@ public class OrderService {
     /**
      * Get order statistics summary
      */
+    /**
+     * Get order statistics summary (Optimized)
+     */
     public Map<String, Object> getOrderStatistics() {
-        log.info("Fetching order statistics");
+        log.info("Fetching order statistics (Optimized)");
 
         Map<String, Object> stats = new HashMap<>();
-        List<Order> allOrders = orderRepository.findAll();
-
-        stats.put("totalOrders", (long) allOrders.size());
-        stats.put("pendingOrders", allOrders.stream().filter(o -> o.getStatus() == com.minari.ecommerce.entity.OrderStatus.PENDING).count());
-        stats.put("completedOrders", allOrders.stream().filter(o -> o.getStatus() == com.minari.ecommerce.entity.OrderStatus.DELIVERED).count());
-        stats.put("cancelledOrders", allOrders.stream().filter(o -> o.getStatus() == com.minari.ecommerce.entity.OrderStatus.CANCELLED).count());
-        stats.put("totalRevenue", allOrders.stream()
-                .mapToDouble(Order::getTotalAmount)
-                .sum());
-        stats.put("averageOrderValue", allOrders.isEmpty() ? 0.0
-                : allOrders.stream().mapToDouble(Order::getTotalAmount).average().orElse(0.0));
+        
+        stats.put("totalOrders", orderRepository.count());
+        stats.put("pendingOrders", orderRepository.countByStatus(com.minari.ecommerce.entity.OrderStatus.PENDING));
+        stats.put("completedOrders", orderRepository.countByStatus(com.minari.ecommerce.entity.OrderStatus.DELIVERED));
+        stats.put("cancelledOrders", orderRepository.countByStatus(com.minari.ecommerce.entity.OrderStatus.CANCELLED));
+        
+        Double totalRevenue = orderRepository.sumTotalRevenue();
+        stats.put("totalRevenue", totalRevenue != null ? totalRevenue : 0.0);
+        
+        long count = orderRepository.count();
+        stats.put("averageOrderValue", count > 0 ? (totalRevenue != null ? totalRevenue : 0.0) / count : 0.0);
 
         return stats;
     }
@@ -363,39 +366,34 @@ public class OrderService {
     /**
      * Get top selling products
      */
+    /**
+     * Get top selling products (Optimized)
+     */
     public List<Map<String, Object>> getTopSellingProducts(int limit) {
-        log.info("Fetching top {} selling products", limit);
+        log.info("Fetching top {} selling products (Optimized)", limit);
         List<Map<String, Object>> topProducts = new ArrayList<>();
-        List<Order> allOrders = orderRepository.findAll();
-
-        // Map Product ID to Sales Count
-        Map<Long, Integer> productSales = new HashMap<>();
-        Map<Long, com.minari.ecommerce.entity.Product> productMap = new HashMap<>();
-
-        for (Order order : allOrders) {
-            if (order.getItems() != null) {
-                for (OrderItem item : order.getItems()) {
-                    Long pid = item.getProduct().getId();
-                    productSales.put(pid, productSales.getOrDefault(pid, 0) + item.getQuantity());
-                    productMap.putIfAbsent(pid, item.getProduct());
-                }
-            }
+        
+        List<Object[]> results = orderRepository.findTopSellingProducts(org.springframework.data.domain.PageRequest.of(0, limit));
+        
+        for (Object[] row : results) {
+            Map<String, Object> map = new HashMap<>();
+            map.put("name", row[0]);
+            map.put("imageUrl", row[1]);
+            map.put("salesCount", row[2]);
+            topProducts.add(map);
         }
 
-        // Sort
-        productSales.entrySet().stream()
-                .sorted((a, b) -> b.getValue().compareTo(a.getValue()))
-                .limit(limit)
-                .forEach(entry -> {
-                    com.minari.ecommerce.entity.Product p = productMap.get(entry.getKey());
-                    Map<String, Object> map = new HashMap<>();
-                    map.put("name", p.getName());
-                    map.put("imageUrl", p.getImageUrl());
-                    map.put("salesCount", entry.getValue());
-                    topProducts.add(map);
-                });
-
         return topProducts;
+    }
+
+    /**
+     * Get recent orders (Optimized)
+     */
+    public List<OrderDTO> getRecentOrders(int limit) {
+         return orderRepository.findRecentOrders(org.springframework.data.domain.PageRequest.of(0, limit))
+                .stream()
+                .map(this::convertToDTO)
+                .collect(Collectors.toList());
     }
 
     /**
