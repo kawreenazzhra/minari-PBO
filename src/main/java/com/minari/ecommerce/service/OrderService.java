@@ -33,21 +33,21 @@ public class OrderService {
     private final UserRepository userRepository;
     private final EmailService emailService;
     private final ProductService productService;
+    private final com.minari.ecommerce.repository.CustomerRepository customerRepository;
 
     private final com.minari.ecommerce.service.PromotionService promotionService;
-    private final com.minari.ecommerce.service.CustomerService customerService;
 
     public OrderService(OrderRepository orderRepository, ShoppingCartService cartService, UserRepository userRepository,
             EmailService emailService, ProductService productService, 
-            com.minari.ecommerce.service.PromotionService promotionService,
-            com.minari.ecommerce.service.CustomerService customerService) {
+            com.minari.ecommerce.repository.CustomerRepository customerRepository,
+            com.minari.ecommerce.service.PromotionService promotionService) {
         this.orderRepository = orderRepository;
         this.cartService = cartService;
         this.userRepository = userRepository;
         this.emailService = emailService;
         this.productService = productService;
+        this.customerRepository = customerRepository;
         this.promotionService = promotionService;
-        this.customerService = customerService;
     }
 
     public Order createOrderFromCart(String email, Address shippingAddress, PaymentMethod paymentMethod) {
@@ -524,9 +524,13 @@ public class OrderService {
             int pointsToAward = (int) (order.getTotalAmount() / 10000);
             
             if (pointsToAward > 0) {
-                customerService.addLoyaltyPoints(order.getCustomer().getId(), pointsToAward);
+                // Directly update customer loyalty points via repository
+                com.minari.ecommerce.entity.Customer customer = order.getCustomer();
+                customer.setLoyaltyPoints(customer.getLoyaltyPoints() + pointsToAward);
+                customerRepository.save(customer);
+                
                 log.info("Awarded {} loyalty points to customer {} for order {}", 
-                    pointsToAward, order.getCustomer().getId(), order.getOrderNumber());
+                    pointsToAward, customer.getId(), order.getOrderNumber());
             }
         } catch (Exception e) {
             log.error("Failed to award loyalty points for order: {}", order.getOrderNumber(), e);
