@@ -113,7 +113,7 @@
                 </div>
 
                 <!-- Payment Method Link -->
-                <a th:href="@{/checkout/payment(addressId=${addressId}, paymentMethod=${selectedPaymentMethod})}"
+                <a th:href="@{/checkout/payment(addressId=${addressId}, paymentMethod=${selectedPaymentMethod}, items=${items})}"
                     class="summary-link-card"
                     th:style="${selectedPaymentMethod == null ? 'border: 1px dashed #d68c78;' : ''}">
                     <div class="summary-label">Payment method</div>
@@ -127,7 +127,7 @@
 
                 <!-- Shipping Address Link -->
                 <!-- Includes paymentMethod so it persists when returning -->
-                <a th:href="@{/checkout/address(addressId=${addressId}, paymentMethod=${selectedPaymentMethod})}"
+                <a th:href="@{/checkout/address(addressId=${addressId}, paymentMethod=${selectedPaymentMethod}, items=${items})}"
                     class="summary-link-card"
                     th:style="${selectedAddress == null ? 'border: 1px dashed #d68c78;' : ''}">
                     <div class="summary-label">Shipping to</div>

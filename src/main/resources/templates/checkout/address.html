@@ -226,6 +226,7 @@
                         </div>
                         <input type="hidden" name="country" value="Indonesia">
                         <input type="hidden" name="paymentMethod" th:value="${paymentMethod}">
+                        <input type="hidden" name="items" th:value="${items}">
 
                         <button type="submit" class="btn btn-dark w-100">Save Address</button>
                     </form>
@@ -238,6 +239,7 @@
     <script th:src="@{/js/navbar.js}"></script>
     <script th:inline="javascript">
         const paymentMethod = /*[[${paymentMethod}]]*/ '';
+        const items = /*[[${items}]]*/ '';
 
         function selectAddress(element) {
             const addressId = element.getAttribute('data-id');
@@ -253,6 +255,9 @@
                 let url = '/payment?addressId=' + addressId;
                 if (paymentMethod && paymentMethod !== '' && paymentMethod !== 'null') {
                     url += '&paymentMethod=' + paymentMethod;
+                }
+                if (items && items !== '' && items !== 'null') {
+                    url += '&items=' + items;
                 }
                 window.location.href = url;
             }, 800);

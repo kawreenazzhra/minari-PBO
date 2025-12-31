@@ -45,6 +45,7 @@ public class WebOrderController {
     public String selectAddress(Authentication authentication, 
                               @RequestParam(value = "addressId", required = false) Long currentAddressId,
                               @RequestParam(value = "paymentMethod", required = false) String paymentMethod,
+                              @RequestParam(value = "items", required = false) String items,
                               Model model) {
         if (authentication == null) return "redirect:/login";
         
@@ -63,7 +64,9 @@ public class WebOrderController {
         if (currentAddressId != null) {
              model.addAttribute("selectedAddressId", currentAddressId);
         }
-        // Removed default selection to respect user choice (or lack thereof)
+        
+        // Pass items param to view so it can be preserved
+        model.addAttribute("items", items);
         
         return "checkout/address";
     }
@@ -77,7 +80,8 @@ public class WebOrderController {
                              @RequestParam("zipcode") String zipcode,
                              @RequestParam("country") String country,
                              @RequestParam(value = "addressType", required = false, defaultValue = "Home") String addressType,
-                             @RequestParam(value = "paymentMethod", required = false) String paymentMethod) {
+                             @RequestParam(value = "paymentMethod", required = false) String paymentMethod,
+                             @RequestParam(value = "items", required = false) String items) {
         if (authentication == null) return "redirect:/login";
         
         String email = authentication.getName();
@@ -106,6 +110,9 @@ public class WebOrderController {
         if (paymentMethod != null && !paymentMethod.isEmpty()) {
             redirectUrl += "&paymentMethod=" + paymentMethod;
         }
+        if (items != null && !items.isEmpty()) {
+            redirectUrl += "&items=" + items;
+        }
         return redirectUrl;
     }
 
@@ -113,11 +120,13 @@ public class WebOrderController {
     public String paymentMethod(Authentication authentication, 
                               @RequestParam(value = "addressId", required = false) Long addressId,
                               @RequestParam(value = "paymentMethod", required = false) String paymentMethod,
+                              @RequestParam(value = "items", required = false) String items,
                               Model model) {
         if (authentication == null) return "redirect:/login";
         
         model.addAttribute("addressId", addressId);
         model.addAttribute("selectedPaymentMethod", paymentMethod);
+        model.addAttribute("items", items);
         
         return "checkout/payment";
     }

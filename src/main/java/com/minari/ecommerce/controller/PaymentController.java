@@ -121,6 +121,7 @@ public class PaymentController {
         model.addAttribute("appliedPromotion", discountCalc.getAppliedPromotion());
         model.addAttribute("total", finalTotal);
         model.addAttribute("selectedItemsJson", selectedItemsJson);
+        model.addAttribute("items", itemsParam);
         
         return "checkout/summary"; 
     }

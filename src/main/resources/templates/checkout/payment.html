@@ -181,14 +181,20 @@
     <script th:src="@{/js/navbar.js}"></script>
     <script th:inline="javascript">
         const addressId = /*[[${addressId}]]*/ null;
+        const items = /*[[${items}]]*/ '';
 
         function selectPaymentMethod(paymentMethod) {
-            // Immediately redirect back to payment summary with selected method
+            let url = '/payment?paymentMethod=' + paymentMethod;
+
             if (addressId) {
-                window.location.href = '/payment?addressId=' + addressId + '&paymentMethod=' + paymentMethod;
-            } else {
-                window.location.href = '/payment?paymentMethod=' + paymentMethod;
+                url += '&addressId=' + addressId;
             }
+
+            if (items && items !== '' && items !== 'null') {
+                url += '&items=' + items;
+            }
+
+            window.location.href = url;
         }
     </script>
 </body>
