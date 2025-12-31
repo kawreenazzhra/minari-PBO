@@ -31,6 +31,14 @@
 		<maven.compiler.source>21</maven.compiler.source>
 		<maven.compiler.target>21</maven.compiler.target>
 		<lombok.version>1.18.30</lombok.version>
+		
+		<!-- SonarQube Properties -->
+		<sonar.organization>kawreenazzhra</sonar.organization>
+		<sonar.host.url>https://sonarcloud.io</sonar.host.url>
+		<sonar.projectKey>kawreenazzhra_minari-PBO</sonar.projectKey>
+		<sonar.projectName>Minari E-Commerce</sonar.projectName>
+		<sonar.java.coveragePlugin>jacoco</sonar.java.coveragePlugin>
+		<sonar.coverage.jacoco.xmlReportPaths>${project.build.directory}/site/jacoco/jacoco.xml</sonar.coverage.jacoco.xmlReportPaths>
 	</properties>
 	<dependencies>
 		<dependency>
@@ -159,15 +167,5 @@
 			</plugin>
 		</plugins>
 	</build>
-
-	<properties>
-		<!-- SonarQube Properties -->
-		<sonar.organization>minari-ecommerce</sonar.organization>
-		<sonar.host.url>https://sonarcloud.io</sonar.host.url>
-		<sonar.projectKey>minari-ecommerce</sonar.projectKey>
-		<sonar.projectName>Minari E-Commerce</sonar.projectName>
-		<sonar.java.coveragePlugin>jacoco</sonar.java.coveragePlugin>
-		<sonar.coverage.jacoco.xmlReportPaths>${project.build.directory}/site/jacoco/jacoco.xml</sonar.coverage.jacoco.xmlReportPaths>
-	</properties>
 
 </project>
