@@ -12,6 +12,7 @@ import com.minari.ecommerce.entity.ShoppingCart;
 import com.minari.ecommerce.entity.User;
 import com.minari.ecommerce.repository.OrderRepository;
 import com.minari.ecommerce.repository.UserRepository;
+import com.minari.ecommerce.dto.DiscountCalculation;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 import jakarta.transaction.Transactional;
@@ -123,12 +124,15 @@ public class OrderService {
         double shippingFee = 15000.0;
 
         // Calculate discount for selected items
-        DiscountCalculation discountCalc = promotionService.calculateBestDiscount(
-            itemsToProcess.stream()
-                .map(CartItem::getProduct)
-                .collect(Collectors.toList()),
-            productsSubtotal
-        );
+        // Create a temporary cart for discount calculation that contains only selected items
+        ShoppingCart tempCart = new ShoppingCart();
+        tempCart.setItems(itemsToProcess);
+        // Note: calculateBestDiscount uses cart.getTotalAmount() which iterates items.
+        // itemsToProcess are CartItems which have a getSubtotal() method.
+        // We need to ensure the tempCart works correctly with calculateBestDiscount logic.
+
+        // Calculate discount for selected items
+        DiscountCalculation discountCalc = promotionService.calculateBestDiscount(tempCart);
         
         double bestDiscountAmount = discountCalc.getDiscountAmount();
         com.minari.ecommerce.entity.Promotion appliedPromotion = discountCalc.getAppliedPromotion();
