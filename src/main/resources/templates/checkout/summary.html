@@ -89,7 +89,7 @@
             <form th:action="@{/checkout/place}" method="post" id="checkoutForm">
                 <input type="hidden" name="addressId" th:value="${selectedAddress != null ? selectedAddress.id : ''}">
                 <input type="hidden" name="payment_method" th:value="${selectedPaymentMethod ?: ''}">
-                <input type="hidden" name="selectedItems" id="selectedItemsInput" value="">
+                <input type="hidden" name="selectedItems" id="selectedItemsInput" th:value="${selectedItemsJson}">
 
                 <!-- Product List Card -->
                 <div class="checkout-card">

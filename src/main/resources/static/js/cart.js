@@ -210,8 +210,8 @@ document.addEventListener('DOMContentLoaded', () => {
             // Save selected IDs to sessionStorage so backend can filter
             sessionStorage.setItem('selectedCartItems', JSON.stringify(selectedIds));
 
-            // Redirect to checkout summary page
-            window.location.href = '/payment';
+            // Redirect to checkout summary page with selected items
+            window.location.href = '/payment?items=' + selectedIds.join(',');
         });
     }
 
