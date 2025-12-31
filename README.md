@@ -2,7 +2,7 @@
 
 **Minari E-Commerce** adalah aplikasi web berkinerja tinggi yang dibangun dengan Java 21 dan Spring Boot. Aplikasi ini menyediakan pengalaman belanja yang lengkap bagi pelanggan dan dashboard yang canggih untuk administrator.
 
-## 🚀 Tech Stack
+##  Tech Stack
 
 - **Backend:** Java 21 (LTS), Spring Boot 3.x
 - **Frontend:** Thymeleaf, Bootstrap 5, Vanilla JavaScript (OOP Architecture)
@@ -11,7 +11,7 @@
 - **Security:** Spring Security (RBAC - Role Based Access Control)
 - **Containerization:** Docker
 
-## 🗄️ Arsitektur Database
+##  Arsitektur Database
 
 Project ini menggunakan **Serverless PostgreSQL** yang di-hosting di **Neon Tech** untuk production.
 
@@ -25,7 +25,7 @@ Aplikasi secara otomatis mengganti koneksi database berdasarkan environment:
 - **Local Development:** Menggunakan **H2 Database** (In-memory) agar cepat dan ringan.
 - **Production (Cloud):** Terhubung ke **Neon PostgreSQL** via environment variable (`SPRING_DATASOURCE_URL`).
 
-## 🧠 Penerapan Prinsip OOP
+##  Penerapan Prinsip OOP
 
 Project ini menerapkan prinsip **Object-Oriented Programming (OOP)** secara ketat untuk memastikan kemudahan maintain dan scalability:
 
@@ -45,7 +45,7 @@ Project ini menerapkan prinsip **Object-Oriented Programming (OOP)** secara keta
     *   Penggunaan injeksi Service berbasis Interface (`@Autowired`).
     *   DTO (Data Transfer Objects) mengabstraksi struktur database internal dari respon API.
 
-## ✨ Fitur Utama
+##  Fitur Utama
 
 ### Untuk Pelanggan (Customer)
 - **Katalog Produk:** Jelajahi produk per kategori, cari dengan filter.
@@ -60,7 +60,7 @@ Project ini menerapkan prinsip **Object-Oriented Programming (OOP)** secara keta
 - **Manajemen Order:** Lihat dan update status pesanan (Shipped, Delivered, dll).
 - **Manajemen Kategori:** Kelola kategori produk.
 
-## 🛠️ Instalasi & Setup
+##  Instalasi & Setup
 
 ### Prasyarat
 - Java 21 SDK terinstal.
@@ -100,7 +100,7 @@ Project ini menerapkan prinsip **Object-Oriented Programming (OOP)** secara keta
 Aplikasi ini sudah ter-kontainerisasi dengan **Docker**, membuatnya mudah di-deploy ke platform cloud manapun yang mendukung container (Koyeb, Railway, Render, AWS App Runner).
 
 ### Environment Variables Wajib
-Saat deploy, pastikan Anda mengatur environment variable berikut di dashboard cloud provider Anda:
+Saat deploy, pastikan untuk mengatur environment variable berikut di dashboard cloud provider:
 
 | Variable | Deskripsi | Contoh |
 |----------|-----------|--------|
@@ -126,5 +126,3 @@ src/main/
     └── templates/              # View HTML Thymeleaf
 ```
 
-## 📄 Lisensi
-[Tambahkan detail lisensi di sini]
