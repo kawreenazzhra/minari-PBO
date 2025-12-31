@@ -33,9 +33,9 @@
 		<lombok.version>1.18.30</lombok.version>
 		
 		<!-- SonarQube Properties -->
-		<sonar.organization>kawreenazzhra</sonar.organization>
+		<sonar.organization>minari</sonar.organization>
 		<sonar.host.url>https://sonarcloud.io</sonar.host.url>
-		<sonar.projectKey>kawreenazzhra_minari-PBO</sonar.projectKey>
+		<sonar.projectKey>minari_minari-PBO</sonar.projectKey>
 		<sonar.projectName>Minari E-Commerce</sonar.projectName>
 		<sonar.java.coveragePlugin>jacoco</sonar.java.coveragePlugin>
 		<sonar.coverage.jacoco.xmlReportPaths>${project.build.directory}/site/jacoco/jacoco.xml</sonar.coverage.jacoco.xmlReportPaths>
