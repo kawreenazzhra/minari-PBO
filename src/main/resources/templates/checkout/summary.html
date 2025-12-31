@@ -89,6 +89,7 @@
             <form th:action="@{/checkout/place}" method="post" id="checkoutForm">
                 <input type="hidden" name="addressId" th:value="${selectedAddress != null ? selectedAddress.id : ''}">
                 <input type="hidden" name="payment_method" th:value="${selectedPaymentMethod ?: ''}">
+                <input type="hidden" name="selectedItems" id="selectedItemsInput" value="">
 
                 <!-- Product List Card -->
                 <div class="checkout-card">
@@ -221,6 +222,15 @@
             console.log('Address ID:', addressIdInput ? addressIdInput.value : 'NOT FOUND');
             console.log('Payment Method:', paymentMethodInput ? paymentMethodInput.value : 'NOT FOUND');
             console.log('URL:', window.location.href);
+
+            // Load selected items from sessionStorage
+            const selectedItems = sessionStorage.getItem('selectedCartItems');
+            if (selectedItems) {
+                console.log('Selected items from cart:', selectedItems);
+                document.getElementById('selectedItemsInput').value = selectedItems;
+            } else {
+                console.log('No selected items found in sessionStorage - will checkout all items');
+            }
         });
 
         function submitCheckoutForm() {
@@ -231,6 +241,7 @@
             console.log('=== CHECKOUT BUTTON CLICKED ===');
             console.log('Address ID:', addressId);
             console.log('Payment Method:', paymentMethod);
+            console.log('Selected Items:', document.getElementById('selectedItemsInput').value);
 
             if (!addressId || addressId === 'null' || addressId === '') {
                 alert('âš ï¸ Please select a shipping address first!\n\nClick on "Shipping to" to choose your address.');

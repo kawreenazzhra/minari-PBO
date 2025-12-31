@@ -125,13 +125,15 @@ public class WebOrderController {
     @PostMapping("/place")
     public String placeOrder(Authentication authentication,
             @RequestParam(value = "addressId", required = false) Long addressId,
-            @RequestParam(value = "payment_method", required = false) String paymentMethodStr) {
+            @RequestParam(value = "payment_method", required = false) String paymentMethodStr,
+            @RequestParam(value = "selectedItems", required = false) String selectedItemsJson) {
         
         if (authentication == null) return "redirect:/login";
         
         System.out.println("DEBUG: placeOrder called");
         System.out.println("DEBUG: addressId = " + addressId);
         System.out.println("DEBUG: paymentMethodStr = " + paymentMethodStr);
+        System.out.println("DEBUG: selectedItems = " + selectedItemsJson);
         
         if (addressId == null) {
             return "redirect:/payment?error=missing_address";
@@ -153,10 +155,21 @@ public class WebOrderController {
         else if ("e_wallet".equalsIgnoreCase(paymentMethodStr))
             method = PaymentMethod.E_WALLET;
 
+        // Parse selected item IDs
+        java.util.List<Long> selectedProductIds = null;
+        if (selectedItemsJson != null && !selectedItemsJson.isEmpty()) {
+            try {
+                com.fasterxml.jackson.databind.ObjectMapper mapper = new com.fasterxml.jackson.databind.ObjectMapper();
+                selectedProductIds = mapper.readValue(selectedItemsJson, 
+                    new com.fasterxml.jackson.core.type.TypeReference<java.util.List<Long>>() {});
+            } catch (Exception e) {
+                System.err.println("Error parsing selected items: " + e.getMessage());
+            }
+        }
 
         try {
             System.out.println("Creating order for user: " + email);
-            com.minari.ecommerce.entity.Order savedOrder = orderService.createOrderFromCart(email, address, method);
+            com.minari.ecommerce.entity.Order savedOrder = orderService.createOrderFromCart(email, address, method, selectedProductIds);
             System.out.println("Order created successfully: " + savedOrder.getOrderNumber());
             System.out.println("Cart should be cleared now");
             return "redirect:/checkout/order-confirm?orderNumber=" + savedOrder.getOrderNumber() + 

@@ -50,6 +50,140 @@ public class OrderService {
         this.promotionService = promotionService;
     }
 
+    // Overloaded method with selectedProductIds parameter for selective checkout
+    public Order createOrderFromCart(String email, Address shippingAddress, PaymentMethod paymentMethod, List<Long> selectedProductIds) {
+        if (selectedProductIds == null || selectedProductIds.isEmpty()) {
+            // If no selection, use original method (all items)
+            return createOrderFromCart(email, shippingAddress, paymentMethod);
+        }
+        
+        User user = userRepository.findByEmail(email)
+                .orElseThrow(() -> new RuntimeException("User not found"));
+
+        ShoppingCart cart = cartService.getCartForUser(email);
+
+        System.out.println("[OrderService] Creating order from cart for user: " + email);
+        System.out.println("[OrderService] Cart has " + cart.getItems().size() + " items");
+        System.out.println("[OrderService] Selected product IDs: " + selectedProductIds);
+        
+        if (cart.getItems().isEmpty()) {
+            throw new RuntimeException("Cart is empty");
+        }
+        
+        // Filter cart items based on selection
+        List<CartItem> itemsToProcess = cart.getItems().stream()
+            .filter(item -> selectedProductIds.contains(item.getProduct().getId()))
+            .collect(Collectors.toList());
+            
+        System.out.println("[OrderService] Filtered to " + itemsToProcess.size() + " selected items");
+        
+        if (itemsToProcess.isEmpty()) {
+            throw new RuntimeException("No items selected for checkout");
+        }
+        
+        // Validate stock and deduct for selected items only
+        for (CartItem item : itemsToProcess) {
+            com.minari.ecommerce.entity.Product product = item.getProduct();
+            if (!product.canFulfillOrder(item.getQuantity())) {
+                throw new RuntimeException("Not enough stock for: " + product.getName());
+            }
+            int newStock = product.getStockQuantity() - item.getQuantity();
+            product.setStockQuantity(newStock);
+            productService.saveProduct(product);
+            log.info("Stock deducted for product: {} new stock: {}", product.getName(), newStock);
+        }
+        
+        Order order = new Order();
+        order.setOrderNumber("MIN" + System.currentTimeMillis() + new Random().nextInt(100));
+        order.setOrderDate(LocalDateTime.now());
+        order.setUser(user);
+        if (user instanceof com.minari.ecommerce.entity.Customer) {
+            order.setCustomer((com.minari.ecommerce.entity.Customer) user);
+        } else {
+             log.warn("Order created by non-customer user: {}", user.getEmail());
+        }
+        
+        // Create address snapshot
+        Address orderAddress = new Address();
+        orderAddress.setRecipientName(shippingAddress.getRecipientName());
+        orderAddress.setPhoneNumber(shippingAddress.getPhoneNumber());
+        orderAddress.setStreetAddress(shippingAddress.getStreetAddress());
+        orderAddress.setCity(shippingAddress.getCity());
+        orderAddress.setProvince(shippingAddress.getProvince());
+        orderAddress.setState(shippingAddress.getState() != null ? shippingAddress.getState() : shippingAddress.getProvince());
+        orderAddress.setCountry(shippingAddress.getCountry() != null ? shippingAddress.getCountry() : "Indonesia");
+        orderAddress.setZipcode(shippingAddress.getZipcode());
+        order.setShippingAddress(orderAddress);
+
+        // Calculate totals for selected items only
+        double productsSubtotal = itemsToProcess.stream()
+                .mapToDouble(item -> item.getProduct().getPrice() * item.getQuantity())
+                .sum();
+        
+        double shippingFee = 15000.0;
+
+        // Calculate discount for selected items
+        DiscountCalculation discountCalc = promotionService.calculateBestDiscount(
+            itemsToProcess.stream()
+                .map(CartItem::getProduct)
+                .collect(Collectors.toList()),
+            productsSubtotal
+        );
+        
+        double bestDiscountAmount = discountCalc.getDiscountAmount();
+        com.minari.ecommerce.entity.Promotion appliedPromotion = discountCalc.getAppliedPromotion();
+        
+        if (appliedPromotion != null) {
+            log.info("Applying promotion: {} with discount: {}", appliedPromotion.getName(), bestDiscountAmount);
+            appliedPromotion.setUsedCount(appliedPromotion.getUsedCount() + 1);
+            promotionService.savePromotion(appliedPromotion);
+            order.setPromotionId(appliedPromotion.getId());
+            order.setPromoCode(appliedPromotion.getPromoCode());
+        }
+        
+        order.setSubtotalAmount(productsSubtotal);
+        order.setDiscountAmount(bestDiscountAmount);
+        order.setShippingCost(shippingFee);
+        order.setTotalAmount(Math.max(0, (productsSubtotal - bestDiscountAmount) + shippingFee));
+
+        // Create order items from selected cart items only
+        List<OrderItem> orderItems = itemsToProcess.stream()
+                .map(cartItem -> new OrderItem(order, cartItem.getProduct(), cartItem))
+                .collect(Collectors.toList());
+
+        order.setItems(orderItems);
+        Payment payment = new Payment();
+        payment.setOrder(order);
+        payment.setAmount(order.getTotalAmount());
+        payment.setPaymentMethod(paymentMethod);
+        payment.processPayment();
+
+        order.setPayment(payment);
+
+        if (payment.getStatus() == PaymentStatus.PAID || payment.getPaymentMethod() == PaymentMethod.COD) {
+            order.createShipment(generateTrackingNumber(), "J&Tuh");
+        }
+
+        System.out.println("[OrderService] Saving order...");
+        Order savedOrder = orderRepository.saveAndFlush(order);
+        System.out.println("[OrderService] Order saved successfully! Order ID: " + savedOrder.getId() + ", Order Number: " + savedOrder.getOrderNumber());
+
+        // Remove only selected items from cart
+        for (Long productId : selectedProductIds) {
+            cartService.removeFromCart(email, productId);
+        }
+        System.out.println("[OrderService] Removed selected items from cart");
+
+        try {
+             emailService.sendOrderConfirmation(user.getEmail(), savedOrder);
+             emailService.sendAdminOrderNotification(savedOrder);
+        } catch (Exception e) {
+             log.error("Failed to send order confirmation email", e);
+        }
+
+        return savedOrder;
+    }
+
     public Order createOrderFromCart(String email, Address shippingAddress, PaymentMethod paymentMethod) {
         User user = userRepository.findByEmail(email)
                 .orElseThrow(() -> new RuntimeException("User not found"));

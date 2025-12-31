@@ -199,13 +199,16 @@ document.addEventListener('DOMContentLoaded', () => {
             const selectedIds = [];
             cartList.querySelectorAll('.cart-item').forEach(row => {
                 const checked = row.querySelector('.item-check')?.checked;
-                if (checked) selectedIds.push(row.dataset.id);
+                if (checked) selectedIds.push(row.dataset.productId);
             });
 
             if (selectedIds.length === 0) {
                 alert('Please select at least one item to checkout.');
                 return;
             }
+
+            // Save selected IDs to sessionStorage so backend can filter
+            sessionStorage.setItem('selectedCartItems', JSON.stringify(selectedIds));
 
             // Redirect to checkout summary page
             window.location.href = '/payment';
